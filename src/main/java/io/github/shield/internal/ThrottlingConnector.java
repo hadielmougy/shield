@@ -6,18 +6,39 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+
+/**
+ *
+ */
 public class ThrottlingConnector extends Connector {
 
+    /**
+     *
+     */
     private final Semaphore permits;
+
+    /**
+     *
+     */
     private long invokeTimeout;
 
 
+    /**
+     *
+     * @param max
+     * @param maxWaitMillis
+     */
     public ThrottlingConnector(int max, long maxWaitMillis) {
         this.permits = new Semaphore(max, true);
         invokeTimeout = maxWaitMillis;
     }
 
 
+    /**
+     *
+     * @param supplier
+     * @return
+     */
     @Override
     public Object invoke(Supplier supplier) {
         boolean permitted = false;

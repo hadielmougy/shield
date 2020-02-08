@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.Connector;
+import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -9,16 +10,37 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/**
+ *
+ */
 public class InvocationInterceptor implements MethodInterceptor {
 
 
+    /**
+     *
+     */
     private final Connector connector;
     private static Logger LOG = Logger.getLogger(InvocationInterceptor.class.getName());
 
+
+    /**
+     *
+     * @param connector
+     */
     public InvocationInterceptor(Connector connector) {
         this.connector = connector;
     }
 
+
+    /**
+     *
+     * @param obj
+     * @param method
+     * @param args
+     * @param proxy
+     * @return
+     */
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
         return connector.invoke(() -> {
@@ -33,12 +55,20 @@ public class InvocationInterceptor implements MethodInterceptor {
         });
     }
 
+
+    /**
+     *
+     * @param methodName
+     * @param target
+     * @param args
+     * @return
+     */
     private Object callFallbackIfFound(String methodName, Object target, Object[] args) {
         String fallbackName = methodName + "Fallback";
         Method fallback = null;
         Object result = null;
         try {
-            fallback = target.getClass().getDeclaredMethod(fallbackName, toClasses(args));
+            fallback = target.getClass().getDeclaredMethod(fallbackName, ClassUtil.toClassArray(args));
         } catch (NoSuchMethodException e) {
             LOG.info(String.format("No fallback is found for %s", methodName));
         }
@@ -54,12 +84,4 @@ public class InvocationInterceptor implements MethodInterceptor {
         return result;
     }
 
-    private Class<?>[] toClasses(Object[] args) {
-        Class[] clazz = new Class[args.length];
-
-        for (int i = 0; i < args.length; i++) {
-            clazz[i] = args[i].getClass();
-        }
-        return clazz;
-    }
 }

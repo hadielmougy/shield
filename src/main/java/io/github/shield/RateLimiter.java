@@ -3,11 +3,23 @@ package io.github.shield;
 import com.google.common.base.Preconditions;
 import io.github.shield.internal.RateLimiterConnector;
 
+
+/**
+ *
+ */
 public interface RateLimiter extends ShieldFactory {
 
+    /**
+     *
+     * @param rate
+     * @return
+     */
     RateLimiter withRate(Double rate);
 
 
+    /**
+     *
+     */
     class Config implements RateLimiter {
 
         double rate;
