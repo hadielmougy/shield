@@ -8,10 +8,10 @@ public interface FireAndForget extends ConnectorFactory {
     /**
      *
      */
-    class Config implements FireAndForget {
+    class Config extends BaseConfig implements FireAndForget {
         @Override
         public Connector connector() {
-            return new FireAndForgetConnector();
+            return new FireAndForgetConnector(getObject());
         }
     }
 

@@ -9,6 +9,10 @@ import io.github.shield.InvocationContext;
 public class DirectConnector extends Connector {
 
 
+    public DirectConnector(Object target) {
+        super(target);
+    }
+
     @Override
     public boolean beforeInvocation(InvocationContext context) {
         return true;

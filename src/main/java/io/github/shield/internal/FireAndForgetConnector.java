@@ -11,7 +11,8 @@ public class FireAndForgetConnector extends Connector {
 
     private final ExecutorService executorService;
 
-    public FireAndForgetConnector() {
+    public FireAndForgetConnector(Object target) {
+        super(target);
         executorService = Executors.newSingleThreadExecutor();
     }
 

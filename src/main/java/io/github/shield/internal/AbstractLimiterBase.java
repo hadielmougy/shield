@@ -31,7 +31,8 @@ public abstract class AbstractLimiterBase extends Connector {
      * @param max
      * @param maxWaitMillis
      */
-    public AbstractLimiterBase(int max, long maxWaitMillis) {
+    public AbstractLimiterBase(int max, long maxWaitMillis, Object target) {
+        super(target);
         this.permits = max;
         this.semaphore = new Semaphore(max, true);
         this.invokeTimeout = maxWaitMillis;

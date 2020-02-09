@@ -11,10 +11,10 @@ public interface DirectCall extends ConnectorFactory {
     /**
      *
      */
-    class Config implements DirectCall {
+    class Config extends BaseConfig implements DirectCall {
         @Override
         public Connector connector() {
-            return new DirectConnector();
+            return new DirectConnector(getObject());
         }
     }
 

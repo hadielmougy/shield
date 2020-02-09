@@ -1,7 +1,6 @@
 package io.github.shield.proxy;
 
 import io.github.shield.Connector;
-import io.github.shield.internal.InvocationInterceptor;
 import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.Enhancer;
 

@@ -20,7 +20,7 @@ public interface RateLimiter extends ConnectorFactory {
     /**
      *
      */
-    class Config implements RateLimiter {
+    class Config extends BaseConfig implements RateLimiter {
 
         int rate;
 
@@ -33,7 +33,7 @@ public interface RateLimiter extends ConnectorFactory {
         @Override
         public Connector connector() {
             Validations.checkArgument( rate > 0, "rate must be positive");
-            return new RateLimiterConnector(rate);
+            return new RateLimiterConnector(rate, getObject());
         }
     }
 }

@@ -12,6 +12,11 @@ import java.util.function.Supplier;
 public abstract class Connector implements Invocable {
 
 
+    private final Object targetComponent;
+
+    public Connector(Object targetComponent) {
+        this.targetComponent = targetComponent;
+    }
 
     /**
      * Factory method for rate limiting connector
@@ -92,4 +97,8 @@ public abstract class Connector implements Invocable {
         return supplier.get();
     }
 
+
+    public Object getTargetComponent() {
+        return targetComponent;
+    }
 }

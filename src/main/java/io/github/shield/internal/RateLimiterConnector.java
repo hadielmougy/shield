@@ -21,8 +21,8 @@ public class RateLimiterConnector extends AbstractLimiterBase {
      *
      * @param max
      */
-    public RateLimiterConnector(int max) {
-        super(max, 250);
+    public RateLimiterConnector(int max, Object target) {
+        super(max, 250, target);
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
     }

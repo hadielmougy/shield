@@ -21,9 +21,10 @@ public class FireAndForgetConnectorTest {
     @Test
     public void testRunningInDifferentThread() throws InterruptedException {
 
-        final DefaultComponent comp = Connector
+        final Component comp = Connector
                 .fireAndForget()
-                .as(DefaultComponent.class);
+                .forObject(new DefaultComponent())
+                .as(Component.class);
 
         final StringBuilder stringBuilder = new StringBuilder();
 
@@ -31,15 +32,22 @@ public class FireAndForgetConnectorTest {
 
         TimeUnit.MILLISECONDS.sleep(100);
         String currentThreadName = Thread.currentThread().getName();
+        Assert.assertNotEquals("", stringBuilder.toString());
         Assert.assertNotEquals(currentThreadName, stringBuilder.toString());
         executor.shutdown();
 
     }
 
 
-    public static class DefaultComponent {
+    public static interface Component {
+        void doCall(StringBuilder sb);
+    }
 
+    public static class DefaultComponent implements Component {
+
+        @Override
         public void doCall(StringBuilder sb) {
+            System.out.println("##################");
             sb.append(Thread.currentThread().getName());
         }
 

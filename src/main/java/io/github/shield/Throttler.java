@@ -29,7 +29,7 @@ public interface Throttler extends ConnectorFactory {
     /**
      *
      */
-    class Config implements Throttler {
+    class Config extends BaseConfig implements Throttler {
 
         int max;
         long wait;
@@ -51,7 +51,7 @@ public interface Throttler extends ConnectorFactory {
         public Connector connector() {
             Validations.checkArgument(max > 0, "Max requests must be positive");
             Validations.checkArgument(wait > 0, "wait value must be positive");
-            return new ThrottlingConnector(max, wait);
+            return new ThrottlingConnector(max, wait, getObject());
         }
     }
 }

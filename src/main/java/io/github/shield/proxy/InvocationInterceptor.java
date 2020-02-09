@@ -1,7 +1,7 @@
-package io.github.shield.internal;
+package io.github.shield.proxy;
 
 import io.github.shield.Connector;
-import io.github.shield.InvocationContext;
+import io.github.shield.internal.InvocationNotPermittedException;
 import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  *
  */
-public class InvocationInterceptor implements MethodInterceptor {
+public class InvocationInterceptor implements MethodInterceptor, java.lang.reflect.InvocationHandler {
 
 
     /**
@@ -57,6 +57,22 @@ public class InvocationInterceptor implements MethodInterceptor {
     }
 
 
+    @Override
+    public Object invoke(Object obj, Method method, Object[] args) throws Throwable {
+        return connector.invoke(() -> {
+            try {
+                return method.invoke(connector.getTargetComponent(), args);
+            } catch (InvocationNotPermittedException th) {
+                return callFallbackIfFound(method.getName(), obj, args);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+    }
+
     /**
      *
      * @param methodName
@@ -84,5 +100,4 @@ public class InvocationInterceptor implements MethodInterceptor {
         }
         return result;
     }
-
 }
