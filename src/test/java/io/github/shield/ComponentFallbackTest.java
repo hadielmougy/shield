@@ -21,12 +21,12 @@ public class ComponentFallbackTest {
 
     @Test
     public void testThrottled() {
-        final SingleThreadedDefaultComponent comp = Shield.throttler()
+        final SingleThreadedDefaultComponent comp = Connector.throttler()
                 .ofMax(1)
                 .ofMaxWaitMillis(500)
                 .as(SingleThreadedDefaultComponent.class);
 
-        final ForwarderComponent forwarder = Shield.directCall()
+        final ForwarderComponent forwarder = Connector.directCall()
                 .as(ForwarderComponent.class, comp);
 
 

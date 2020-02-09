@@ -23,7 +23,7 @@ public class ConcurrentLimiterTest {
     @Test
     public void testThrottled() throws InterruptedException {
 
-        final SingleThreadedDefaultComponent comp = Shield.throttler()
+        final SingleThreadedDefaultComponent comp = Connector.throttler()
                 .ofMax(1)
                 .ofMaxWaitMillis(500)
                 .as(SingleThreadedDefaultComponent.class);
@@ -44,7 +44,7 @@ public class ConcurrentLimiterTest {
 
     @Test
     public void testDefault() {
-        final SingleThreadedDefaultComponent comp = Shield.directCall().as(SingleThreadedDefaultComponent.class);
+        final SingleThreadedDefaultComponent comp = Connector.directCall().as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 

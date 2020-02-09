@@ -21,7 +21,7 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited1() throws InterruptedException {
-        final SingleThreadedDefaultComponent comp = Shield.rateLimiter()
+        final SingleThreadedDefaultComponent comp = Connector.rateLimiter()
                 .withRate(1)
                 .as(SingleThreadedDefaultComponent.class);
 
@@ -41,7 +41,7 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited2() {
-        final SingleThreadedDefaultComponent comp = Shield.rateLimiter()
+        final SingleThreadedDefaultComponent comp = Connector.rateLimiter()
                 .withRate(3)
                 .as(SingleThreadedDefaultComponent.class);
 

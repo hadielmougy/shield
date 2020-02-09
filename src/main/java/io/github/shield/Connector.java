@@ -12,6 +12,30 @@ import java.util.function.Supplier;
 public abstract class Connector {
 
     /**
+     * Factory method for rate limiting connector
+     * @return rate limiter connector factory
+     */
+    public static RateLimiter rateLimiter() {
+        return new RateLimiter.Config();
+    }
+
+    /**
+     * Factory method for throttling connector
+     * @return throttler connector factory
+     */
+    public static Throttler throttler() {
+        return new Throttler.Config();
+    }
+
+    /**
+     * Factory method for Direct call connector
+     * @return direct connector factory
+     */
+    public static DirectCall directCall() {
+        return new DirectCall.Config();
+    }
+
+    /**
      * This should be implemented by the connector type. It contains all connector specific logic
      * to acquire needed resources before the invokation, like limiting requests counting requests etc.
      * @return returns the target components return value
@@ -19,12 +43,10 @@ public abstract class Connector {
     protected abstract boolean beforeInvocation();
 
     /**
-     * This should be implemented by the connector to close all acquired resources
+     * Do wrapped object invocation
+     * @param supplier method call in wrapped object
+     * @return wrapped object return
      */
-    protected abstract void afterInvocation();
-
-
-
     public final Object invoke(Supplier supplier) {
         boolean shouldInvoke = beforeInvocation();
         Object result = null;
@@ -39,6 +61,13 @@ public abstract class Connector {
         }
         return result;
     }
+
+    /**
+     * This should be implemented by the connector to close all acquired resources
+     */
+    protected abstract void afterInvocation();
+
+
 
     /**
      * The actual invocation to the target component through this connector
