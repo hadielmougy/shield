@@ -9,7 +9,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  *
  */
-public class RateLimiterConnector extends ThrottlingConnector {
+public class RateLimiterConnector extends AbstractLimiterBase {
 
 
     private final ScheduledExecutorService scheduler;
@@ -20,13 +20,13 @@ public class RateLimiterConnector extends ThrottlingConnector {
      * @param max
      */
     public RateLimiterConnector(int max) {
-        super(max, 250, false);
+        super(max, 250);
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
     }
 
     private void resetPermits() {
-        semaphore.release(permits);
+        releaseAll();
     }
 
 

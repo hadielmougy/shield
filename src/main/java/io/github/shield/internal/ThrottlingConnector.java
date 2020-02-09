@@ -1,30 +1,13 @@
 package io.github.shield.internal;
 
-import io.github.shield.Connector;
-
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 
 /**
  *
  */
-public class ThrottlingConnector extends Connector {
+public class ThrottlingConnector extends AbstractLimiterBase {
 
-    /**
-     *
-     */
-    protected final Semaphore semaphore;
-
-
-    protected final int permits;
-    protected final boolean releasable;
-
-    /**
-     *
-     */
-    protected long invokeTimeout;
 
 
     /**
@@ -33,22 +16,10 @@ public class ThrottlingConnector extends Connector {
      * @param maxWaitMillis
      */
     public ThrottlingConnector(int max, long maxWaitMillis) {
-        this(max, maxWaitMillis, true);
+        super(max, maxWaitMillis);
     }
 
 
-    /**
-     *
-     * @param max
-     * @param maxWaitMillis
-     */
-    public ThrottlingConnector(int max, long maxWaitMillis, boolean releasable) {
-        this.permits = max;
-        this.semaphore = new Semaphore(max, true);
-        this.invokeTimeout = maxWaitMillis;
-        this.releasable = releasable;
-
-    }
 
 
     /**
@@ -58,22 +29,11 @@ public class ThrottlingConnector extends Connector {
      */
     @Override
     public Object invoke(Supplier supplier) {
-        boolean permitted = false;
-        try {
-            permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         Object result = null;
-        if (permitted) {
-            try {
-                result = doInvoke(supplier);
-            } finally {
-                if (releasable)
-                    semaphore.release();
-            }
-        } else {
-            throw new InvocationNotPermittedException();
+        try {
+            result = super.invoke(supplier);
+        } finally {
+            release();
         }
         return result;
     }
