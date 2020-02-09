@@ -30,4 +30,8 @@ public class RateLimiterConnector extends AbstractLimiterBase {
     }
 
 
+    @Override
+    public void afterInvocation() {
+        // do nothing
+    }
 }

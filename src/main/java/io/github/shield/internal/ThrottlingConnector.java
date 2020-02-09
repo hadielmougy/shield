@@ -1,6 +1,5 @@
 package io.github.shield.internal;
 
-import java.util.function.Supplier;
 
 
 /**
@@ -22,19 +21,8 @@ public class ThrottlingConnector extends AbstractLimiterBase {
 
 
 
-    /**
-     *
-     * @param supplier
-     * @return
-     */
     @Override
-    public Object invoke(Supplier supplier) {
-        Object result = null;
-        try {
-            result = super.invoke(supplier);
-        } finally {
-            release();
-        }
-        return result;
+    public void afterInvocation() {
+        release();
     }
 }

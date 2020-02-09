@@ -10,14 +10,13 @@ import java.util.function.Supplier;
 public class DirectConnector extends Connector {
 
 
-    /**
-     *
-     * @param supplier
-     * @return
-     */
     @Override
-    public Object invoke(Supplier supplier) {
-        return doInvoke(supplier);
+    public boolean beforeInvocation() {
+        return true;
     }
 
+    @Override
+    public void afterInvocation() {
+        // do nothting
+    }
 }

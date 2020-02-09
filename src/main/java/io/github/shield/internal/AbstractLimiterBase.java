@@ -4,7 +4,6 @@ import io.github.shield.Connector;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 public abstract class AbstractLimiterBase extends Connector {
 
@@ -41,24 +40,17 @@ public abstract class AbstractLimiterBase extends Connector {
 
     /**
      *
-     * @param supplier
      * @return
      */
     @Override
-    public Object invoke(Supplier supplier) {
+    public boolean beforeInvocation() {
         boolean permitted = false;
         try {
             permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Object result = null;
-        if (permitted) {
-                result = doInvoke(supplier);
-        } else {
-            throw new InvocationNotPermittedException();
-        }
-        return result;
+        return permitted;
     }
 
 
