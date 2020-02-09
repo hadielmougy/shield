@@ -1,45 +1,33 @@
 package io.github.shield.internal;
 
-import com.google.common.util.concurrent.RateLimiter;
-import io.github.shield.Connector;
 
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  *
  */
-public class RateLimiterConnector extends Connector {
+public class RateLimiterConnector extends ThrottlingConnector {
+
+
+    private final ScheduledExecutorService scheduler;
 
 
     /**
      *
+     * @param max
      */
-    private final RateLimiter rateLimiter;
+    public RateLimiterConnector(int max) {
+        super(max, 250, false);
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
+    }
 
-
-    /**
-     *
-     * @param rate
-     */
-    public RateLimiterConnector(Double rate) {
-        rateLimiter = RateLimiter.create(rate);
+    private void resetPermits() {
+        semaphore.release(permits);
     }
 
 
-    /**
-     *
-     * @param supplier
-     * @return
-     */
-    @Override
-    public Object invoke(Supplier supplier) {
-        boolean permitted = rateLimiter.tryAcquire(250, TimeUnit.MILLISECONDS);
-        Object result = null;
-        if (permitted) {
-            result = doInvoke(supplier);
-        }
-        return result;
-    }
 }

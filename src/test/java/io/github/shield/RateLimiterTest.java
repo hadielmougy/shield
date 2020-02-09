@@ -3,7 +3,6 @@ package io.github.shield;
 import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
@@ -23,7 +22,7 @@ public class RateLimiterTest {
     @Test
     public void testLimited1() throws InterruptedException {
         final SingleThreadedDefaultComponent comp = Shield.rateLimiter()
-                .withRate(1d)
+                .withRate(1)
                 .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
@@ -41,10 +40,9 @@ public class RateLimiterTest {
 
 
     @Test
-    @Ignore
     public void testLimited2() {
         final SingleThreadedDefaultComponent comp = Shield.rateLimiter()
-                .withRate(3d)
+                .withRate(3)
                 .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);

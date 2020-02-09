@@ -1,8 +1,8 @@
 package io.github.shield;
 
 
-import com.google.common.base.Preconditions;
 import io.github.shield.internal.ThrottlingConnector;
+import io.github.shield.internal.Validations;
 
 
 /**
@@ -49,8 +49,8 @@ public interface Throttler extends ShieldFactory {
 
         @Override
         public Connector connector() {
-            Preconditions.checkArgument(max > 0, "Max requests must be positive");
-            Preconditions.checkArgument(wait > 0, "wait value must be positive");
+            Validations.checkArgument(max > 0, "Max requests must be positive");
+            Validations.checkArgument(wait > 0, "wait value must be positive");
             return new ThrottlingConnector(max, wait);
         }
     }

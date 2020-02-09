@@ -1,7 +1,6 @@
 package io.github.shield.internal;
 
 import io.github.shield.Connector;
-import io.github.shield.ShieldFactory;
 
 import java.util.IdentityHashMap;
 

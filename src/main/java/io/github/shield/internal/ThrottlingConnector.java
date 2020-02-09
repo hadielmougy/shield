@@ -15,12 +15,16 @@ public class ThrottlingConnector extends Connector {
     /**
      *
      */
-    private final Semaphore permits;
+    protected final Semaphore semaphore;
+
+
+    protected final int permits;
+    protected final boolean releasable;
 
     /**
      *
      */
-    private long invokeTimeout;
+    protected long invokeTimeout;
 
 
     /**
@@ -29,8 +33,21 @@ public class ThrottlingConnector extends Connector {
      * @param maxWaitMillis
      */
     public ThrottlingConnector(int max, long maxWaitMillis) {
-        this.permits = new Semaphore(max, true);
-        invokeTimeout = maxWaitMillis;
+        this(max, maxWaitMillis, true);
+    }
+
+
+    /**
+     *
+     * @param max
+     * @param maxWaitMillis
+     */
+    public ThrottlingConnector(int max, long maxWaitMillis, boolean releasable) {
+        this.permits = max;
+        this.semaphore = new Semaphore(max, true);
+        this.invokeTimeout = maxWaitMillis;
+        this.releasable = releasable;
+
     }
 
 
@@ -43,7 +60,7 @@ public class ThrottlingConnector extends Connector {
     public Object invoke(Supplier supplier) {
         boolean permitted = false;
         try {
-            permitted = permits.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
+            permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -52,7 +69,8 @@ public class ThrottlingConnector extends Connector {
             try {
                 result = doInvoke(supplier);
             } finally {
-                permits.release();
+                if (releasable)
+                    semaphore.release();
             }
         } else {
             throw new InvocationNotPermittedException();

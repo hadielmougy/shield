@@ -1,7 +1,7 @@
 package io.github.shield;
 
-import com.google.common.base.Preconditions;
 import io.github.shield.internal.RateLimiterConnector;
+import io.github.shield.internal.Validations;
 
 
 /**
@@ -14,7 +14,7 @@ public interface RateLimiter extends ShieldFactory {
      * @param rate
      * @return
      */
-    RateLimiter withRate(Double rate);
+    RateLimiter withRate(int rate);
 
 
     /**
@@ -22,17 +22,17 @@ public interface RateLimiter extends ShieldFactory {
      */
     class Config implements RateLimiter {
 
-        double rate;
+        int rate;
 
         @Override
-        public RateLimiter withRate(Double rate) {
+        public RateLimiter withRate(int rate) {
             this.rate = rate;
             return this;
         }
 
         @Override
         public Connector connector() {
-            Preconditions.checkArgument( rate > 0, "rate must be positive");
+            Validations.checkArgument( rate > 0, "rate must be positive");
             return new RateLimiterConnector(rate);
         }
     }
