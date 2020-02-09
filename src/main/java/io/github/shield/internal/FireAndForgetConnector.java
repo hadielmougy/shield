@@ -12,7 +12,7 @@ public class FireAndForgetConnector extends Connector {
     private final ExecutorService executorService;
 
     public FireAndForgetConnector() {
-        executorService = Executors.newCachedThreadPool();
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -23,5 +23,7 @@ public class FireAndForgetConnector extends Connector {
     }
 
     @Override
-    protected void afterInvocation(InvocationContext context) {}
+    protected void afterInvocation(InvocationContext context) {
+        executorService.shutdown();
+    }
 }
