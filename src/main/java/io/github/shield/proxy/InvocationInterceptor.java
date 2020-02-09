@@ -3,8 +3,6 @@ package io.github.shield.proxy;
 import io.github.shield.Connector;
 import io.github.shield.internal.InvocationNotPermittedException;
 import io.github.shield.util.ClassUtil;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,7 +13,7 @@ import java.util.logging.Logger;
 /**
  *
  */
-public class InvocationInterceptor implements MethodInterceptor, java.lang.reflect.InvocationHandler {
+public class InvocationInterceptor implements java.lang.reflect.InvocationHandler {
 
 
     /**
@@ -34,27 +32,6 @@ public class InvocationInterceptor implements MethodInterceptor, java.lang.refle
     }
 
 
-    /**
-     *
-     * @param obj
-     * @param method
-     * @param args
-     * @param proxy
-     * @return
-     */
-    @Override
-    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
-        return connector.invoke(() -> {
-            try {
-                return proxy.invokeSuper(obj, args);
-            } catch (InvocationNotPermittedException th) {
-                return callFallbackIfFound(method.getName(), obj, args);
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-            return null;
-        });
-    }
 
 
     @Override
@@ -62,12 +39,15 @@ public class InvocationInterceptor implements MethodInterceptor, java.lang.refle
         return connector.invoke(() -> {
             try {
                 return method.invoke(connector.getTargetComponent(), args);
-            } catch (InvocationNotPermittedException th) {
-                return callFallbackIfFound(method.getName(), obj, args);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                Throwable th = e.getCause();
+                if (th instanceof InvocationNotPermittedException) {
+                    return callFallbackIfFound(method.getName(), obj, args);
+                } else {
+                    e.printStackTrace();
+                }
             }
             return null;
         });

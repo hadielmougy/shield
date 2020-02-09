@@ -21,13 +21,16 @@ public class ComponentFallbackTest {
 
     @Test
     public void testThrottledAndFallback() {
-        final SingleThreadedDefaultComponent comp = Connector.throttler()
+        final IDefaultComponent comp = Connector.throttler()
                 .ofMax(1)
                 .ofMaxWaitMillis(500)
-                .as(SingleThreadedDefaultComponent.class);
+                .forObject(new DefaultComponent())
+                .as(IDefaultComponent.class);
 
-        final ForwarderComponent forwarder = Connector.directCall()
-                .as(ForwarderComponent.class, comp);
+        final IForwarderComponent forwarder = Connector
+                .directCall()
+                .forObject(new ForwarderComponent(comp))
+                .as(IForwarderComponent.class);
 
 
         final AtomicInteger callCounter             = new AtomicInteger(0);
@@ -46,11 +49,20 @@ public class ComponentFallbackTest {
     }
 
 
-    public static class ForwarderComponent {
+    public static interface IForwarderComponent {
 
-        private final SingleThreadedDefaultComponent component;
+        void doCall(AtomicInteger counter, AtomicInteger fallback);
 
-        public ForwarderComponent(SingleThreadedDefaultComponent component) {
+
+        void doCallFallback(AtomicInteger counter, AtomicInteger fallback);
+
+    }
+
+    public static class ForwarderComponent implements IForwarderComponent {
+
+        private final IDefaultComponent component;
+
+        public ForwarderComponent(IDefaultComponent component) {
             this.component = component;
         }
 
@@ -66,7 +78,15 @@ public class ComponentFallbackTest {
 
     }
 
-    public static class SingleThreadedDefaultComponent {
+
+    public static interface IDefaultComponent {
+
+        void doCall(AtomicInteger counter, AtomicInteger fallback);
+
+    }
+
+
+    public static class DefaultComponent implements IDefaultComponent {
 
         public void doCall(AtomicInteger counter, AtomicInteger fallback) {
             try {

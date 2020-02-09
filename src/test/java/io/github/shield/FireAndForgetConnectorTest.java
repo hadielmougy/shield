@@ -47,7 +47,6 @@ public class FireAndForgetConnectorTest {
 
         @Override
         public void doCall(StringBuilder sb) {
-            System.out.println("##################");
             sb.append(Thread.currentThread().getName());
         }
 

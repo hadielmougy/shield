@@ -21,9 +21,10 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited1() throws InterruptedException {
-        final SingleThreadedDefaultComponent comp = Connector.rateLimiter()
+        final ISingleThreadedDefaultComponent comp = Connector.rateLimiter()
                 .withRate(1)
-                .as(SingleThreadedDefaultComponent.class);
+                .forObject(new SingleThreadedDefaultComponent())
+                .as(ISingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
@@ -41,9 +42,10 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited2() {
-        final SingleThreadedDefaultComponent comp = Connector.rateLimiter()
+        final ISingleThreadedDefaultComponent comp = Connector.rateLimiter()
                 .withRate(3)
-                .as(SingleThreadedDefaultComponent.class);
+                .forObject(new SingleThreadedDefaultComponent())
+                .as(ISingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
@@ -57,8 +59,13 @@ public class RateLimiterTest {
     }
 
 
+    public static interface ISingleThreadedDefaultComponent {
 
-    public static class SingleThreadedDefaultComponent {
+        public void doCall(AtomicInteger counter);
+
+    }
+
+    public static class SingleThreadedDefaultComponent implements ISingleThreadedDefaultComponent{
 
         public void doCall(AtomicInteger counter) {
             try {
@@ -68,6 +75,5 @@ public class RateLimiterTest {
                 e.printStackTrace();
             }
         }
-
     }
 }

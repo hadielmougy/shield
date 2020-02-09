@@ -23,10 +23,11 @@ public class ConcurrentLimiterTest {
     @Test
     public void testThrottled() throws InterruptedException {
 
-        final SingleThreadedDefaultComponent comp = Connector.throttler()
+        final ISingleThreadedDefaultComponent comp = Connector.throttler()
                 .ofMax(1)
                 .ofMaxWaitMillis(500)
-                .as(SingleThreadedDefaultComponent.class);
+                .forObject(new SingleThreadedDefaultComponent())
+                .as(ISingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
@@ -44,7 +45,9 @@ public class ConcurrentLimiterTest {
 
     @Test
     public void testDefault() {
-        final SingleThreadedDefaultComponent comp = Connector.directCall().as(SingleThreadedDefaultComponent.class);
+        final ISingleThreadedDefaultComponent comp = Connector.directCall()
+                .forObject(new SingleThreadedDefaultComponent())
+                .as(ISingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
@@ -60,8 +63,14 @@ public class ConcurrentLimiterTest {
     }
 
 
+    public static interface ISingleThreadedDefaultComponent {
 
-    public static class SingleThreadedDefaultComponent {
+        public void doCall(AtomicInteger counter);
+
+    }
+
+
+    public static class SingleThreadedDefaultComponent implements ISingleThreadedDefaultComponent {
 
         public void doCall(AtomicInteger counter) {
             try {

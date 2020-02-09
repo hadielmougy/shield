@@ -9,7 +9,7 @@ public class JdkProxyFactory {
         Object target = connector.getTargetComponent();
         return (T) java.lang.reflect.Proxy.newProxyInstance(
                 target.getClass().getClassLoader(),
-                target.getClass().getInterfaces(),
+                new Class[]{type},
                 new InvocationInterceptor(connector));
     }
 
