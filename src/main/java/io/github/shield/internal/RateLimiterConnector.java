@@ -1,6 +1,8 @@
 package io.github.shield.internal;
 
 
+import io.github.shield.InvocationContext;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -31,7 +33,7 @@ public class RateLimiterConnector extends AbstractLimiterBase {
 
 
     @Override
-    public void afterInvocation() {
+    public void afterInvocation(InvocationContext context) {
         // do nothing
     }
 }

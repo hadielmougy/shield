@@ -20,7 +20,7 @@ public class ComponentFallbackTest {
     }
 
     @Test
-    public void testThrottled() {
+    public void testThrottledAndFallback() {
         final SingleThreadedDefaultComponent comp = Connector.throttler()
                 .ofMax(1)
                 .ofMaxWaitMillis(500)

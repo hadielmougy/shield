@@ -8,7 +8,7 @@ import io.github.shield.internal.Validations;
 /**
  *
  */
-public interface Throttler extends ShieldFactory {
+public interface Throttler extends ConnectorFactory {
 
     /**
      *

@@ -5,7 +5,7 @@ import io.github.shield.internal.DirectConnector;
 /**
  *
  */
-public interface DirectCall extends ShieldFactory {
+public interface DirectCall extends ConnectorFactory {
 
 
     /**

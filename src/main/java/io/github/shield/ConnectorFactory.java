@@ -6,7 +6,7 @@ import io.github.shield.proxy.ProxyFactory;
 /**
  *
  */
-public interface ShieldFactory {
+public interface ConnectorFactory {
 
 
     /**

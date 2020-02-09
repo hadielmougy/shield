@@ -9,7 +9,9 @@ import java.util.function.Supplier;
  * Base connector type that represents that invocation of a method from a client component to the target (this)
  * The method is represented as a supplier
  */
-public abstract class Connector {
+public abstract class Connector implements Invocable {
+
+
 
     /**
      * Factory method for rate limiting connector
@@ -28,6 +30,15 @@ public abstract class Connector {
     }
 
     /**
+     * Factory method for fire and forget connector
+     * @return direct connector factory
+     */
+    public static FireAndForget fireAndForget() {
+        return new FireAndForget.Config();
+    }
+
+
+    /**
      * Factory method for Direct call connector
      * @return direct connector factory
      */
@@ -37,24 +48,25 @@ public abstract class Connector {
 
     /**
      * This should be implemented by the connector type. It contains all connector specific logic
-     * to acquire needed resources before the invokation, like limiting requests counting requests etc.
+     * to acquire needed resources before the invocation, like limiting requests counting requests etc.
      * @return returns the target components return value
+     * @param context
      */
-    protected abstract boolean beforeInvocation();
+    protected abstract boolean beforeInvocation(InvocationContext context);
 
     /**
      * Do wrapped object invocation
-     * @param supplier method call in wrapped object
      * @return wrapped object return
      */
     public final Object invoke(Supplier supplier) {
-        boolean shouldInvoke = beforeInvocation();
+        InvocationContext context = new InvocationContext(supplier);
+        boolean shouldInvoke = beforeInvocation(context);
         Object result = null;
         if (shouldInvoke) {
             try {
-                result = doInvoke(supplier);
+                result = context.invoke(this);
             } finally {
-                afterInvocation();
+                afterInvocation(context);
             }
         } else {
             throw new InvocationNotPermittedException();
@@ -64,8 +76,9 @@ public abstract class Connector {
 
     /**
      * This should be implemented by the connector to close all acquired resources
+     * @param context
      */
-    protected abstract void afterInvocation();
+    protected abstract void afterInvocation(InvocationContext context);
 
 
 
@@ -74,7 +87,8 @@ public abstract class Connector {
      * @param supplier method call
      * @return result of invocation
      */
-    private Object doInvoke(Supplier supplier) {
+    @Override
+    public Object doInvoke(Supplier supplier) {
         return supplier.get();
     }
 

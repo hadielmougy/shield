@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.Connector;
+import io.github.shield.InvocationContext;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -41,9 +42,10 @@ public abstract class AbstractLimiterBase extends Connector {
     /**
      *
      * @return
+     * @param context
      */
     @Override
-    public boolean beforeInvocation() {
+    public boolean beforeInvocation(InvocationContext context) {
         boolean permitted = false;
         try {
             permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);

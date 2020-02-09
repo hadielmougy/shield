@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 
+import io.github.shield.InvocationContext;
 
 /**
  *
@@ -22,7 +23,7 @@ public class ThrottlingConnector extends AbstractLimiterBase {
 
 
     @Override
-    public void afterInvocation() {
+    public void afterInvocation(InvocationContext context) {
         release();
     }
 }

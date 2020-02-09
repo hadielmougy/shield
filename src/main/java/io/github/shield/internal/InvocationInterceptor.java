@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.Connector;
+import io.github.shield.InvocationContext;
 import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -48,8 +49,8 @@ public class InvocationInterceptor implements MethodInterceptor {
                 return proxy.invokeSuper(obj, args);
             } catch (InvocationNotPermittedException th) {
                 return callFallbackIfFound(method.getName(), obj, args);
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
+            } catch (Throwable th) {
+                th.printStackTrace();
             }
             return null;
         });

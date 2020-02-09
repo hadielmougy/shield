@@ -7,7 +7,7 @@ import io.github.shield.internal.Validations;
 /**
  *
  */
-public interface RateLimiter extends ShieldFactory {
+public interface RateLimiter extends ConnectorFactory {
 
     /**
      *

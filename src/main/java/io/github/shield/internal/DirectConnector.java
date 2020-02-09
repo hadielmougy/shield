@@ -1,8 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.Connector;
-
-import java.util.function.Supplier;
+import io.github.shield.InvocationContext;
 
 /**
  *
@@ -11,12 +10,12 @@ public class DirectConnector extends Connector {
 
 
     @Override
-    public boolean beforeInvocation() {
+    public boolean beforeInvocation(InvocationContext context) {
         return true;
     }
 
     @Override
-    public void afterInvocation() {
+    public void afterInvocation(InvocationContext context) {
         // do nothting
     }
 }
