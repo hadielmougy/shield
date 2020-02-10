@@ -38,7 +38,11 @@ public class InvocationInterceptor implements java.lang.reflect.InvocationHandle
     public Object invoke(Object obj, Method method, Object[] args) throws Throwable {
         return connector.invoke(() -> {
             try {
-                return method.invoke(connector.getTargetComponent(), args);
+                if (connector.getTargetComponent() == null) {
+                    return null;
+                } else {
+                    return method.invoke(connector.getTargetComponent(), args);
+                }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
