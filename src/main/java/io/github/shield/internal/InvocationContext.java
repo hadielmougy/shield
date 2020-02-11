@@ -1,4 +1,4 @@
-package io.github.shield;
+package io.github.shield.internal;
 
 import java.util.function.Supplier;
 
@@ -19,8 +19,4 @@ public final class InvocationContext {
         this.supplier = supplier;
     }
 
-
-    public Object invoke(Invocable connector) {
-        return connector.doInvoke(supplier);
-    }
 }

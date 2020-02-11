@@ -22,10 +22,12 @@ public class ComponentFallbackTest {
     @Test
     public void testThrottledAndFallback() {
         Shield throttlerShield = new Shield();
+
         throttlerShield.addFilter(Filter.throttler()
                 .ofMax(1)
                 .ofMaxWaitMillis(500)
                 .build());
+
         final SingleThreadedDefaultComponent comp = throttlerShield
                 .as(SingleThreadedDefaultComponent.class);
 

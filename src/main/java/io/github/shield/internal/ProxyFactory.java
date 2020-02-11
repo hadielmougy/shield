@@ -1,4 +1,4 @@
-package io.github.shield.proxy;
+package io.github.shield.internal;
 
 import io.github.shield.Filter;
 import io.github.shield.internal.InvocationInterceptor;
@@ -29,14 +29,14 @@ public class ProxyFactory {
     /**
      *
      * @param type
-     * @param filter
+     * @param filters
      * @param <T>
      * @return
      */
-    private static <T> Enhancer baseEnhancer(Class<T> type, List<Filter> filter) {
+    private static <T> Enhancer baseEnhancer(Class<T> type, List<Filter> filters) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(type);
-        enhancer.setCallback(new InvocationInterceptor(filter));
+        enhancer.setCallback(new InvocationInterceptor(filters));
         return enhancer;
     }
 

@@ -1,7 +1,6 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
-import io.github.shield.InvocationContext;
 import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -22,16 +21,16 @@ public class InvocationInterceptor implements MethodInterceptor {
     /**
      *
      */
-    private final List<Filter> filter;
+    private final List<Filter> filters;
     private static Logger LOG = Logger.getLogger(InvocationInterceptor.class.getName());
 
 
     /**
      *
-     * @param filter
+     * @param filters
      */
-    public InvocationInterceptor(List<Filter> filter) {
-        this.filter = filter;
+    public InvocationInterceptor(List<Filter> filters) {
+        this.filters = filters;
     }
 
 
@@ -57,7 +56,7 @@ public class InvocationInterceptor implements MethodInterceptor {
         });
 
         boolean toContinue = false;
-        for (Filter conn : filter) {
+        for (Filter conn : filters) {
             toContinue = conn.beforeInvocation(context);
             if (!toContinue) {
                 break;
@@ -72,7 +71,8 @@ public class InvocationInterceptor implements MethodInterceptor {
             try {
                 result = context.getSupplier().get();
             } finally {
-                filter.stream().forEach(conn -> conn.afterInvocation(context));
+                filters.stream()
+                        .forEach(conn -> conn.afterInvocation(context));
             }
         }
         return result;

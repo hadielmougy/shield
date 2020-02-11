@@ -1,8 +1,6 @@
 package io.github.shield.internal;
 
 
-import io.github.shield.InvocationContext;
-
 /**
  *
  */

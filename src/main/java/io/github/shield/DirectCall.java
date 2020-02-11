@@ -7,7 +7,6 @@ import io.github.shield.internal.DirectFilter;
  */
 public interface DirectCall extends FilterFactory {
 
-
     /**
      *
      */

@@ -1,7 +1,7 @@
 package io.github.shield;
 
 
-import io.github.shield.proxy.ProxyFactory;
+import io.github.shield.internal.ProxyFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class Shield {
      * @return
      */
     public  <T> T as(Class<T> type, Object... args) {
-        T component         = ProxyFactory.proxy(type, filters, args);
+        T component = ProxyFactory.proxy(type, filters, args);
         return component;
     }
 
