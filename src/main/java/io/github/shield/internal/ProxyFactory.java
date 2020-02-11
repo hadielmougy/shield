@@ -1,7 +1,6 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
-import io.github.shield.internal.InvocationInterceptor;
 import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.Enhancer;
 

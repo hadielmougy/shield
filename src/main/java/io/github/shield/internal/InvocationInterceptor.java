@@ -44,6 +44,7 @@ public class InvocationInterceptor implements MethodInterceptor {
      */
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
+        //TODO needs refactoring
         InvocationContext context = new InvocationContext(() -> {
             try {
                 return proxy.invokeSuper(obj, args);

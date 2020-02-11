@@ -1,8 +1,7 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
 
-public class TimeoutFilter implements Filter {
+public class TimeoutFilter extends AbstractBaseFilter {
     @Override
     public boolean beforeInvocation(InvocationContext context) {
         //TODO

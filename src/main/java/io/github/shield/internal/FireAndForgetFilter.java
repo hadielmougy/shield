@@ -1,12 +1,10 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
-public class FireAndForgetFilter implements Filter {
+public class FireAndForgetFilter extends AbstractBaseFilter {
 
     private final ExecutorService executorService;
 

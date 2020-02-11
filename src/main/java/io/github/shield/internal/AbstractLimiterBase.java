@@ -1,11 +1,10 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AbstractLimiterBase implements Filter {
+public abstract class AbstractLimiterBase extends AbstractBaseFilter {
 
     /**
      *

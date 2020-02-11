@@ -1,11 +1,10 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
 
 /**
  *
  */
-public class DirectFilter implements Filter {
+public class DirectFilter extends AbstractBaseFilter {
 
 
     @Override

@@ -7,7 +7,7 @@ import io.github.shield.internal.InvocationContext;
  * Base build type that represents that invocation of a method from a client component to the target (this)
  * The method is represented as a supplier
  */
-public interface Filter {
+public interface Filter extends Comparable<Filter> {
 
 
 
@@ -59,5 +59,11 @@ public interface Filter {
      * @param context
      */
     void afterInvocation(InvocationContext context);
+
+    /**
+     *
+     * @return
+     */
+    Integer getOrder();
 
 }

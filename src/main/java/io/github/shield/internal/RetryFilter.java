@@ -1,8 +1,6 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
-
-public class RetryFilter implements Filter {
+public class RetryFilter extends AbstractBaseFilter {
     @Override
     public boolean beforeInvocation(InvocationContext context) {
         //TODO
