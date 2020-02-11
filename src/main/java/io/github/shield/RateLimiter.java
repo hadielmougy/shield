@@ -1,13 +1,13 @@
 package io.github.shield;
 
-import io.github.shield.internal.RateLimiterConnector;
+import io.github.shield.internal.RateLimiterFilter;
 import io.github.shield.internal.Validations;
 
 
 /**
  *
  */
-public interface RateLimiter extends ConnectorFactory {
+public interface RateLimiter extends FilterFactory {
 
     /**
      *
@@ -31,9 +31,9 @@ public interface RateLimiter extends ConnectorFactory {
         }
 
         @Override
-        public Connector connector() {
+        public Filter build() {
             Validations.checkArgument( rate > 0, "rate must be positive");
-            return new RateLimiterConnector(rate);
+            return new RateLimiterFilter(rate);
         }
     }
 }

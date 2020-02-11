@@ -6,7 +6,7 @@ import io.github.shield.InvocationContext;
 /**
  *
  */
-public class ThrottlingConnector extends AbstractLimiterBase {
+public class ThrottlingFilter extends AbstractLimiterBase {
 
 
 
@@ -15,7 +15,7 @@ public class ThrottlingConnector extends AbstractLimiterBase {
      * @param max
      * @param maxWaitMillis
      */
-    public ThrottlingConnector(int max, long maxWaitMillis) {
+    public ThrottlingFilter(int max, long maxWaitMillis) {
         super(max, maxWaitMillis);
     }
 

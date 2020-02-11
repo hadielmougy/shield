@@ -1,11 +1,11 @@
 package io.github.shield;
 
-import io.github.shield.internal.DirectConnector;
+import io.github.shield.internal.DirectFilter;
 
 /**
  *
  */
-public interface DirectCall extends ConnectorFactory {
+public interface DirectCall extends FilterFactory {
 
 
     /**
@@ -13,8 +13,8 @@ public interface DirectCall extends ConnectorFactory {
      */
     class Config implements DirectCall {
         @Override
-        public Connector connector() {
-            return new DirectConnector();
+        public Filter build() {
+            return new DirectFilter();
         }
     }
 

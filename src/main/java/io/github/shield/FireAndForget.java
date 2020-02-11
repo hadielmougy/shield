@@ -1,8 +1,8 @@
 package io.github.shield;
 
-import io.github.shield.internal.FireAndForgetConnector;
+import io.github.shield.internal.FireAndForgetFilter;
 
-public interface FireAndForget extends ConnectorFactory {
+public interface FireAndForget extends FilterFactory {
 
 
     /**
@@ -10,8 +10,8 @@ public interface FireAndForget extends ConnectorFactory {
      */
     class Config implements FireAndForget {
         @Override
-        public Connector connector() {
-            return new FireAndForgetConnector();
+        public Filter build() {
+            return new FireAndForgetFilter();
         }
     }
 

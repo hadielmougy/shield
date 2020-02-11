@@ -1,14 +1,14 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.ThrottlingConnector;
+import io.github.shield.internal.ThrottlingFilter;
 import io.github.shield.internal.Validations;
 
 
 /**
  *
  */
-public interface Throttler extends ConnectorFactory {
+public interface Throttler extends FilterFactory {
 
     /**
      *
@@ -48,10 +48,10 @@ public interface Throttler extends ConnectorFactory {
 
 
         @Override
-        public Connector connector() {
+        public Filter build() {
             Validations.checkArgument(max > 0, "Max requests must be positive");
             Validations.checkArgument(wait > 0, "wait value must be positive");
-            return new ThrottlingConnector(max, wait);
+            return new ThrottlingFilter(max, wait);
         }
     }
 }

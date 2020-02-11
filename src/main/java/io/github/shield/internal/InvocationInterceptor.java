@@ -1,6 +1,6 @@
 package io.github.shield.internal;
 
-import io.github.shield.Connector;
+import io.github.shield.Filter;
 import io.github.shield.InvocationContext;
 import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -8,6 +8,7 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,16 +22,16 @@ public class InvocationInterceptor implements MethodInterceptor {
     /**
      *
      */
-    private final Connector connector;
+    private final List<Filter> filter;
     private static Logger LOG = Logger.getLogger(InvocationInterceptor.class.getName());
 
 
     /**
      *
-     * @param connector
+     * @param filter
      */
-    public InvocationInterceptor(Connector connector) {
-        this.connector = connector;
+    public InvocationInterceptor(List<Filter> filter) {
+        this.filter = filter;
     }
 
 
@@ -44,7 +45,7 @@ public class InvocationInterceptor implements MethodInterceptor {
      */
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
-        return connector.invoke(() -> {
+        InvocationContext context = new InvocationContext(() -> {
             try {
                 return proxy.invokeSuper(obj, args);
             } catch (InvocationNotPermittedException th) {
@@ -54,7 +55,31 @@ public class InvocationInterceptor implements MethodInterceptor {
             }
             return null;
         });
+
+        boolean toContinue = false;
+        for (Filter conn : filter) {
+            toContinue = conn.beforeInvocation(context);
+            if (!toContinue) {
+                break;
+            }
+        }
+
+        Object result = null;
+
+        if (!toContinue) {
+            throw new InvocationNotPermittedException();
+        } else {
+            try {
+                result = context.getSupplier().get();
+            } finally {
+                filter.stream().forEach(conn -> conn.afterInvocation(context));
+            }
+        }
+        return result;
     }
+
+
+
 
 
     /**

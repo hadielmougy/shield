@@ -21,9 +21,11 @@ public class FireAndForgetConnectorTest {
     @Test
     public void testRunningInDifferentThread() throws InterruptedException {
 
-        final DefaultComponent comp = Connector
-                .fireAndForget()
-                .as(DefaultComponent.class);
+        Shield shield = new Shield();
+        shield.addFilter(Filter.fireAndForget().build());
+
+
+        final DefaultComponent comp = shield.as(DefaultComponent.class);
 
         final StringBuilder stringBuilder = new StringBuilder();
 

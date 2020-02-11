@@ -21,8 +21,10 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited1() throws InterruptedException {
-        final SingleThreadedDefaultComponent comp = Connector.rateLimiter()
-                .withRate(1)
+        Shield shield = new Shield();
+        shield.addFilter(Filter.rateLimiter()
+                .withRate(1).build());
+        final SingleThreadedDefaultComponent comp = shield
                 .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
@@ -41,8 +43,10 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited2() {
-        final SingleThreadedDefaultComponent comp = Connector.rateLimiter()
-                .withRate(3)
+        Shield shield = new Shield();
+        shield.addFilter(Filter.rateLimiter()
+                .withRate(2).build());
+        final SingleThreadedDefaultComponent comp =shield
                 .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);

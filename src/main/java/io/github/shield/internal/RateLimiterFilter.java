@@ -11,7 +11,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  *
  */
-public class RateLimiterConnector extends AbstractLimiterBase {
+public class RateLimiterFilter extends AbstractLimiterBase {
 
 
     private final ScheduledExecutorService scheduler;
@@ -21,7 +21,7 @@ public class RateLimiterConnector extends AbstractLimiterBase {
      *
      * @param max
      */
-    public RateLimiterConnector(int max) {
+    public RateLimiterFilter(int max) {
         super(max, 250);
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
