@@ -1,14 +1,15 @@
-package io.github.shield.internal;
+package io.github.shield;
 
 
 /**
  *
  */
-public class InvocationNotPermittedException extends RuntimeException {
+public class InvocationNotPermittedException extends InvocationException {
+
     private final Class<?> throwingClass;
 
     public InvocationNotPermittedException(Class<?> throwingClass) {
-        super();
+        super(null);
         this.throwingClass = throwingClass;
     }
 

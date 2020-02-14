@@ -41,10 +41,10 @@ public class InvocationInterceptor implements MethodInterceptor {
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
 
         InvocationContext context = new InvocationContext(filters, obj, method, args, proxy);
-        InvocationDispatcher invocationDispatcher =
-                new InvocationDispatcher(new TargetMethodInvocation(), new FallbackMethodInvocation());
+        InvokerDispatcher invokerDispatcher =
+                new InvokerDispatcher(new TargetMethodInvoker(), new FallbackMethodInvoker());
 
-        return invocationDispatcher.invoke(context);
+        return invokerDispatcher.invoke(context);
 
     }
 }

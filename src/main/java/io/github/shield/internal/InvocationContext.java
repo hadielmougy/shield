@@ -1,22 +1,28 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
+import io.github.shield.Invocable;
+import io.github.shield.InvocationException;
+import io.github.shield.InvocationNotPermittedException;
+import io.github.shield.util.ClassUtil;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public final class InvocationContext {
 
-    private Supplier supplier;
+    private Invocable invocable;
 
     private final List<Filter> filters;
     private final Object targetObject;
     private final Method targetMethod;
     private final Object[] args;
     private final MethodProxy proxy;
+
+
+    private static final String FALLBACK_SUFFIX = "Fallback";
 
 
     public InvocationContext(List<Filter> filters,
@@ -30,30 +36,29 @@ public final class InvocationContext {
         this.args = args;
         this.proxy = proxy;
 
-        initSupplier();
+        initInvocable();
     }
 
-    private void initSupplier() {
-        this.supplier = () -> {
+    private void initInvocable() {
+        this.invocable = () -> {
             try {
                 return proxy.invokeSuper(targetObject, args);
-            } catch (InvocationNotPermittedException ex) {
-                throw ex;
+            } catch (InvocationNotPermittedException th) {
+                throw th;
             } catch (Throwable th) {
-                th.printStackTrace();
+                throw new InvocationException(th);
             }
-            return null;
         };
     }
 
-    public Supplier getSupplier() {
-        return supplier;
+
+    public Invocable getInvocable() {
+        return invocable;
     }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
+    public void setInvocable(Invocable invocable) {
+        this.invocable = invocable;
     }
-
 
     public List<Filter> getFilters() {
         return Collections.unmodifiableList(filters);
@@ -71,7 +76,29 @@ public final class InvocationContext {
         return args;
     }
 
-    public MethodProxy getProxy() {
-        return proxy;
+
+    public Class getTargetClass() {
+        return getTargetObject().getClass();
+    }
+
+    public String getTargetMethodName() {
+        return getTargetMethod().getName();
+    }
+
+    public Method getFallbackMethod() throws NoSuchMethodException {
+        final String fallbackName = getTargetMethodName() + FALLBACK_SUFFIX;
+        return getTargetClass().getDeclaredMethod(fallbackName, ClassUtil.toClassArray(getArgs()));
+    }
+
+    public Object invoke() {
+        return getInvocable().invoke();
+    }
+
+    public Object invokeFallback() {
+        try {
+            return getFallbackMethod().invoke(this.targetObject, this.getArgs());
+        } catch (Exception e) {
+            throw new InvocationException(e);
+        }
     }
 }

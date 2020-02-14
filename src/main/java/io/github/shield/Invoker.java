@@ -3,7 +3,7 @@ package io.github.shield;
 
 import io.github.shield.internal.InvocationContext;
 
-public interface Invocation {
+public interface Invoker {
 
     Object invoke(InvocationContext context);
 }
