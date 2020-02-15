@@ -11,6 +11,7 @@ public class Shield {
 
 
     private List<Filter> filters;
+    private Object targetObject;
 
 
     public Shield() {
@@ -23,16 +24,21 @@ public class Shield {
     }
 
 
+    public Shield forObject(Object targetObject) {
+        this.targetObject = targetObject;
+        return this;
+    }
+
+
     /**
      *
      * @param type
-     * @param args
      * @param <T>
      * @return
      */
-    public  <T> T as(Class<T> type, Object... args) {
+    public  <T> T as(Class<T> type) {
         sort(filters);
-        T component = ProxyFactory.proxy(type, filters, args);
+        T component = ProxyFactory.proxy(type, targetObject, filters);
         return component;
     }
 

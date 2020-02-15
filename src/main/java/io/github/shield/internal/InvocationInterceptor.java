@@ -1,8 +1,6 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -11,40 +9,34 @@ import java.util.List;
 /**
  *
  */
-public class InvocationInterceptor implements MethodInterceptor {
+public class InvocationInterceptor implements java.lang.reflect.InvocationHandler {
 
 
     /**
      *
      */
     private final List<Filter> filters;
+    private final Object targetObject;
 
 
     /**
      *
      * @param filters
      */
-    public InvocationInterceptor(List<Filter> filters) {
+    public InvocationInterceptor(Object targetObject, List<Filter> filters) {
+        this.targetObject = targetObject;
         this.filters = filters;
     }
 
 
-    /**
-     *
-     * @param obj
-     * @param method
-     * @param args
-     * @param proxy
-     * @return
-     */
-    @Override
-    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
 
-        InvocationContext context = new InvocationContext(filters, obj, method, args, proxy);
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) {
+        InvocationContext context = new InvocationContext(filters, targetObject, method, args);
         InvokerDispatcher invokerDispatcher =
                 new InvokerDispatcher(new TargetMethodInvoker(), new FallbackMethodInvoker());
 
         return invokerDispatcher.invoke(context);
-
     }
 }

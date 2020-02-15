@@ -4,7 +4,6 @@ import io.github.shield.Invocable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 public class FireAndForgetFilter extends AbstractBaseFilter {
 
