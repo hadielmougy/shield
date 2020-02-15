@@ -31,7 +31,7 @@ public class RateLimiterFilter extends AbstractLimiterBase {
 
 
     @Override
-    public void afterInvocation(InvocationContext context) {
+    public void afterInvocation() {
         // do nothing
     }
 }

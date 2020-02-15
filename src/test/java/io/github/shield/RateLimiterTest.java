@@ -13,19 +13,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RateLimiterTest {
 
     private ExecutorService executor;
+    private Shield shield;
 
     @Before
     public void init() {
         executor = Executors.newFixedThreadPool(4);
+        shield = new Shield();
     }
 
     @Test
     public void testLimited1() throws InterruptedException {
-        Shield shield = new Shield();
-        shield.addFilter(Filter.rateLimiter()
-                .withRate(1).build());
+        shield.addFilter(Filter.rateLimiter().withRate(1).build());
 
-        final AtomicInteger counter               = new AtomicInteger(0);
+        final AtomicInteger counter = new AtomicInteger(0);
 
         Component component = new TestComponentWithFallback(() -> {
             counter.incrementAndGet();
@@ -36,10 +36,7 @@ public class RateLimiterTest {
             }
         }, ()-> counter.decrementAndGet());
 
-        final Component comp = shield
-                .forObject(component)
-                .as(Component.class);
-
+        final Component comp = shield.forObject(component).as(Component.class);
 
         executor.submit(() -> comp.doCall());
         executor.submit(() -> comp.doCall());
@@ -49,13 +46,11 @@ public class RateLimiterTest {
         Assert.assertEquals(1, counter.get());
 
         executor.shutdown();
-
     }
 
 
     @Test
     public void testLimited2() {
-        Shield shield = new Shield();
         shield.addFilter(Filter.rateLimiter()
                 .withRate(2).build());
 

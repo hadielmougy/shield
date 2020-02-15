@@ -1,6 +1,5 @@
 package io.github.shield.internal;
 
-import io.github.shield.InvocationNotPermittedException;
 import io.github.shield.Invoker;
 
 

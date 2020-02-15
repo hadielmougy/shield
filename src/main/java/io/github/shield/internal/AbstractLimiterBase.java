@@ -40,10 +40,9 @@ public abstract class AbstractLimiterBase extends AbstractBaseFilter {
     /**
      *
      * @return
-     * @param context
      */
     @Override
-    public boolean beforeInvocation(InvocationContext context) {
+    public boolean beforeInvocation() {
         boolean permitted = false;
         try {
             permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
@@ -51,6 +50,12 @@ public abstract class AbstractLimiterBase extends AbstractBaseFilter {
             e.printStackTrace();
         }
         return permitted;
+    }
+
+
+    @Override
+    public Object invoke() {
+        return invokeNext();
     }
 
 

@@ -37,28 +37,27 @@ public interface Filter extends Comparable<Filter> {
 
 
     /**
-     * Factory method for Direct call build
+     * Factory method for retry build
      * @return direct build factory
      */
-    static DirectCall directCall() {
-        return new DirectCall.Config();
+    static Retry retry() {
+        return new Retry.Config();
     }
+
 
     /**
      * This should be implemented by the build type. It contains all build specific logic
      * to acquire needed resources before the invocation, like limiting requests counting requests etc.
      * @return returns the target components return value
-     * @param context
      */
-    boolean beforeInvocation(InvocationContext context);
+    boolean beforeInvocation();
 
 
 
     /**
      * This should be implemented by the build to close all acquired resources
-     * @param context
      */
-    void afterInvocation(InvocationContext context);
+    void afterInvocation();
 
     /**
      *
@@ -66,4 +65,12 @@ public interface Filter extends Comparable<Filter> {
      */
     Integer getOrder();
 
+
+    void setNext(Filter next);
+
+
+    Object invoke();
+
+
+    void setContext(InvocationContext context);
 }
