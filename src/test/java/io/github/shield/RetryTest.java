@@ -54,6 +54,7 @@ public class RetryTest {
 
     @Test
     public void shouldRetryOnGivenException() {
+        Shield shield = new Shield();
         shield.addFilter(Filter.retry().timeUnit(TimeUnit.MILLISECONDS).withDelay(500).withMaxRetries(3)
                 .onException(IllegalArgumentException.class).build());
         final AtomicInteger counter = new AtomicInteger(0);
