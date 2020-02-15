@@ -19,7 +19,7 @@ public class TimeoutFilter extends AbstractBaseFilter {
         exe = Executors.newSingleThreadScheduledExecutor();
     }
     @Override
-    public boolean beforeInvocation(InvocationContext context) {
+    public boolean beforeInvocation() {
         this.currentThread = Thread.currentThread();
         this.running = true;
         exe.scheduleWithFixedDelay(new InterruptionRunnable(), maxWait, maxWait, timeUnit);
@@ -27,7 +27,12 @@ public class TimeoutFilter extends AbstractBaseFilter {
     }
 
     @Override
-    public void afterInvocation(InvocationContext context) {
+    public Object invoke() {
+        return invokeNext();
+    }
+
+    @Override
+    public void afterInvocation() {
         running = false;
         exe.shutdownNow();
     }

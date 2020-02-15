@@ -37,6 +37,9 @@ public class Shield {
      * @return
      */
     public  <T> T as(Class<T> type) {
+        if (filters.isEmpty()) {
+            throw new IllegalStateException("At least one filter must be provided");
+        }
         sort(filters);
         T component = ProxyFactory.proxy(type, targetObject, filters);
         return component;

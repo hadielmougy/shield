@@ -1,7 +1,5 @@
 package io.github.shield.internal;
 
-import io.github.shield.Invocable;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,14 +12,21 @@ public class FireAndForgetFilter extends AbstractBaseFilter {
     }
 
     @Override
-    public boolean beforeInvocation(final InvocationContext context) {
-        final Invocable invocable = context.getInvocable();
-        context.setInvocable(() -> executorService.submit(() -> invocable.invoke()));
+    public boolean beforeInvocation() {
         return true;
     }
 
     @Override
-    public void afterInvocation(final InvocationContext context) {
+    public Object invoke() {
+        executorService.submit(() -> invokeNext());
+        return null;
+    }
+
+    @Override
+    public void afterInvocation() {
         executorService.shutdown();
     }
+
+
+
 }

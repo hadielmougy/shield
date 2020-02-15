@@ -1,5 +1,7 @@
-package io.github.shield;
+package io.github.shield.internal;
 
+
+import io.github.shield.InvocationException;
 
 /**
  *
