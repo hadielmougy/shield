@@ -29,13 +29,23 @@ public class ConcurrentLimiterTest {
                 .ofMaxWaitMillis(500)
                 .build());
 
-        final SingleThreadedDefaultComponent comp = shield
-                .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
-        executor.submit(() -> comp.doCall(counter));
-        executor.submit(() -> comp.doCall(counter));
+        TestComponentWithFallback targetObj
+                = new TestComponentWithFallback(() -> {
+            counter.incrementAndGet();
+            try {
+                Thread.currentThread().sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, () -> counter.decrementAndGet());
+
+        final Component comp = shield.forObject(targetObj).as(Component.class);
+
+        executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
 
         TimeUnit.MILLISECONDS.sleep(100);
 
@@ -50,34 +60,29 @@ public class ConcurrentLimiterTest {
     public void testDefault() {
         Shield shield = new Shield();
         shield.addFilter(Filter.directCall().build());
-        final SingleThreadedDefaultComponent comp = shield.as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
-        executor.submit(() -> comp.doCall(counter));
-        executor.submit(() -> comp.doCall(counter));
+        TestComponentWithFallback targetObj
+                = new TestComponentWithFallback(() -> {
+            counter.incrementAndGet();
+            try {
+                Thread.currentThread().sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, () -> counter.decrementAndGet());
+
+        final Component comp = shield.forObject(targetObj).as(Component.class);
+
+        executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
 
         Awaitility.await().atMost(1, TimeUnit.SECONDS).until(() -> counter.get() == 2);
 
         Assert.assertEquals(2, counter.get());
 
         executor.shutdown();
-
-    }
-
-
-
-    public static class SingleThreadedDefaultComponent {
-
-        public void doCall(AtomicInteger counter) {
-            try {
-                counter.incrementAndGet();
-                TimeUnit.SECONDS.sleep(5);
-                counter.decrementAndGet();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
     }
 

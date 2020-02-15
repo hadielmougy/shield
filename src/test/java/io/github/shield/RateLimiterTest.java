@@ -24,13 +24,25 @@ public class RateLimiterTest {
         Shield shield = new Shield();
         shield.addFilter(Filter.rateLimiter()
                 .withRate(1).build());
-        final SingleThreadedDefaultComponent comp = shield
-                .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
-        executor.submit(() -> comp.doCall(counter));
-        executor.submit(() -> comp.doCall(counter));
+        Component component = new TestComponentWithFallback(() -> {
+            counter.incrementAndGet();
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, ()-> counter.decrementAndGet());
+
+        final Component comp = shield
+                .forObject(component)
+                .as(Component.class);
+
+
+        executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
 
         TimeUnit.MILLISECONDS.sleep(100);
 
@@ -46,13 +58,22 @@ public class RateLimiterTest {
         Shield shield = new Shield();
         shield.addFilter(Filter.rateLimiter()
                 .withRate(2).build());
-        final SingleThreadedDefaultComponent comp =shield
-                .as(SingleThreadedDefaultComponent.class);
 
         final AtomicInteger counter               = new AtomicInteger(0);
 
-        executor.submit(() -> comp.doCall(counter));
-        executor.submit(() -> comp.doCall(counter));
+        Component component = new TestComponentWithFallback(() -> {
+            counter.incrementAndGet();
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, ()-> counter.decrementAndGet());
+
+        final Component comp = shield.forObject(component).as(Component.class);
+
+        executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS).until(()-> counter.get() == 2);
 
@@ -62,16 +83,4 @@ public class RateLimiterTest {
 
 
 
-    public static class SingleThreadedDefaultComponent {
-
-        public void doCall(AtomicInteger counter) {
-            try {
-                counter.incrementAndGet();
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 }

@@ -5,7 +5,6 @@ import io.github.shield.Invocable;
 import io.github.shield.InvocationException;
 import io.github.shield.InvocationNotPermittedException;
 import io.github.shield.util.ClassUtil;
-import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -19,7 +18,6 @@ public final class InvocationContext {
     private final Object targetObject;
     private final Method targetMethod;
     private final Object[] args;
-    private final MethodProxy proxy;
 
 
     private static final String FALLBACK_SUFFIX = "Fallback";
@@ -28,13 +26,11 @@ public final class InvocationContext {
     public InvocationContext(List<Filter> filters,
                              Object targetObject,
                              Method targetMethod,
-                             Object[] args,
-                             MethodProxy proxy) {
+                             Object[] args) {
         this.filters = filters;
         this.targetObject = targetObject;
         this.targetMethod = targetMethod;
         this.args = args;
-        this.proxy = proxy;
 
         initInvocable();
     }
@@ -42,7 +38,7 @@ public final class InvocationContext {
     private void initInvocable() {
         this.invocable = () -> {
             try {
-                return proxy.invokeSuper(targetObject, args);
+                return targetMethod.invoke(targetObject, args);
             } catch (InvocationNotPermittedException th) {
                 throw th;
             } catch (Throwable th) {

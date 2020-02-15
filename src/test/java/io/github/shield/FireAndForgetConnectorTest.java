@@ -24,12 +24,15 @@ public class FireAndForgetConnectorTest {
         Shield shield = new Shield();
         shield.addFilter(Filter.fireAndForget().build());
 
-
-        final DefaultComponent comp = shield.as(DefaultComponent.class);
-
         final StringBuilder stringBuilder = new StringBuilder();
 
-        executor.submit(() -> comp.doCall(stringBuilder));
+        TestComponentWithFallback targetObj
+                = new TestComponentWithFallback(() -> stringBuilder.append(Thread.currentThread().getName()), null);
+
+        final Component comp = shield.forObject(targetObj).as(Component.class);
+
+
+        executor.submit(() -> comp.doCall());
 
         TimeUnit.MILLISECONDS.sleep(100);
         String currentThreadName = Thread.currentThread().getName();
@@ -39,11 +42,4 @@ public class FireAndForgetConnectorTest {
     }
 
 
-    public static class DefaultComponent {
-
-        public void doCall(StringBuilder sb) {
-            sb.append(Thread.currentThread().getName());
-        }
-
-    }
 }

@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ComponentFallbackTest {
@@ -19,8 +18,10 @@ public class ComponentFallbackTest {
         executor = Executors.newFixedThreadPool(4);
     }
 
-    @Test
-    public void testThrottledAndFallback() {
+    @Test(expected = InvocationNotPermittedException.class)
+    public void testThrottledAndFallback() throws InterruptedException {
+        final AtomicInteger counter = new AtomicInteger(0);
+
         Shield throttlerShield = new Shield();
 
         throttlerShield.addFilter(Filter.throttler()
@@ -28,61 +29,31 @@ public class ComponentFallbackTest {
                 .ofMaxWaitMillis(500)
                 .build());
 
-        final SingleThreadedDefaultComponent comp = throttlerShield
-                .as(SingleThreadedDefaultComponent.class);
-
-        Shield directShield = new Shield();
-        directShield.addFilter(Filter.directCall().build());
-        final ForwarderComponent forwarder = directShield
-                .as(ForwarderComponent.class, comp);
-
-
-        final AtomicInteger callCounter             = new AtomicInteger(0);
-        final AtomicInteger fallBackCounter         = new AtomicInteger(0);
-
-        executor.submit(() -> forwarder.doCall(callCounter, fallBackCounter));
-        executor.submit(() -> forwarder.doCall(callCounter, fallBackCounter));
-
-        Awaitility.await().until(() -> fallBackCounter.get() == 1);
-
-        Assert.assertEquals(1, callCounter.get());
-        Assert.assertEquals(1, fallBackCounter.get());
-
-        executor.shutdown();
-
-    }
-
-
-    public static class ForwarderComponent {
-
-        private final SingleThreadedDefaultComponent component;
-
-        public ForwarderComponent(SingleThreadedDefaultComponent component) {
-            this.component = component;
-        }
-
-
-        public void doCall(AtomicInteger counter, AtomicInteger fallback) {
-            component.doCall(counter, fallback);
-        }
-
-
-        public void doCallFallback(AtomicInteger counter, AtomicInteger fallback) {
-            fallback.incrementAndGet();
-        }
-
-    }
-
-    public static class SingleThreadedDefaultComponent {
-
-        public void doCall(AtomicInteger counter, AtomicInteger fallback) {
+        TestComponentWithFallback targetObj
+                = new TestComponentWithFallback(() -> {
+                    counter.incrementAndGet();
             try {
-                counter.incrementAndGet();
-                TimeUnit.SECONDS.sleep(5);
+                Thread.currentThread().sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }, () -> counter.decrementAndGet());
 
+        final Component comp = throttlerShield
+                .forObject(targetObj)
+                .as(Component.class);
+
+
+        executor.submit(() -> comp.doCall());
+
+        Thread.currentThread().sleep(500);
+
+        comp.doCall();
+
+        Awaitility.await().until(() -> counter.get() == 1);
+        Assert.assertEquals(1, counter.get());
+
+        executor.shutdown();
     }
+
 }

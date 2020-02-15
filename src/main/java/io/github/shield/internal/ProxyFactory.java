@@ -1,8 +1,6 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
-import io.github.shield.util.ClassUtil;
-import net.sf.cglib.proxy.Enhancer;
 
 import java.util.List;
 
@@ -15,28 +13,18 @@ public class ProxyFactory {
     /**
      *
      * @param type
-     * @param filter
-     * @param args
-     * @param <T>
-     * @return
-     */
-    public static <T> T proxy(Class<T> type, List<Filter> filter, Object[] args) {
-        return  (T) baseEnhancer(type, filter).create(ClassUtil.toClassArray(args), args);
-    }
-
-
-    /**
-     *
-     * @param type
+     * @param target
      * @param filters
      * @param <T>
      * @return
      */
-    private static <T> Enhancer baseEnhancer(Class<T> type, List<Filter> filters) {
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(type);
-        enhancer.setCallback(new InvocationInterceptor(filters));
-        return enhancer;
+    public static <T> T proxy(Class<T> type, Object target, List<Filter> filters) {
+        return (T) java.lang.reflect.Proxy.newProxyInstance(
+                target.getClass().getClassLoader(),
+                new Class[]{type},
+                new InvocationInterceptor(target, filters));
     }
+
+
 
 }
