@@ -11,22 +11,22 @@ public class Shield {
 
 
     private List<Filter> filters;
-    private Object targetObject;
+    private final Object targetObject;
 
-
-    public Shield() {
-        this.filters = new LinkedList<>();
-
-    }
-
-    public void addFilter(Filter filter) {
-        this.filters.add(filter);
-    }
-
-
-    public Shield forObject(Object targetObject) {
+    private Shield(Object targetObject) {
         this.targetObject = targetObject;
+        this.filters = new LinkedList<>();
+    }
+
+
+    public Shield withFilter(Filter filter) {
+        this.filters.add(filter);
         return this;
+    }
+
+
+    public static Shield forObject(Object targetObject) {
+        return new Shield(targetObject);
     }
 
 

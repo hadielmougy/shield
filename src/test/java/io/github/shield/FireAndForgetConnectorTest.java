@@ -21,16 +21,13 @@ public class FireAndForgetConnectorTest {
     @Test
     public void testRunningInDifferentThread() throws InterruptedException {
 
-        Shield shield = new Shield();
-        shield.addFilter(Filter.fireAndForget().build());
-
         final StringBuilder stringBuilder = new StringBuilder();
 
-        TestComponentWithFallback targetObj
-                = new TestComponentWithFallback(() -> stringBuilder.append(Thread.currentThread().getName()), null);
-
-        final Component comp = shield.forObject(targetObj).as(Component.class);
-
+        TestComponentWithFallback targetObj = new TestComponentWithFallback(() -> stringBuilder.append(Thread.currentThread().getName()), null);
+        final Component comp = Shield.forObject(targetObj)
+                .withFilter(Filter.fireAndForget()
+                        .build())
+                .as(Component.class);
 
         executor.submit(() -> comp.doCall());
 

@@ -22,26 +22,16 @@ public class ConcurrentLimiterTest {
     @Test
     public void testThrottled() throws InterruptedException {
 
-        Shield shield = new Shield();
-        shield.addFilter(Filter.throttler()
-                .ofMax(1)
-                .ofMaxWaitMillis(500)
-                .build());
-
-
         final AtomicInteger counter               = new AtomicInteger(0);
 
-        TestComponentWithFallback targetObj
-                = new TestComponentWithFallback(() -> {
-            counter.incrementAndGet();
-            try {
-                Thread.currentThread().sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }, () -> counter.decrementAndGet());
+        Component targetObj = Components.sleepComponentWithCounter(counter, 2000);
 
-        final Component comp = shield.forObject(targetObj).as(Component.class);
+        final Component comp = Shield.forObject(targetObj)
+                .withFilter(Filter.throttler()
+                        .ofMax(1)
+                        .ofMaxWaitMillis(500)
+                        .build())
+                .as(Component.class);
 
         executor.submit(() -> comp.doCall());
         executor.submit(() -> comp.doCall());

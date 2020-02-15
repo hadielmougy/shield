@@ -13,30 +13,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RateLimiterTest {
 
     private ExecutorService executor;
-    private Shield shield;
 
     @Before
     public void init() {
         executor = Executors.newFixedThreadPool(4);
-        shield = new Shield();
     }
 
     @Test
     public void testLimited1() throws InterruptedException {
-        shield.addFilter(Filter.rateLimiter().withRate(1).build());
 
         final AtomicInteger counter = new AtomicInteger(0);
+        Component component = Components.sleepComponentWithCounter(counter, 1000);
 
-        Component component = new TestComponentWithFallback(() -> {
-            counter.incrementAndGet();
-            try {
-                TimeUnit.MILLISECONDS.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }, ()-> counter.decrementAndGet());
-
-        final Component comp = shield.forObject(component).as(Component.class);
+        final Component comp = Shield.forObject(component)
+                .withFilter(Filter.rateLimiter()
+                        .withRate(1)
+                        .build())
+                .as(Component.class);
 
         executor.submit(() -> comp.doCall());
         executor.submit(() -> comp.doCall());
@@ -51,21 +44,14 @@ public class RateLimiterTest {
 
     @Test
     public void testLimited2() {
-        shield.addFilter(Filter.rateLimiter()
-                .withRate(2).build());
+        final AtomicInteger counter = new AtomicInteger(0);
+        Component component = Components.sleepComponentWithCounter(counter, 1000);
 
-        final AtomicInteger counter               = new AtomicInteger(0);
-
-        Component component = new TestComponentWithFallback(() -> {
-            counter.incrementAndGet();
-            try {
-                TimeUnit.MILLISECONDS.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }, ()-> counter.decrementAndGet());
-
-        final Component comp = shield.forObject(component).as(Component.class);
+        final Component comp = Shield.forObject(component)
+                .withFilter(Filter.rateLimiter()
+                        .withRate(2)
+                        .build())
+                .as(Component.class);
 
         executor.submit(() -> comp.doCall());
         executor.submit(() -> comp.doCall());

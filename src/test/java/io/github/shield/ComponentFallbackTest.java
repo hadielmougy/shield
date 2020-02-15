@@ -23,25 +23,13 @@ public class ComponentFallbackTest {
     public void testThrottledAndFallback() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
 
-        Shield throttlerShield = new Shield();
+        Component targetObj = Components.sleepComponentWithCounter(counter,2000);
 
-        throttlerShield.addFilter(Filter.throttler()
-                .ofMax(1)
-                .ofMaxWaitMillis(500)
-                .build());
-
-        TestComponentWithFallback targetObj
-                = new TestComponentWithFallback(() -> {
-                    counter.incrementAndGet();
-            try {
-                Thread.currentThread().sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }, () -> counter.decrementAndGet());
-
-        final Component comp = throttlerShield
-                .forObject(targetObj)
+        final Component comp = Shield.forObject(targetObj)
+                .withFilter(Filter.throttler()
+                        .ofMax(1)
+                        .ofMaxWaitMillis(500)
+                        .build())
                 .as(Component.class);
 
 
