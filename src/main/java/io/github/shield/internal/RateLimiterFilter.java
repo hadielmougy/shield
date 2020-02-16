@@ -1,7 +1,10 @@
 package io.github.shield.internal;
 
 
-import java.util.concurrent.Executors;
+import io.github.shield.ExecutorAware;
+import io.github.shield.ExecutorProvider;
+
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -9,20 +12,18 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  *
  */
-public class RateLimiterFilter extends AbstractLimiterBase {
+public class RateLimiterFilter extends AbstractLimiterBase implements ExecutorAware {
 
 
-    private final ScheduledExecutorService scheduler;
+    private ScheduledExecutorService scheduler;
 
 
     /**
      *
      * @param max
      */
-    public RateLimiterFilter(int max) {
+    public RateLimiterFilter(final int max) {
         super(max, 250);
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
     }
 
     private void resetPermits() {
@@ -33,5 +34,16 @@ public class RateLimiterFilter extends AbstractLimiterBase {
     @Override
     public void afterInvocation() {
         // do nothing
+    }
+
+    @Override
+    public void configureExecutor(final ExecutorProvider provider) {
+        provider.provide(this);
+    }
+
+    @Override
+    public void setExecutorService(final ExecutorService executorService) {
+        this.scheduler = (ScheduledExecutorService) executorService;
+        scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
     }
 }

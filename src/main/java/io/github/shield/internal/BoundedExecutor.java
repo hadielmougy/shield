@@ -6,8 +6,13 @@ import java.util.concurrent.TimeUnit;
 
 public class BoundedExecutor extends ThreadPoolExecutor {
 
-    public BoundedExecutor() {
-        super(4, 1000, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    public BoundedExecutor(final ShieldThreadFactory shieldThreadFactory) {
+        super(4,
+                100,
+                1,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(),
+                shieldThreadFactory);
     }
 
 

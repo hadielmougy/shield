@@ -41,7 +41,7 @@ public class RetryFilter extends AbstractBaseFilter {
         Object result = null;
         int counter = 1;
         Throwable th = null;
-        while(counter <= retries) {
+        while (counter <= retries) {
             th = null;
             try {
                 result = invokeNext();
