@@ -1,12 +1,15 @@
 package io.github.shield.internal;
 
 
-import io.github.shield.ExecutorAware;
 import io.github.shield.ExecutorProvider;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
+public class TimeoutFilter extends AbstractBaseFilter {
 
     /**
      */

@@ -118,4 +118,13 @@ public interface Filter extends Comparable<Filter> {
         }
         return result;
     }
+
+
+    /**
+     * Overriden if need executor to be configured for this instance.
+     * @param executorProvider
+     */
+    default void configureExecutor(ExecutorProvider executorProvider) {
+
+    }
 }

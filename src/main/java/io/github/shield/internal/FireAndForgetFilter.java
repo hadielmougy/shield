@@ -1,12 +1,11 @@
 package io.github.shield.internal;
 
-import io.github.shield.ExecutorAware;
 import io.github.shield.ExecutorProvider;
 
 import java.util.concurrent.ExecutorService;
 
 public
-class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
+class FireAndForgetFilter extends AbstractBaseFilter {
 
 
     /**
@@ -20,6 +19,7 @@ class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
      * implementation based on implementation type.
      * @param executorProvider
      */
+    @Override
     public void configureExecutor(final ExecutorProvider executorProvider) {
         executorService = executorProvider.get(this);
     }

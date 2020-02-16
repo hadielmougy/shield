@@ -1,6 +1,5 @@
 package io.github.shield.internal;
 
-import io.github.shield.ExecutorAware;
 import io.github.shield.ExecutorProvider;
 import io.github.shield.Filter;
 import io.github.shield.ProxyFactory;
@@ -50,9 +49,7 @@ public final class JdkProxyFactory implements ProxyFactory {
     public <T> T create(final Class<T> type, final List<Filter> filters) {
 
         for (Filter filter : filters) {
-            if (filter instanceof ExecutorAware) {
-                ((ExecutorAware) filter).configureExecutor(executorProvider);
-            }
+            filter.configureExecutor(executorProvider);
         }
 
         return (T) java.lang.reflect.Proxy.newProxyInstance(

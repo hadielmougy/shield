@@ -1,7 +1,6 @@
 package io.github.shield.internal;
 
 
-import io.github.shield.ExecutorAware;
 import io.github.shield.ExecutorProvider;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,7 +10,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  *
  */
-public class RateLimiterFilter extends AbstractLimiterBase implements ExecutorAware {
+public class RateLimiterFilter extends AbstractLimiterBase {
 
 
     private ScheduledExecutorService scheduler;
