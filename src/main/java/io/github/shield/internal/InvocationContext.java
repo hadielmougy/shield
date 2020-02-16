@@ -1,5 +1,6 @@
 package io.github.shield.internal;
 
+import io.github.shield.ExecutorProvider;
 import io.github.shield.Filter;
 import io.github.shield.InvocationCancelledException;
 import io.github.shield.InvocationException;
@@ -33,6 +34,7 @@ public final class InvocationContext {
      *
      */
     private final Object[] args;
+    private final ExecutorProvider executorProvider;
 
     /**
      *
@@ -44,11 +46,12 @@ public final class InvocationContext {
 
 
 
-    public InvocationContext(List<Filter> filters, Object targetObject, Method targetMethod, Object[] args) {
+    public InvocationContext(List<Filter> filters, Object targetObject, Method targetMethod, Object[] args, ExecutorProvider exe) {
         this.filters = filters;
         this.targetObject = targetObject;
         this.targetMethod = targetMethod;
         this.args = args;
+        this.executorProvider = exe;
 
         initInvocationChain();
     }
@@ -63,6 +66,7 @@ public final class InvocationContext {
         for (Filter filter : filters) {
             filtersDeque.addFirst(filter);
             filter.setContext(this);
+            filter.configureExecutor(executorProvider);
         }
 
         Filter curr = filtersDeque.pollFirst();

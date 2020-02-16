@@ -19,7 +19,7 @@ public class InvokerDispatcher implements Invoker {
 
 
     @Override
-    public Object invoke(InvocationContext context) {
+    public Object invoke(final InvocationContext context) {
         Class targetClass = context.getTargetClass();
         try {
             return targetMethodInvoker.invoke(context);
