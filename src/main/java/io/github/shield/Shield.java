@@ -19,7 +19,7 @@ public class Shield {
     }
 
 
-    public Shield withFilter(Filter filter) {
+    public Shield filter(Filter filter) {
         this.filters.add(filter);
         return this;
     }

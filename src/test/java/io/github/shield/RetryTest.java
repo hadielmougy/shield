@@ -4,7 +4,6 @@ import io.github.shield.internal.RetriesExhaustedException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -19,7 +18,7 @@ public class RetryTest {
         Component component = Components.throwingComponentWithCounter(new RuntimeException(), counter, 2);
 
         final Component comp = Shield.forObject(component)
-                .withFilter(Filter.retry()
+                .filter(Filter.retry()
                         .delayMillis(500)
                         .maxRetries(3)
                         .build())
@@ -39,7 +38,7 @@ public class RetryTest {
 
 
         final Component comp = Shield.forObject(component)
-                .withFilter(Filter.retry()
+                .filter(Filter.retry()
                         .delayMillis(500)
                         .maxRetries(3)
                         .build())
@@ -54,7 +53,7 @@ public class RetryTest {
         final AtomicInteger counter = new AtomicInteger(0);
         final Component component = Components.throwingComponentWithCounter(new IllegalArgumentException(), counter, 2);
         final Component comp = Shield.forObject(component)
-                .withFilter(Filter.retry()
+                .filter(Filter.retry()
                         .delayMillis(500)
                         .maxRetries(3)
                         .onException(IllegalArgumentException.class)
@@ -74,7 +73,7 @@ public class RetryTest {
         Component component = Components.throwingComponent(new IllegalStateException());
 
         final Component comp = Shield.forObject(component)
-                .withFilter(Filter.retry()
+                .filter(Filter.retry()
                         .delayMillis(500)
                         .maxRetries(3)
                         .onException(IllegalArgumentException.class)

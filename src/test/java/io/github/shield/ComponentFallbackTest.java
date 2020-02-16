@@ -26,7 +26,7 @@ public class ComponentFallbackTest {
         Component targetObj = Components.sleepComponentWithCounter(counter,2000);
 
         final Component comp = Shield.forObject(targetObj)
-                .withFilter(Filter.throttler()
+                .filter(Filter.throttler()
                         .ofMax(1)
                         .ofMaxWaitMillis(500)
                         .build())
