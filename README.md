@@ -24,3 +24,8 @@ Fault tolerance library for java
 * Timeout
 * Fire and forget
 * Retry
+
+
+## TODO
+* JMX support
+* Auto calculate queue size

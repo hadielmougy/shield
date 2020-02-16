@@ -33,7 +33,7 @@ public interface Retry extends FilterFactory {
     TimeUnit DEFAULT_TIMEUNIT = TimeUnit.MILLISECONDS;
 
     /**
-     * Default timeout policy
+     * Default timeout policy.
      */
     TimeoutPolicy DEFAULT_TIMEOUT_POLICY = new FixedDelayTimeoutPolicy(DEFAULT_DELAY_VALUE, DEFAULT_TIMEUNIT);
 
