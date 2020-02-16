@@ -3,7 +3,7 @@ package io.github.shield.internal;
 import io.github.shield.ExecutorProvider;
 import io.github.shield.Filter;
 import io.github.shield.ProxyFactory;
-import io.github.shield.ThreadAware;
+import io.github.shield.ExecutorAware;
 
 import java.util.List;
 
@@ -50,8 +50,8 @@ public final class JdkProxyFactory implements ProxyFactory {
     public <T> T create(final Class<T> type, final List<Filter> filters) {
 
         for (Filter filter : filters) {
-            if (filter instanceof ThreadAware) {
-                ((ThreadAware) filter).configureExecutor(executorProvider);
+            if (filter instanceof ExecutorAware) {
+                ((ExecutorAware) filter).configureExecutor(executorProvider);
             }
         }
 

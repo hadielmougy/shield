@@ -8,7 +8,7 @@ import java.util.Objects;
 public class DefaultProxyFactoryProvider implements ProxyFactoryProvider {
 
     @Override
-    public ProxyFactory forObject(Object obj) {
+    public ProxyFactory forObject(final Object obj) {
         return new JdkProxyFactory(Objects.requireNonNull(obj));
     }
 }

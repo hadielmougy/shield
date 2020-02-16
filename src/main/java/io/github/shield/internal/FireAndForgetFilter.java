@@ -1,12 +1,12 @@
 package io.github.shield.internal;
 
 import io.github.shield.ExecutorProvider;
-import io.github.shield.ThreadAware;
+import io.github.shield.ExecutorAware;
 
 import java.util.concurrent.ExecutorService;
 
 public
-class FireAndForgetFilter extends AbstractBaseFilter implements ThreadAware {
+class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
 
 
     /**

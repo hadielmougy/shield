@@ -2,10 +2,10 @@ package io.github.shield;
 
 import java.util.concurrent.ExecutorService;
 
-public interface ThreadAware {
+public interface ExecutorAware {
 
     void configureExecutor(final ExecutorProvider executorProvider);
 
 
-    void setExecutorService(ExecutorService executorService);
+    void setExecutorService(final ExecutorService executorService);
 }

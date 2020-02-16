@@ -2,13 +2,13 @@ package io.github.shield.internal;
 
 
 import io.github.shield.ExecutorProvider;
-import io.github.shield.ThreadAware;
+import io.github.shield.ExecutorAware;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TimeoutFilter extends AbstractBaseFilter implements ThreadAware {
+public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
 
     /**
      */
