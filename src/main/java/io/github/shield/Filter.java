@@ -66,11 +66,23 @@ public interface Filter extends Comparable<Filter> {
     Integer getOrder();
 
 
+    /**
+     *
+     * @param next
+     */
     void setNext(Filter next);
 
 
+    /**
+     *
+     * @return
+     */
     Object invoke();
 
 
+    /**
+     *
+     * @param context
+     */
     void setContext(InvocationContext context);
 }

@@ -16,6 +16,10 @@ public class InvocationInterceptor implements java.lang.reflect.InvocationHandle
      *
      */
     private final List<Filter> filters;
+
+    /**
+     *
+     */
     private final Object targetObject;
 
 
@@ -29,14 +33,17 @@ public class InvocationInterceptor implements java.lang.reflect.InvocationHandle
     }
 
 
-
-
+    /**
+     *
+     * @param proxy
+     * @param method
+     * @param args
+     * @return
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         InvocationContext context = new InvocationContext(filters, targetObject, method, args);
-        InvokerDispatcher invokerDispatcher =
-                new InvokerDispatcher(new TargetMethodInvoker(), new FallbackMethodInvoker());
-
+        InvokerDispatcher invokerDispatcher = new InvokerDispatcher(new TargetMethodInvoker(), new FallbackMethodInvoker());
         return invokerDispatcher.invoke(context);
     }
 }

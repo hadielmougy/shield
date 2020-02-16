@@ -13,20 +13,37 @@ import java.util.function.Supplier;
 public final class InvocationContext {
 
 
+    /**
+     *
+     */
     private final List<Filter> filters;
+
+    /**
+     *
+     */
     private final Object targetObject;
+
+    /**
+     *
+     */
     private final Method targetMethod;
+
+    /**
+     *
+     */
     private final Object[] args;
 
-
-    private static final String FALLBACK_SUFFIX = "Fallback";
+    /**
+     *
+     */
     private Filter firstFilter;
 
 
-    public InvocationContext(List<Filter> filters,
-                             Object targetObject,
-                             Method targetMethod,
-                             Object[] args) {
+    private static final String FALLBACK_SUFFIX = "Fallback";
+
+
+
+    public InvocationContext(List<Filter> filters, Object targetObject, Method targetMethod, Object[] args) {
         this.filters = filters;
         this.targetObject = targetObject;
         this.targetMethod = targetMethod;
@@ -35,6 +52,9 @@ public final class InvocationContext {
         initInvocation();
     }
 
+    /**
+     *
+     */
     private void initInvocation() {
 
         Deque<Filter> filtersDeque = new LinkedList<>();
@@ -62,6 +82,10 @@ public final class InvocationContext {
     }
 
 
+    /**
+     *
+     * @return
+     */
     private Supplier targetObjectInvocation() {
         return () -> {
             try {
@@ -75,19 +99,38 @@ public final class InvocationContext {
     }
 
 
+    /**
+     *
+     * @return
+     */
     public Class getTargetClass() {
         return targetObject.getClass();
     }
 
+
+    /**
+     *
+     * @return
+     */
     private String getTargetMethodName() {
         return targetMethod.getName();
     }
 
+
+    /**
+     *
+     * @return
+     * @throws NoSuchMethodException
+     */
     public Method getFallbackMethod() throws NoSuchMethodException {
         final String fallbackName = getTargetMethodName() + FALLBACK_SUFFIX;
         return getTargetClass().getDeclaredMethod(fallbackName, ClassUtil.toClassArray(args));
     }
 
+    /**
+     *
+     * @return
+     */
     public Object invoke() {
         Object result = null;
         if (firstFilter.beforeInvocation()) {
@@ -99,6 +142,11 @@ public final class InvocationContext {
         return result;
     }
 
+
+    /**
+     *
+     * @return
+     */
     public Object invokeFallback() {
         try {
             return getFallbackMethod().invoke(this.targetObject, args);

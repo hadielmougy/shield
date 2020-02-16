@@ -5,22 +5,32 @@ import java.util.concurrent.Executors;
 
 public class FireAndForgetFilter extends AbstractBaseFilter {
 
+    /**
+     *
+     */
     private final ExecutorService executorService;
 
+
+    /**
+     * Constructor.
+     */
     public FireAndForgetFilter() {
         executorService = Executors.newSingleThreadExecutor();
     }
+
 
     @Override
     public boolean beforeInvocation() {
         return true;
     }
 
+
     @Override
     public Object invoke() {
         executorService.submit(() -> invokeNext());
         return null;
     }
+
 
     @Override
     public void afterInvocation() {
