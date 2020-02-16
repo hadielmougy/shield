@@ -54,7 +54,7 @@ class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
 
 
     /**
-     * Called after invoke to release used resources if any.
+     * Called after execute to release used resources if any.
      */
     @Override
     public void afterInvocation() {

@@ -1,4 +1,4 @@
-package io.github.shield.internal;
+package io.github.shield;
 
 
 import io.github.shield.InvocationException;

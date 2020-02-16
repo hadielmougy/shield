@@ -6,7 +6,7 @@ public class TargetMethodInvoker implements Invoker {
 
     @Override
     public Object invoke(InvocationContext context) {
-        return context.invoke();
+        return context.execute();
     }
 
 }

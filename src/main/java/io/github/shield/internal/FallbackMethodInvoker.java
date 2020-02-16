@@ -10,7 +10,7 @@ public class FallbackMethodInvoker implements Invoker {
     @Override
     public Object invoke(InvocationContext context) {
         try {
-            return context.invokeFallback();
+            return context.executeFallback();
         } catch (InvocationException e) {
             System.err.printf("Error invoking fallback method with cause %s", e.getMessage());
         }

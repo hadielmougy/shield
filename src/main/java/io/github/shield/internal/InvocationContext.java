@@ -2,6 +2,7 @@ package io.github.shield.internal;
 
 import io.github.shield.Filter;
 import io.github.shield.InvocationException;
+import io.github.shield.InvocationNotPermittedException;
 import io.github.shield.util.ClassUtil;
 
 import java.lang.reflect.Method;
@@ -131,15 +132,8 @@ public final class InvocationContext {
      *
      * @return
      */
-    public Object invoke() {
-        Object result = null;
-        if (firstFilter.beforeInvocation()) {
-            result = firstFilter.invoke();
-            firstFilter.afterInvocation();
-        } else {
-            throw new InvocationNotPermittedException(getTargetClass());
-        }
-        return result;
+    public Object execute() {
+        return firstFilter.doInvoke();
     }
 
 
@@ -147,7 +141,7 @@ public final class InvocationContext {
      *
      * @return
      */
-    public Object invokeFallback() {
+    public Object executeFallback() {
         try {
             return getFallbackMethod().invoke(this.targetObject, args);
         } catch (Exception e) {

@@ -28,10 +28,7 @@ public abstract class AbstractBaseFilter implements Filter {
 
 
     protected final Object invokeNext() {
-        next.beforeInvocation();
-        Object result = next.invoke();
-        next.afterInvocation();
-        return result;
+        return next.doInvoke();
     }
 
 
@@ -40,6 +37,11 @@ public abstract class AbstractBaseFilter implements Filter {
         this.context = context;
     }
 
+
+    @Override
+    public InvocationContext getContext() {
+        return context;
+    }
 
     @Override
     public Object invoke() {

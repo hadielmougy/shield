@@ -1,6 +1,5 @@
 package io.github.shield;
 
-import io.github.shield.internal.InvocationNotPermittedException;
 import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;

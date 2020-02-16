@@ -96,4 +96,26 @@ public interface Filter extends Comparable<Filter> {
      * @param context execution context
      */
     void setContext(InvocationContext context);
+
+
+    /**
+     * Return invocation context.
+     * @return context
+     */
+    InvocationContext getContext();
+
+    /**
+     * Invocation Template.
+     * @return invocation result
+     */
+    default Object doInvoke() {
+        Object result = null;
+        if (beforeInvocation()) {
+            result = invoke();
+            afterInvocation();
+        } else {
+            throw new InvocationNotPermittedException(getContext().getTargetClass());
+        }
+        return result;
+    }
 }
