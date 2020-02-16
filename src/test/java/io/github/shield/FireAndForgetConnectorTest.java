@@ -29,10 +29,12 @@ public class FireAndForgetConnectorTest {
                         .build())
                 .as(Component.class);
 
-        executor.submit(() -> comp.doCall());
+
+        comp.doCall();
 
         TimeUnit.MILLISECONDS.sleep(100);
         String currentThreadName = Thread.currentThread().getName();
+        Assert.assertNotEquals("", stringBuilder.toString());
         Assert.assertNotEquals(currentThreadName, stringBuilder.toString());
         executor.shutdown();
 

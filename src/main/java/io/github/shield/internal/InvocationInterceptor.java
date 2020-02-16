@@ -2,6 +2,7 @@ package io.github.shield.internal;
 
 import io.github.shield.Filter;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  *
  */
-public class InvocationInterceptor implements java.lang.reflect.InvocationHandler {
+public class InvocationInterceptor implements InvocationHandler {
 
 
     /**
@@ -24,12 +25,12 @@ public class InvocationInterceptor implements java.lang.reflect.InvocationHandle
 
 
     /**
-     *
-     * @param filters
+     * @param obj
+     * @param l
      */
-    public InvocationInterceptor(Object targetObject, List<Filter> filters) {
-        this.targetObject = targetObject;
-        this.filters = filters;
+    public InvocationInterceptor(final Object obj, final List<Filter> l) {
+        this.targetObject = obj;
+        this.filters = l;
     }
 
 

@@ -1,7 +1,7 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.JdkProxyFactory;
+import io.github.shield.internal.DefaultProxyFactoryProvider;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,13 +19,30 @@ public final class Shield {
      */
     private final ProxyFactory proxyFactory;
 
+    /**
+     *
+     */
+    private static ProxyFactoryProvider proxyFactoryProvider;
+
+    static {
+        proxyFactoryProvider(new DefaultProxyFactoryProvider());
+    }
+
+
+    /**
+     *
+     * @param provider
+     */
+    public static void proxyFactoryProvider(final ProxyFactoryProvider provider) {
+        Shield.proxyFactoryProvider = provider;
+    }
+
 
 
     private Shield(final Object obj) {
-        this.proxyFactory = new JdkProxyFactory(Objects.requireNonNull(obj));
+        this.proxyFactory = proxyFactoryProvider.forObject(obj);
         this.filters = new LinkedList<>();
     }
-
 
 
     /**

@@ -1,40 +1,73 @@
 package io.github.shield.internal;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import io.github.shield.ExecutorProvider;
+import io.github.shield.ThreadAware;
 
-public class FireAndForgetFilter extends AbstractBaseFilter {
+import java.util.concurrent.ExecutorService;
+
+public
+class FireAndForgetFilter extends AbstractBaseFilter implements ThreadAware {
+
 
     /**
      *
      */
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
 
 
     /**
-     * Constructor.
+     * This called before the object being used to provide the executor
+     * implementation based on implementation type.
+     * @param executorProvider
      */
-    public FireAndForgetFilter() {
-        executorService = Executors.newSingleThreadExecutor();
+    public void configureExecutor(final ExecutorProvider executorProvider) {
+        executorProvider.provide(this);
     }
 
 
+    /**
+     *
+     * @param exe
+     */
+    public void setExecutorService(final ExecutorService exe) {
+        this.executorService = exe;
+    }
+
+    /**
+     * Called before invocation.
+     */
     @Override
     public boolean beforeInvocation() {
         return true;
     }
 
 
+    /**
+     * Execute invocation chain.
+     */
     @Override
     public Object invoke() {
+        ensureExecutor();
         executorService.submit(() -> invokeNext());
         return null;
     }
 
 
+    /**
+     * Called after invoke to release used resources if any.
+     */
     @Override
     public void afterInvocation() {
+        ensureExecutor();
         executorService.shutdown();
+    }
+
+
+    private void ensureExecutor() {
+        if (executorService == null) {
+            final String msg = "executor service is not configured";
+            throw new IllegalStateException(msg);
+        }
     }
 
 

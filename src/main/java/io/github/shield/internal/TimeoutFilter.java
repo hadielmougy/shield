@@ -1,23 +1,45 @@
 package io.github.shield.internal;
 
 
-import java.util.concurrent.Executors;
+import io.github.shield.ExecutorProvider;
+import io.github.shield.ThreadAware;
+
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TimeoutFilter extends AbstractBaseFilter {
+public class TimeoutFilter extends AbstractBaseFilter implements ThreadAware {
 
+    /**
+     */
     private final long maxWait;
+    /**
+     */
     private final TimeUnit timeUnit;
-    private final ScheduledExecutorService exe;
+    /**
+     */
+    private ScheduledExecutorService exe;
+    /**
+     */
     private Thread currentThread;
+    /**
+     */
     private volatile boolean running = false;
 
-    public TimeoutFilter(long maxWait, TimeUnit timeUnit) {
-        this.maxWait = maxWait;
-        this.timeUnit = timeUnit;
-        exe = Executors.newSingleThreadScheduledExecutor();
+    /**
+     * {@inheritDoc}.
+     * @param wait
+     * @param unit
+     */
+    public TimeoutFilter(final long wait, final TimeUnit unit) {
+        this.maxWait = wait;
+        this.timeUnit = unit;
     }
+
+    /**
+     * {@inheritDoc}
+     * @return
+     */
     @Override
     public boolean beforeInvocation() {
         this.currentThread = Thread.currentThread();
@@ -26,15 +48,40 @@ public class TimeoutFilter extends AbstractBaseFilter {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return
+     */
     @Override
     public Object invoke() {
         return invokeNext();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void afterInvocation() {
         running = false;
         exe.shutdownNow();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param executorProvider
+     */
+    @Override
+    public void configureExecutor(final ExecutorProvider executorProvider) {
+        executorProvider.provide(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param executor
+     */
+    @Override
+    public void setExecutorService(final ExecutorService executor) {
+        this.exe = (ScheduledExecutorService) executor;
     }
 
     private class InterruptionRunnable implements Runnable {
