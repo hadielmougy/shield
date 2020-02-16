@@ -53,6 +53,12 @@ public class RetryFilter extends AbstractBaseFilter {
                 }
             }
             counter++;
+            try {
+                timeUnit.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         if (th != null) {
