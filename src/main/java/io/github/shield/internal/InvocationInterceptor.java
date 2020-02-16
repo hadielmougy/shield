@@ -22,7 +22,6 @@ public class InvocationInterceptor implements InvocationHandler {
      */
     private final Object target;
 
-
     /**
      */
     private final InvokerDispatcher dispatcher;
@@ -32,15 +31,15 @@ public class InvocationInterceptor implements InvocationHandler {
 
 
     /**
-     * @param obj
+     * @param o
      * @param l
      * @param p
      */
-    InvocationInterceptor(final Object obj, final List<Filter> l, final ExecutorProvider p) {
-        this.target = obj;
+    InvocationInterceptor(final Object o, final List<Filter> l, final ExecutorProvider p) {
+        this.target  = o;
         this.filters = l;
-        this.exe = p;
-        final TargetMethodInvoker method = new TargetMethodInvoker();
+        this.exe     = p;
+        final TargetMethodInvoker method     = new TargetMethodInvoker();
         final FallbackMethodInvoker fallback = new FallbackMethodInvoker();
         dispatcher = new InvokerDispatcher(method, fallback);
     }
@@ -55,6 +54,7 @@ public class InvocationInterceptor implements InvocationHandler {
      */
     @Override
     public Object invoke(final Object p, final Method m, final Object[] a) {
-        return dispatcher.invoke(new InvocationContext(filters, target, m, a, exe));
+        return dispatcher.invoke(
+                new InvocationContext(filters, target, m, a, exe));
     }
 }

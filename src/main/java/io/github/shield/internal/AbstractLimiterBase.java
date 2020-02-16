@@ -29,7 +29,7 @@ public abstract class AbstractLimiterBase extends AbstractBaseFilter {
      * @param max
      * @param maxWaitMillis
      */
-    public AbstractLimiterBase(int max, long maxWaitMillis) {
+    public AbstractLimiterBase(final int max, final long maxWaitMillis) {
         this.permits = max;
         this.semaphore = new Semaphore(max, true);
         this.invokeTimeout = maxWaitMillis;
@@ -45,7 +45,8 @@ public abstract class AbstractLimiterBase extends AbstractBaseFilter {
     public boolean beforeInvocation() {
         boolean permitted = false;
         try {
-            permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
+            permitted = semaphore.tryAcquire(
+                    invokeTimeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

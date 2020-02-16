@@ -44,7 +44,7 @@ public final class JdkProxyFactory implements ProxyFactory {
      * @param type
      * @param filters
      * @param <T>
-     * @return
+     * @return proxy
      */
     public <T> T create(final Class<T> type, final List<Filter> filters) {
         return (T) java.lang.reflect.Proxy.newProxyInstance(
