@@ -14,55 +14,122 @@ import java.util.concurrent.TimeUnit;
  */
 public interface Retry extends FilterFactory {
 
+    /**
+     * Default delay millis value. 1000 is the default value for
+     * waiting between retries.
+     */
+    long DEFAULT_DELAY_VALUE = 1000;
+
+    /**
+     * Default value for retries before give up.
+     */
+    int DEFAULT_RETRIES = 3;
+
+    /**
+     * Default time unit for delay between retries.
+     */
+    TimeUnit DEFAULT_TIMEUNIT = TimeUnit.MILLISECONDS;
+
+    /**
+     * Delay milliseconds between retries.
+     * @param delay value of milliseconds
+     * @return Retry config builder
+     */
     Retry delayMillis(long delay);
 
+    /**
+     * Delay seconds between retries.
+     * @param delay
+     * @return Retry config builder
+     */
     Retry delaySeconds(long delay);
 
+    /**
+     * Maximum number of retries before give up.
+     * @param maxRetries
+     * @return Retry config builder
+     */
     Retry maxRetries(int maxRetries);
 
+    /**
+     * Can be called many times to set exceptions that must be retries on.
+     * @param ex exception class
+     * @return Retry config builder
+     */
     Retry onException(Class<? extends Exception> ex);
 
 
     /**
-     *
+     * Retry config builder.
      */
     class Config implements Retry {
 
-
-        private long delay = 1000;
-        private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-        private int maxRetries = 3;
+        /**
+         * @see Retry
+         */
+        private long delay = DEFAULT_DELAY_VALUE;
+        /**
+         * @see Retry
+         */
+        private TimeUnit timeUnit = DEFAULT_TIMEUNIT;
+        /**
+         * @see Retry
+         */
+        private int maxRetries = DEFAULT_RETRIES;
+        /**
+         * @see Retry
+         */
         private List<Class<? extends Exception>> exceptions = new ArrayList<>();
 
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public Retry delayMillis(long delay) {
-            Validations.checkArgument(delay > 0, "delay must be positive value");
-            this.delay = delay;
+        public Retry delayMillis(final long value) {
+            final String err = "delay must be positive value";
+            Validations.checkArgument(delay > 0, err);
+            this.delay = value;
             this.timeUnit = TimeUnit.MILLISECONDS;
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public Retry delaySeconds(long delay) {
-            Validations.checkArgument(delay > 0, "delay must be positive value");
-            this.delay = delay;
+        public Retry delaySeconds(final long value) {
+            final String err = "delay must be positive value";
+            Validations.checkArgument(delay > 0, err);
+            this.delay = value;
             this.timeUnit = TimeUnit.SECONDS;
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public Retry maxRetries(int maxRetries) {
-            Validations.checkArgument(maxRetries > 0, "maxRetries must be positive value");
-            this.maxRetries = maxRetries;
+        public Retry maxRetries(final int value) {
+            final String err = "maxRetries must be positive value";
+            Validations.checkArgument(maxRetries > 0, err);
+            this.maxRetries = value;
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public Retry onException(Class<? extends Exception> ex) {
-            exceptions.add(Objects.requireNonNull(ex, "exception class must not be null"));
+        public Retry onException(final Class<? extends Exception> ex) {
+            final String err = "exception class must not be null";
+            exceptions.add(Objects.requireNonNull(ex, err));
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Filter build() {
             return new RetryFilter(maxRetries, delay, timeUnit, exceptions);

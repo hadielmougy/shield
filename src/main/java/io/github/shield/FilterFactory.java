@@ -1,14 +1,11 @@
 package io.github.shield;
 
-/**
- *
- */
 public interface FilterFactory {
 
 
     /**
-     *
-     * @return
+     * Builds filter instance.
+     * @return filter
      */
     Filter build();
 }
