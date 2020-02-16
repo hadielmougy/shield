@@ -4,7 +4,8 @@ package io.github.shield;
 import io.github.shield.internal.InvocationContext;
 
 /**
- * Base build type that represents that invocation of a method from a client component to the target (this)
+ * Base build type that represents that invocation of a method from a client
+ * component to the target (this).
  * The method is represented as a supplier
  */
 public interface Filter extends Comparable<Filter> {
@@ -12,7 +13,7 @@ public interface Filter extends Comparable<Filter> {
 
 
     /**
-     * Factory method for rate limiting build
+     * Factory method for rate limiting build.
      * @return rate limiter build factory
      */
     static RateLimiter rateLimiter() {
@@ -20,7 +21,7 @@ public interface Filter extends Comparable<Filter> {
     }
 
     /**
-     * Factory method for throttling build
+     * Factory method for throttling build.
      * @return throttler build factory
      */
     static Throttler throttler() {
@@ -28,7 +29,7 @@ public interface Filter extends Comparable<Filter> {
     }
 
     /**
-     * Factory method for fire and forget build
+     * Factory method for fire and forget build.
      * @return direct build factory
      */
     static FireAndForget fireAndForget() {
@@ -37,7 +38,7 @@ public interface Filter extends Comparable<Filter> {
 
 
     /**
-     * Factory method for retry build
+     * Factory method for retry build.
      * @return direct build factory
      */
     static Retry retry() {
@@ -46,8 +47,9 @@ public interface Filter extends Comparable<Filter> {
 
 
     /**
-     * This should be implemented by the build type. It contains all build specific logic
-     * to acquire needed resources before the invocation, like limiting requests counting requests etc.
+     * This should be implemented by the build type. It contains all build
+     * specific logic to acquire needed resources before the invocation,
+     * like limiting requests counting requests etc.
      * @return returns the target components return value
      */
     boolean beforeInvocation();
@@ -55,34 +57,34 @@ public interface Filter extends Comparable<Filter> {
 
 
     /**
-     * This should be implemented by the build to close all acquired resources
+     * This should be implemented by the build to close all acquired resources.
      */
     void afterInvocation();
 
     /**
-     *
-     * @return
+     * order of this filter instance in the execution chain.
+     * @return the number that indicates rhe order
      */
     Integer getOrder();
 
 
     /**
-     *
-     * @param next
+     * Next filter of execution chain.
+     * @param next next filter
      */
     void setNext(Filter next);
 
 
     /**
-     *
-     * @return
+     * Invoke this filter.
+     * @return result of execution
      */
     Object invoke();
 
 
     /**
-     *
-     * @param context
+     * Add execution context to the filter instance.
+     * @param context execution context
      */
     void setContext(InvocationContext context);
 }

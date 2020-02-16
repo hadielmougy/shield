@@ -6,6 +6,5 @@ public interface ExecutorAware {
 
     void configureExecutor(final ExecutorProvider executorProvider);
 
-
     void setExecutorService(final ExecutorService executorService);
 }

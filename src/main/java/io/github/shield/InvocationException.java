@@ -3,7 +3,11 @@ package io.github.shield;
 public class InvocationException extends RuntimeException {
 
 
-    public InvocationException(Throwable th) {
-        super(th);
+    /**
+     * Constructor.
+     * @param cause cause throwable
+     */
+    public InvocationException(final Throwable cause) {
+        super(cause);
     }
 }
