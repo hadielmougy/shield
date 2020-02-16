@@ -2,7 +2,6 @@ package io.github.shield;
 
 import io.github.shield.internal.RetriesExhaustedException;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -21,9 +20,8 @@ public class RetryTest {
 
         final Component comp = Shield.forObject(component)
                 .withFilter(Filter.retry()
-                        .timeUnit(TimeUnit.MILLISECONDS)
-                        .withDelay(500)
-                        .withMaxRetries(3)
+                        .delayMillis(500)
+                        .maxRetries(3)
                         .build())
                 .as(Component.class);
 
@@ -42,9 +40,8 @@ public class RetryTest {
 
         final Component comp = Shield.forObject(component)
                 .withFilter(Filter.retry()
-                        .timeUnit(TimeUnit.MILLISECONDS)
-                        .withDelay(500)
-                        .withMaxRetries(3)
+                        .delayMillis(500)
+                        .maxRetries(3)
                         .build())
                 .as(Component.class);
 
@@ -58,9 +55,8 @@ public class RetryTest {
         final Component component = Components.throwingComponentWithCounter(new IllegalArgumentException(), counter, 2);
         final Component comp = Shield.forObject(component)
                 .withFilter(Filter.retry()
-                        .timeUnit(TimeUnit.MILLISECONDS)
-                        .withDelay(500)
-                        .withMaxRetries(3)
+                        .delayMillis(500)
+                        .maxRetries(3)
                         .onException(IllegalArgumentException.class)
                         .build())
                 .as(Component.class);
@@ -79,9 +75,8 @@ public class RetryTest {
 
         final Component comp = Shield.forObject(component)
                 .withFilter(Filter.retry()
-                        .timeUnit(TimeUnit.MILLISECONDS)
-                        .withDelay(500)
-                        .withMaxRetries(3)
+                        .delayMillis(500)
+                        .maxRetries(3)
                         .onException(IllegalArgumentException.class)
                         .build())
                 .as(Component.class);

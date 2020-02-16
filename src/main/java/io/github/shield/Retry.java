@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
  */
 public interface Retry extends FilterFactory {
 
-    Retry withDelay(long delay);
+    Retry delayMillis(long delay);
 
-    Retry withMaxRetries(int maxRetries);
+    Retry delaySeconds(long delay);
 
-    Retry timeUnit(TimeUnit timeUnit);
+    Retry maxRetries(int maxRetries);
 
     Retry onException(Class<? extends Exception> ex);
 
@@ -33,20 +33,22 @@ public interface Retry extends FilterFactory {
         private List<Class<? extends Exception>> exceptions = new ArrayList<>();
 
         @Override
-        public Retry withDelay(long delay) {
+        public Retry delayMillis(long delay) {
             this.delay = delay;
+            this.timeUnit = TimeUnit.MILLISECONDS;
             return this;
         }
 
         @Override
-        public Retry withMaxRetries(int maxRetries) {
+        public Retry delaySeconds(long delay) {
+            this.delay = delay;
+            this.timeUnit = TimeUnit.SECONDS;
+            return this;
+        }
+
+        @Override
+        public Retry maxRetries(int maxRetries) {
             this.maxRetries = maxRetries;
-            return this;
-        }
-
-        @Override
-        public Retry timeUnit(TimeUnit timeUnit) {
-            this.timeUnit = timeUnit;
             return this;
         }
 
