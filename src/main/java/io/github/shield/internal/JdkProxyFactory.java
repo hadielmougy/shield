@@ -25,7 +25,7 @@ public final class JdkProxyFactory implements ProxyFactory {
      * @param obj
      */
     public JdkProxyFactory(final Object obj) {
-        this(obj, new ExecutorConfigurator());
+        this(obj, new ExecutorConfigurer());
     }
 
 

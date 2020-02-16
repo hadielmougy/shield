@@ -5,7 +5,7 @@ import io.github.shield.ExecutorProvider;
 import java.util.concurrent.Executors;
 
 
-public class ExecutorConfigurator implements ExecutorProvider {
+public class ExecutorConfigurer implements ExecutorProvider {
 
 
     @Override
