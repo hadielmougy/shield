@@ -31,10 +31,10 @@ public final class Shield {
 
     /**
      *
-     * @param provider
+     * @param p
      */
-    public static void proxyFactoryProvider(final ProxyFactoryProvider provider) {
-        Shield.proxyFactoryProvider = provider;
+    public static void proxyFactoryProvider(final ProxyFactoryProvider p) {
+        Shield.proxyFactoryProvider = p;
     }
 
 

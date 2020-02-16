@@ -10,9 +10,14 @@ import io.github.shield.internal.Validations;
 public interface RateLimiter extends FilterFactory {
 
     /**
-     *
-     * @param rate
-     * @return
+     * Default rate value per second.
+     */
+    int DEFUALT_RATE = 10;
+
+    /**
+     * Set rate per second value.
+     * @param rate positive value for rate
+     * @return rate limiter config builder
      */
     RateLimiter rate(int rate);
 
@@ -22,15 +27,24 @@ public interface RateLimiter extends FilterFactory {
      */
     class Config implements RateLimiter {
 
-        private int rate = 10;
+        /**
+         * @see RateLimiter
+         */
+        private int rate = DEFUALT_RATE;
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public RateLimiter rate(int rate) {
+        public RateLimiter rate(final int r) {
             Validations.checkArgument(rate > 0, "rate must be positive");
-            this.rate = rate;
+            this.rate = r;
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Filter build() {
             return new RateLimiterFilter(rate);
