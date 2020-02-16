@@ -22,17 +22,17 @@ public interface RateLimiter extends FilterFactory {
      */
     class Config implements RateLimiter {
 
-        int rate;
+        private int rate = 10;
 
         @Override
         public RateLimiter rate(int rate) {
+            Validations.checkArgument(rate > 0, "rate must be positive");
             this.rate = rate;
             return this;
         }
 
         @Override
         public Filter build() {
-            Validations.checkArgument( rate > 0, "rate must be positive");
             return new RateLimiterFilter(rate);
         }
     }
