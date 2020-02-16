@@ -15,3 +15,12 @@ Fault tolerance library for java
 
     comp.doSomething();
 ```
+
+
+## Supported Filters
+
+* Throttler
+* Rate limit
+* Timeout
+* Fire and forget
+* Retry
