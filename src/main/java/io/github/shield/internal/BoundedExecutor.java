@@ -1,4 +1,4 @@
 package io.github.shield.internal;
 
-public class BoundedExxecutor {
+public class BoundedExecutor {
 }
