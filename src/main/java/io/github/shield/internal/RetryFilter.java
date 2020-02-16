@@ -41,6 +41,8 @@ public class RetryFilter extends AbstractBaseFilter {
         Object result = null;
         int counter = 1;
         Throwable th = null;
+        TimeoutPolicy timeout
+                = new FixedDelayTimeoutPolicy(delay, timeunit);
         while (counter <= retries) {
             th = null;
             try {
@@ -54,7 +56,7 @@ public class RetryFilter extends AbstractBaseFilter {
             }
             counter++;
             try {
-                timeunit.sleep(delay);
+                timeout.sleep();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 return null;
