@@ -16,22 +16,14 @@ class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
 
 
     /**
-     * This called before the object being used to provide the executor
+     * This called before the object being used to get the executor
      * implementation based on implementation type.
      * @param executorProvider
      */
     public void configureExecutor(final ExecutorProvider executorProvider) {
-        executorProvider.provide(this);
+        executorService = executorProvider.get(this);
     }
 
-
-    /**
-     *
-     * @param exe
-     */
-    public void setExecutorService(final ExecutorService exe) {
-        this.executorService = exe;
-    }
 
     /**
      * Called before invocation.

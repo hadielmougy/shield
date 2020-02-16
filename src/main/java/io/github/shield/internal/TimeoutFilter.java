@@ -76,16 +76,8 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     @Override
     public void configureExecutor(final ExecutorProvider executorProvider) {
-        executorProvider.provide(this);
+        this.exe = executorProvider.get(this);
     }
 
-    /**
-     * {@inheritDoc}
-     * @param executor
-     */
-    @Override
-    public void setExecutorService(final ExecutorService executor) {
-        this.exe = executor;
-    }
 
 }
