@@ -1,5 +1,7 @@
 package io.github.shield;
 
+import io.github.shield.internal.BackOffTimeoutPolicy;
+import io.github.shield.internal.FixedDelayTimeoutPolicy;
 import io.github.shield.internal.RetryFilter;
 import io.github.shield.internal.Validations;
 
@@ -31,6 +33,11 @@ public interface Retry extends FilterFactory {
     TimeUnit DEFAULT_TIMEUNIT = TimeUnit.MILLISECONDS;
 
     /**
+     * Default timeout policy
+     */
+    TimeoutPolicy DEFAULT_TIMEOUT_POLICY = new FixedDelayTimeoutPolicy(DEFAULT_DELAY_VALUE, DEFAULT_TIMEUNIT);
+
+    /**
      * Delay milliseconds between retries.
      * @param delay value of milliseconds
      * @return Retry config builder
@@ -50,6 +57,18 @@ public interface Retry extends FilterFactory {
      * @return Retry config builder
      */
     Retry maxRetries(int maxRetries);
+
+    /**
+     * Fixed delay timeout policy.
+     * @return Retry config builder
+     */
+    Retry fixed();
+
+    /**
+     * BackOff delay timeout policy.
+     * @return Retry config builder
+     */
+    Retry backOff();
 
     /**
      * Can be called many times to set exceptions that must be retries on.
@@ -81,6 +100,11 @@ public interface Retry extends FilterFactory {
          */
         private List<Class<? extends Exception>> exceptions = new ArrayList<>();
 
+        /**
+         * @see Retry
+         */
+        private TimeoutPolicy timeoutPolicy = DEFAULT_TIMEOUT_POLICY;
+
 
         /**
          * {@inheritDoc}
@@ -91,6 +115,8 @@ public interface Retry extends FilterFactory {
             Validations.checkArgument(delay > 0, err);
             this.delay = value;
             this.timeUnit = TimeUnit.MILLISECONDS;
+            this.timeoutPolicy.setDelay(value);
+            this.timeoutPolicy.setTimeunit(this.timeUnit);
             return this;
         }
 
@@ -103,6 +129,8 @@ public interface Retry extends FilterFactory {
             Validations.checkArgument(delay > 0, err);
             this.delay = value;
             this.timeUnit = TimeUnit.SECONDS;
+            this.timeoutPolicy.setDelay(value);
+            this.timeoutPolicy.setTimeunit(this.timeUnit);
             return this;
         }
 
@@ -121,6 +149,24 @@ public interface Retry extends FilterFactory {
          * {@inheritDoc}
          */
         @Override
+        public Retry fixed() {
+            timeoutPolicy = new FixedDelayTimeoutPolicy(delay, timeUnit);
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Retry backOff() {
+            timeoutPolicy = new BackOffTimeoutPolicy(delay, timeUnit);
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Retry onException(final Class<? extends Exception> ex) {
             final String err = "exception class must not be null";
             exceptions.add(Objects.requireNonNull(ex, err));
@@ -132,7 +178,7 @@ public interface Retry extends FilterFactory {
          */
         @Override
         public Filter build() {
-            return new RetryFilter(maxRetries, delay, timeUnit, exceptions);
+            return new RetryFilter(maxRetries, delay, timeUnit, exceptions, timeoutPolicy);
         }
     }
 }

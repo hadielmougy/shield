@@ -1,5 +1,7 @@
 package io.github.shield.internal;
 
+import io.github.shield.TimeoutPolicy;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -9,14 +11,16 @@ public class RetryFilter extends AbstractBaseFilter {
     private final TimeUnit timeunit;
     private final int retries;
     private final List<Class<? extends Exception>> exceptions;
+    private final TimeoutPolicy timeoutPolicy;
     private boolean retryOnAll;
 
 
-    public RetryFilter(int retries, long delay, TimeUnit timeunit, List<Class<? extends Exception>> exceptions) {
+    public RetryFilter(int retries, long delay, TimeUnit timeunit, List<Class<? extends Exception>> exceptions, TimeoutPolicy timeoutPolicy) {
         this.retries = retries;
         this.delay = delay;
         this.timeunit = timeunit;
         this.exceptions = exceptions;
+        this.timeoutPolicy = timeoutPolicy;
 
         if (exceptions.isEmpty()) {
             retryOnAll = true;
@@ -42,7 +46,7 @@ public class RetryFilter extends AbstractBaseFilter {
         int counter = 1;
         Throwable th = null;
         TimeoutPolicy timeout
-                = new FixedDelayTimeoutPolicy(delay, timeunit);
+                = timeoutPolicy.clone();
         while (counter <= retries) {
             th = null;
             try {
@@ -71,7 +75,7 @@ public class RetryFilter extends AbstractBaseFilter {
 
 
 
-    private boolean shouldRetry(Throwable th) {
+    private boolean shouldRetry(final Throwable th) {
         if (retryOnAll) {
             return true;
         }
