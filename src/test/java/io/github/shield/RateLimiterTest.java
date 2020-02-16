@@ -27,7 +27,7 @@ public class RateLimiterTest {
 
         final Component comp = Shield.forObject(component)
                 .filter(Filter.rateLimiter()
-                        .withRate(1)
+                        .rate(1)
                         .build())
                 .as(Component.class);
 
@@ -49,7 +49,7 @@ public class RateLimiterTest {
 
         final Component comp = Shield.forObject(component)
                 .filter(Filter.rateLimiter()
-                        .withRate(2)
+                        .rate(2)
                         .build())
                 .as(Component.class);
 

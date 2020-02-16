@@ -15,7 +15,7 @@ public interface Throttler extends FilterFactory {
      * @param max
      * @return
      */
-    Throttler ofMax(int max);
+    Throttler requests(int max);
 
 
     /**
@@ -23,7 +23,7 @@ public interface Throttler extends FilterFactory {
      * @param maxWait
      * @return
      */
-    Throttler ofMaxWaitMillis(long maxWait);
+    Throttler maxWaitMillis(long maxWait);
 
 
     /**
@@ -35,13 +35,13 @@ public interface Throttler extends FilterFactory {
         long wait;
 
         @Override
-        public Throttler ofMax(int max) {
+        public Throttler requests(int max) {
             this.max = max;
             return this;
         }
 
         @Override
-        public Throttler ofMaxWaitMillis(long maxWait) {
+        public Throttler maxWaitMillis(long maxWait) {
             this.wait = maxWait;
             return this;
         }

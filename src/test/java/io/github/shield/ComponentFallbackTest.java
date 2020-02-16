@@ -27,8 +27,8 @@ public class ComponentFallbackTest {
 
         final Component comp = Shield.forObject(targetObj)
                 .filter(Filter.throttler()
-                        .ofMax(1)
-                        .ofMaxWaitMillis(500)
+                        .requests(1)
+                        .maxWaitMillis(500)
                         .build())
                 .as(Component.class);
 

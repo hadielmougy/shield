@@ -14,7 +14,7 @@ public interface RateLimiter extends FilterFactory {
      * @param rate
      * @return
      */
-    RateLimiter withRate(int rate);
+    RateLimiter rate(int rate);
 
 
     /**
@@ -25,7 +25,7 @@ public interface RateLimiter extends FilterFactory {
         int rate;
 
         @Override
-        public RateLimiter withRate(int rate) {
+        public RateLimiter rate(int rate) {
             this.rate = rate;
             return this;
         }
