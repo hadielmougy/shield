@@ -1,8 +1,8 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
-import io.github.shield.InvocationException;
 import io.github.shield.InvocationCancelledException;
+import io.github.shield.InvocationException;
 import io.github.shield.util.ClassUtil;
 
 import java.lang.reflect.Method;

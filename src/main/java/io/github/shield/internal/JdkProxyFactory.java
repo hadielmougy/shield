@@ -1,9 +1,9 @@
 package io.github.shield.internal;
 
+import io.github.shield.ExecutorAware;
 import io.github.shield.ExecutorProvider;
 import io.github.shield.Filter;
 import io.github.shield.ProxyFactory;
-import io.github.shield.ExecutorAware;
 
 import java.util.List;
 

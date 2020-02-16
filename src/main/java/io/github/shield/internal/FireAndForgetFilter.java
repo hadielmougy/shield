@@ -1,7 +1,7 @@
 package io.github.shield.internal;
 
-import io.github.shield.ExecutorProvider;
 import io.github.shield.ExecutorAware;
+import io.github.shield.ExecutorProvider;
 
 import java.util.concurrent.ExecutorService;
 
@@ -48,7 +48,12 @@ class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
     @Override
     public Object invoke() {
         ensureExecutor();
-        executorService.submit(() -> invokeNext());
+        InvocationContext context = getContext();
+        executorService.submit(() -> {
+            // copy context to the new thread
+            setContext(context);
+            return invokeNext();
+        });
         return null;
     }
 
@@ -58,8 +63,6 @@ class FireAndForgetFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     @Override
     public void afterInvocation() {
-        ensureExecutor();
-        executorService.shutdown();
     }
 
 

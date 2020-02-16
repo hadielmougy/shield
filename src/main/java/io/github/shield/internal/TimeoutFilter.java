@@ -1,12 +1,10 @@
 package io.github.shield.internal;
 
 
-import io.github.shield.ExecutorProvider;
 import io.github.shield.ExecutorAware;
+import io.github.shield.ExecutorProvider;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
 
@@ -15,16 +13,10 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
     private final long maxWait;
     /**
      */
-    private final TimeUnit timeUnit;
+    private final TimeUnit timeunit;
     /**
      */
-    private ScheduledExecutorService exe;
-    /**
-     */
-    private Thread currentThread;
-    /**
-     */
-    private volatile boolean running = false;
+    private ExecutorService exe;
 
     /**
      * {@inheritDoc}.
@@ -33,7 +25,7 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     public TimeoutFilter(final long wait, final TimeUnit unit) {
         this.maxWait = wait;
-        this.timeUnit = unit;
+        this.timeunit = unit;
     }
 
     /**
@@ -42,9 +34,6 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     @Override
     public boolean beforeInvocation() {
-        this.currentThread = Thread.currentThread();
-        this.running = true;
-        exe.scheduleWithFixedDelay(new InterruptionRunnable(), maxWait, maxWait, timeUnit);
         return true;
     }
 
@@ -54,7 +43,24 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     @Override
     public Object invoke() {
-        return invokeNext();
+        InvocationContext context = getContext();
+        Future<Object> future = exe.submit(() -> {
+            // copy context to the new thread
+            setContext(context);
+            return invokeNext();
+        });
+        try {
+            return future.get(maxWait, timeunit);
+        } catch (TimeoutException ex) {
+            // handle the timeout
+        } catch (InterruptedException e) {
+            // handle the interrupts
+        } catch (ExecutionException e) {
+            // handle other exceptions
+        } finally {
+            future.cancel(true);
+        }
+        return null;
     }
 
     /**
@@ -62,8 +68,6 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     @Override
     public void afterInvocation() {
-        running = false;
-        exe.shutdownNow();
     }
 
     /**
@@ -81,17 +85,7 @@ public class TimeoutFilter extends AbstractBaseFilter implements ExecutorAware {
      */
     @Override
     public void setExecutorService(final ExecutorService executor) {
-        this.exe = (ScheduledExecutorService) executor;
-    }
-
-    private class InterruptionRunnable implements Runnable {
-        @Override
-        public void run() {
-            if (running) {
-                currentThread.interrupt();
-                exe.shutdownNow();
-            }
-        }
+        this.exe = executor;
     }
 
 }
