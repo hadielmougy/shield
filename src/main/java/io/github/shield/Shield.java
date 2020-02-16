@@ -6,6 +6,7 @@ import io.github.shield.internal.ProxyFactory;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Shield {
 
@@ -14,7 +15,7 @@ public class Shield {
     private final Object targetObject;
 
     private Shield(Object targetObject) {
-        this.targetObject = targetObject;
+        this.targetObject = Objects.requireNonNull(targetObject);
         this.filters = new LinkedList<>();
     }
 
