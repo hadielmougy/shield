@@ -2,7 +2,7 @@ package io.github.shield.internal;
 
 import io.github.shield.Filter;
 import io.github.shield.InvocationException;
-import io.github.shield.InvocationNotPermittedException;
+import io.github.shield.InvocationCancelledException;
 import io.github.shield.util.ClassUtil;
 
 import java.lang.reflect.Method;
@@ -50,13 +50,13 @@ public final class InvocationContext {
         this.targetMethod = targetMethod;
         this.args = args;
 
-        initInvocation();
+        initInvocationChain();
     }
 
     /**
      *
      */
-    private void initInvocation() {
+    private void initInvocationChain() {
 
         Deque<Filter> filtersDeque = new LinkedList<>();
 
@@ -91,7 +91,7 @@ public final class InvocationContext {
         return () -> {
             try {
                 return targetMethod.invoke(targetObject, args);
-            } catch (InvocationNotPermittedException th) {
+            } catch (InvocationCancelledException th) {
                 throw th;
             } catch (Throwable th) {
                 throw new InvocationException(th);

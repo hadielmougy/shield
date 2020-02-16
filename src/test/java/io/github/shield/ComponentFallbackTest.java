@@ -18,7 +18,7 @@ public class ComponentFallbackTest {
         executor = Executors.newFixedThreadPool(4);
     }
 
-    @Test(expected = InvocationNotPermittedException.class)
+    @Test(expected = InvocationCancelledException.class)
     public void testThrottledAndFallback() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
 

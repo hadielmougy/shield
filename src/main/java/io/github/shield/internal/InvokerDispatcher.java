@@ -1,9 +1,10 @@
 package io.github.shield.internal;
 
-import io.github.shield.InvocationNotPermittedException;
+import io.github.shield.InvocationCancelledException;
 import io.github.shield.Invoker;
+import net.jcip.annotations.ThreadSafe;
 
-
+@ThreadSafe
 public class InvokerDispatcher implements Invoker {
 
     private final TargetMethodInvoker targetMethodInvoker;
@@ -22,7 +23,7 @@ public class InvokerDispatcher implements Invoker {
         Class targetClass = context.getTargetClass();
         try {
             return targetMethodInvoker.invoke(context);
-        } catch (InvocationNotPermittedException ex) {
+        } catch (InvocationCancelledException ex) {
             if (isNotThrownFromTarget(ex, targetClass)) {
                 return fallbackMethodInvoker.invoke(context);
             } else {
@@ -31,7 +32,7 @@ public class InvokerDispatcher implements Invoker {
         }
     }
 
-    private boolean isNotThrownFromTarget(InvocationNotPermittedException ex, Class targetClass) {
+    private boolean isNotThrownFromTarget(InvocationCancelledException ex, Class targetClass) {
         return !ex.getThrowingClass().equals(targetClass);
     }
 }

@@ -6,16 +6,16 @@ import java.util.concurrent.TimeUnit;
 public class RetryFilter extends AbstractBaseFilter {
 
     private final long delay;
-    private final TimeUnit timeUnit;
+    private final TimeUnit timeunit;
     private final int retries;
     private final List<Class<? extends Exception>> exceptions;
     private boolean retryOnAll;
 
 
-    public RetryFilter(int retries, long delay, TimeUnit timeUnit, List<Class<? extends Exception>> exceptions) {
+    public RetryFilter(int retries, long delay, TimeUnit timeunit, List<Class<? extends Exception>> exceptions) {
         this.retries = retries;
         this.delay = delay;
-        this.timeUnit = timeUnit;
+        this.timeunit = timeunit;
         this.exceptions = exceptions;
 
         if (exceptions.isEmpty()) {
@@ -54,7 +54,7 @@ public class RetryFilter extends AbstractBaseFilter {
             }
             counter++;
             try {
-                timeUnit.sleep(delay);
+                timeunit.sleep(delay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 return null;

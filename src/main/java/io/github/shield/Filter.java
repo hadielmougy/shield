@@ -114,7 +114,7 @@ public interface Filter extends Comparable<Filter> {
             result = invoke();
             afterInvocation();
         } else {
-            throw new InvocationNotPermittedException(getContext().getTargetClass());
+            throw new InvocationCancelledException(getContext().getTargetClass());
         }
         return result;
     }

@@ -9,11 +9,11 @@ public class ExecutorConfigurator implements ExecutorProvider {
 
     @Override
     public void provide(final FireAndForgetFilter fireAndForgetFilter) {
-        fireAndForgetFilter.setExecutorService(Executors.newSingleThreadExecutor());
+        fireAndForgetFilter.setExecutorService(Executors.newCachedThreadPool());
     }
 
     @Override
     public void provide(final TimeoutFilter timeoutFilter) {
-        timeoutFilter.setExecutorService(Executors.newSingleThreadScheduledExecutor());
+        timeoutFilter.setExecutorService(Executors.newScheduledThreadPool(4));
     }
 }
