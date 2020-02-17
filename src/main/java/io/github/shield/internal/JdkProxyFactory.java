@@ -14,29 +14,16 @@ public final class JdkProxyFactory implements ProxyFactory {
     /**
      */
     private final Object targetObjecct;
-    /**
-     *
-     */
-    private final ExecutorProvider exe;
 
     /**
      * JDK proxy factory.
      * @param obj
      */
     public JdkProxyFactory(final Object obj) {
-        this(obj, new ExecutorConfigurer());
-    }
-
-
-    /**
-     * JDK proxy factory.
-     * @param obj
-     * @param e
-     */
-    public JdkProxyFactory(final Object obj, final ExecutorProvider e) {
         this.targetObjecct = obj;
-        this.exe = e;
     }
+
+
 
 
     /**
@@ -50,7 +37,7 @@ public final class JdkProxyFactory implements ProxyFactory {
         return (T) java.lang.reflect.Proxy.newProxyInstance(
                 targetObjecct.getClass().getClassLoader(),
                 new Class[]{type},
-                new InvocationInterceptor(targetObjecct, filters, exe));
+                new InvocationInterceptor(targetObjecct, filters));
     }
 
 

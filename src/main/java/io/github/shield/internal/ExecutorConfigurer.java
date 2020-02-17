@@ -9,6 +9,12 @@ import java.util.concurrent.Executors;
 public class ExecutorConfigurer implements ExecutorProvider {
 
 
+    public static final ExecutorConfigurer INSTANCE = new ExecutorConfigurer();
+
+    private ExecutorConfigurer() {
+    }
+
+
 
     @Override
     public ExecutorService get(final FireAndForgetFilter fireAndForgetFilter) {

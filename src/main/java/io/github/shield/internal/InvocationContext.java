@@ -34,7 +34,6 @@ public final class InvocationContext {
      *
      */
     private final Object[] args;
-    private final ExecutorProvider executorProvider;
 
     /**
      *
@@ -46,12 +45,11 @@ public final class InvocationContext {
 
 
 
-    public InvocationContext(List<Filter> filters, Object o, Method m, Object[] args, ExecutorProvider exe) {
+    public InvocationContext(List<Filter> filters, Object o, Method m, Object[] args) {
         this.filters = filters;
         this.targetObject = o;
         this.targetMethod = m;
         this.args = args;
-        this.executorProvider = exe;
 
         initInvocationChain();
     }
@@ -66,7 +64,6 @@ public final class InvocationContext {
         for (Filter filter : filters) {
             filtersDeque.addFirst(filter);
             filter.setContext(this);
-            filter.configureExecutor(executorProvider);
         }
 
         Filter curr = filtersDeque.pollFirst();

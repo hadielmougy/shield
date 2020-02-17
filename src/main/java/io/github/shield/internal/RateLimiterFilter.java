@@ -13,10 +13,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class RateLimiterFilter extends AbstractLimiterBase {
 
 
-    /**
-     */
-    private ScheduledExecutorService scheduler;
-
 
     /**
      *
@@ -38,8 +34,8 @@ public class RateLimiterFilter extends AbstractLimiterBase {
 
     @Override
     public void configureExecutor(final ExecutorProvider provider) {
-        this.scheduler = (ScheduledExecutorService) provider.get(this);
-        scheduler.scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
+        this.executorService = provider.get(this);
+        ((ScheduledExecutorService) executorService).scheduleAtFixedRate(this::resetPermits, 1, 1, SECONDS);
     }
 
 }

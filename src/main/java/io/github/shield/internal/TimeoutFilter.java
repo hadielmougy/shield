@@ -4,7 +4,6 @@ package io.github.shield.internal;
 import io.github.shield.ExecutorProvider;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -17,9 +16,6 @@ public class TimeoutFilter extends AbstractBaseFilter {
     /**
      */
     private final TimeUnit timeunit;
-    /**
-     */
-    private ExecutorService exe;
 
     /**
      * {@inheritDoc}.
@@ -47,7 +43,7 @@ public class TimeoutFilter extends AbstractBaseFilter {
     @Override
     public Object invoke() {
         InvocationContext context = getContext();
-        Future<Object> future = exe.submit(() -> {
+        Future<Object> future = executorService.submit(() -> {
             // copy context to the new thread
             setContext(context);
             return invokeNext();
@@ -79,7 +75,7 @@ public class TimeoutFilter extends AbstractBaseFilter {
      */
     @Override
     public void configureExecutor(final ExecutorProvider executorProvider) {
-        this.exe = executorProvider.get(this);
+        this.executorService = executorProvider.get(this);
     }
 
 
