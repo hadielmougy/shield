@@ -46,10 +46,10 @@ public final class InvocationContext {
 
 
 
-    public InvocationContext(List<Filter> filters, Object targetObject, Method targetMethod, Object[] args, ExecutorProvider exe) {
+    public InvocationContext(List<Filter> filters, Object o, Method m, Object[] args, ExecutorProvider exe) {
         this.filters = filters;
-        this.targetObject = targetObject;
-        this.targetMethod = targetMethod;
+        this.targetObject = o;
+        this.targetMethod = m;
         this.args = args;
         this.executorProvider = exe;
 
@@ -70,7 +70,7 @@ public final class InvocationContext {
         }
 
         Filter curr = filtersDeque.pollFirst();
-        curr.setNext(new DirectInvocationFilter(this.targetObjectInvocation()));
+        curr.setNext(new DirectInvocationFilter(targetObjectInvocation()));
 
         while (true) {
             Filter next = filtersDeque.pollFirst();
