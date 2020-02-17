@@ -1,24 +1,14 @@
 package io.github.shield.internal;
 
-import io.github.shield.ExecutorProvider;
 import io.github.shield.Filter;
-import io.github.shield.InvocationCancelledException;
 import io.github.shield.InvocationException;
 import io.github.shield.util.ClassUtil;
 
 import java.lang.reflect.Method;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Supplier;
 
 public final class InvocationContext {
 
 
-    /**
-     *
-     */
-    private final List<Filter> filters;
 
     /**
      *
@@ -45,60 +35,13 @@ public final class InvocationContext {
 
 
 
-    public InvocationContext(List<Filter> filters, Object o, Method m, Object[] args) {
-        this.filters = filters;
+    public InvocationContext(Filter filter, Object o, Method m, Object[] args) {
+        this.firstFilter = filter;
         this.targetObject = o;
         this.targetMethod = m;
         this.args = args;
-
-        initInvocationChain();
     }
 
-    /**
-     *
-     */
-    private void initInvocationChain() {
-
-        Deque<Filter> filtersDeque = new LinkedList<>();
-
-        for (Filter filter : filters) {
-            filtersDeque.addFirst(filter);
-            filter.setContext(this);
-        }
-
-        Filter curr = filtersDeque.pollFirst();
-        curr.setNext(new DirectInvocationFilter(targetObjectInvocation()));
-
-        while (true) {
-            Filter next = filtersDeque.pollFirst();
-            if (next == null) {
-                break;
-            } else {
-                next.setNext(curr);
-                curr = next;
-            }
-            break;
-        }
-
-        this.firstFilter = curr;
-    }
-
-
-    /**
-     *
-     * @return
-     */
-    private Supplier targetObjectInvocation() {
-        return () -> {
-            try {
-                return targetMethod.invoke(targetObject, args);
-            } catch (InvocationCancelledException th) {
-                throw th;
-            } catch (Throwable th) {
-                throw new InvocationException(th);
-            }
-        };
-    }
 
 
     /**
