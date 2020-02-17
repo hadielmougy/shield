@@ -2,6 +2,8 @@ package io.github.shield.internal;
 
 import io.github.shield.Filter;
 
+import java.util.concurrent.ExecutorService;
+
 
 public abstract class AbstractBaseFilter implements Filter {
 
@@ -11,9 +13,20 @@ public abstract class AbstractBaseFilter implements Filter {
     private Filter next;
 
     /**
+     */
+    protected ExecutorService executorService;
+
+
+
+    /**
      * Context holder.
      */
     private ThreadLocal<InvocationContext> context = new ThreadLocal<>();
+
+
+    public AbstractBaseFilter() {
+        configureExecutor(ExecutorConfigurer.INSTANCE);
+    }
 
 
     /**
@@ -72,4 +85,11 @@ public abstract class AbstractBaseFilter implements Filter {
     public Object invoke() {
         return invokeNext();
     }
+
+
+    @VisibleForTest
+    private void setExecutorService(final ExecutorService exe) {
+        this.executorService = exe;
+    }
+
 }
