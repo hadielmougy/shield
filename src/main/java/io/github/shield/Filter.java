@@ -3,6 +3,8 @@ package io.github.shield;
 
 import io.github.shield.internal.InvocationContext;
 
+import java.util.function.Supplier;
+
 /**
  * Base build type that represents that invocation of a method from a client
  * component to the target (this).
@@ -87,8 +89,9 @@ public interface Filter extends Comparable<Filter> {
     /**
      * Invoke this filter.
      * @return result of execution
+     * @param supplier
      */
-    Object invoke();
+    Object invoke(Supplier supplier);
 
 
     /**
@@ -107,11 +110,12 @@ public interface Filter extends Comparable<Filter> {
     /**
      * Invocation Template.
      * @return invocation result
+     * @param supplier
      */
-    default Object doInvoke() {
+    default Object doInvoke(Supplier supplier) {
         Object result = null;
         if (beforeInvocation()) {
-            result = invoke();
+            result = invoke(supplier);
             afterInvocation();
         } else {
             throw new InvocationCancelledException(getContext().getTargetClass());

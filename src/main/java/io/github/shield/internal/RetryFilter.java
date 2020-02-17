@@ -4,6 +4,7 @@ import io.github.shield.TimeoutPolicy;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class RetryFilter extends AbstractBaseFilter {
 
@@ -41,7 +42,7 @@ public class RetryFilter extends AbstractBaseFilter {
 
 
     @Override
-    public Object invoke() {
+    public Object invoke(Supplier supplier) {
         Object result = null;
         int counter = 1;
         Throwable th = null;
@@ -50,7 +51,7 @@ public class RetryFilter extends AbstractBaseFilter {
         while (counter <= retries) {
             th = null;
             try {
-                result = invokeNext();
+                result = invokeNext(supplier);
                 break;
             } catch (Throwable th_) {
                 th = th_;

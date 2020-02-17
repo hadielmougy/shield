@@ -1,10 +1,12 @@
 package io.github.shield.internal;
 
 import io.github.shield.Filter;
+import io.github.shield.InvocationCancelledException;
 import io.github.shield.InvocationException;
 import io.github.shield.util.ClassUtil;
 
 import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 public final class InvocationContext {
 
@@ -24,6 +26,7 @@ public final class InvocationContext {
      *
      */
     private final Object[] args;
+    private final Supplier supplier;
 
     /**
      *
@@ -40,6 +43,21 @@ public final class InvocationContext {
         this.targetObject = o;
         this.targetMethod = m;
         this.args = args;
+        this.supplier = targetObjectInvocation();
+    }
+
+
+
+    private Supplier targetObjectInvocation() {
+        return () -> {
+            try {
+                return targetMethod.invoke(targetObject, args);
+            } catch (InvocationCancelledException th) {
+                throw th;
+            } catch (Throwable th) {
+                throw new InvocationException(th);
+            }
+        };
     }
 
 
@@ -77,7 +95,7 @@ public final class InvocationContext {
      * @return
      */
     public Object execute() {
-        return firstFilter.doInvoke();
+        return firstFilter.doInvoke(supplier);
     }
 
 

@@ -3,6 +3,7 @@ package io.github.shield.internal;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public abstract class AbstractLimiterBase extends AbstractBaseFilter {
 
@@ -55,8 +56,8 @@ public abstract class AbstractLimiterBase extends AbstractBaseFilter {
 
 
     @Override
-    public Object invoke() {
-        return invokeNext();
+    public Object invoke(Supplier supplier) {
+        return invokeNext(supplier);
     }
 
 

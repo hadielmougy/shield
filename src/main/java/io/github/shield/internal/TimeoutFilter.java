@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 public class TimeoutFilter extends AbstractBaseFilter {
 
@@ -39,14 +40,15 @@ public class TimeoutFilter extends AbstractBaseFilter {
     /**
      * {@inheritDoc}
      * @return
+     * @param supplier
      */
     @Override
-    public Object invoke() {
+    public Object invoke(Supplier supplier) {
         InvocationContext context = getContext();
         Future<Object> future = executorService.submit(() -> {
             // copy context to the new thread
             setContext(context);
-            return invokeNext();
+            return invokeNext(supplier);
         });
         try {
             return future.get(maxWait, timeunit);

@@ -2,6 +2,8 @@ package io.github.shield.internal;
 
 import io.github.shield.ExecutorProvider;
 
+import java.util.function.Supplier;
+
 
 public
 class FireAndForgetFilter extends AbstractBaseFilter {
@@ -29,15 +31,16 @@ class FireAndForgetFilter extends AbstractBaseFilter {
 
     /**
      * Execute invocation chain.
+     * @param supplier
      */
     @Override
-    public Object invoke() {
+    public Object invoke(Supplier supplier) {
         ensureExecutor();
         InvocationContext context = getContext();
         executorService.submit(() -> {
             // copy context to the new thread
             setContext(context);
-            return invokeNext();
+            return invokeNext(supplier);
         });
         return null;
     }

@@ -3,6 +3,7 @@ package io.github.shield.internal;
 import io.github.shield.Filter;
 
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 
 public abstract class AbstractBaseFilter implements Filter {
@@ -56,8 +57,11 @@ public abstract class AbstractBaseFilter implements Filter {
     }
 
 
-    protected final Object invokeNext() {
-        return next.doInvoke();
+    protected final Object invokeNext(Supplier supplier) {
+        if (next == null) {
+            return supplier.get();
+        }
+        return next.doInvoke(supplier);
     }
 
 
@@ -80,10 +84,11 @@ public abstract class AbstractBaseFilter implements Filter {
 
     /**
      * {@inheritDoc}
+     * @param supplier
      */
     @Override
-    public Object invoke() {
-        return invokeNext();
+    public Object invoke(Supplier supplier) {
+        return invokeNext(supplier);
     }
 
 
