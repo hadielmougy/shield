@@ -114,15 +114,17 @@ public interface Filter extends Comparable<Filter> {
      */
     default Object doInvoke(Supplier supplier) {
         Object result = null;
-        if (beforeInvocation()) {
-            try {
-                result = invoke(supplier);
-            } finally {
-                afterInvocation();
-            }
-        } else {
+        final boolean success = beforeInvocation();
+        if (!success) {
             throw new InvocationCancelledException(getContext().getTargetClass());
         }
+        
+        try {
+            result = invoke(supplier);
+        } finally {
+            afterInvocation();
+        }
+
         return result;
     }
 
