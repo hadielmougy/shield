@@ -134,6 +134,6 @@ public interface Filter extends Comparable<Filter> {
      * @param executorProvider
      */
     default void configureExecutor(ExecutorProvider executorProvider) {
-
+        
     }
 }
