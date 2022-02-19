@@ -1,6 +1,8 @@
 # Compiled class file
 *.class
 
+shield.iml
+
 # Log file
 *.log
 .idea/

@@ -13,7 +13,7 @@ public class RetryFilter extends AbstractBaseFilter {
     private final int retries;
     private final List<Class<? extends Exception>> exceptions;
     private final TimeoutPolicy timeoutPolicy;
-    private boolean retryOnAll;
+    private final boolean retryOnAll;
 
 
     public RetryFilter(int retries, long delay, TimeUnit timeunit, List<Class<? extends Exception>> exceptions, TimeoutPolicy timeoutPolicy) {
@@ -25,6 +25,8 @@ public class RetryFilter extends AbstractBaseFilter {
 
         if (exceptions.isEmpty()) {
             retryOnAll = true;
+        } else {
+            retryOnAll = false;
         }
     }
 
