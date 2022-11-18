@@ -2,7 +2,6 @@ package io.github.shield;
 
 
 import io.github.shield.internal.DefaultProxyFactoryProvider;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,85 +9,87 @@ import java.util.Objects;
 
 public final class Shield {
 
-    /**
-     */
-    private final List<Filter> filters;
+  /**
+   *
+   */
+  private final List<Filter> filters;
 
 
-    /**
-     */
-    private final ProxyFactory proxyFactory;
+  /**
+   *
+   */
+  private final ProxyFactory proxyFactory;
 
-    /**
-     *
-     */
-    private static ProxyFactoryProvider proxyFactoryProvider;
+  /**
+   *
+   */
+  private static ProxyFactoryProvider proxyFactoryProvider;
 
-    static {
-        proxyFactoryProvider(new DefaultProxyFactoryProvider());
+  static {
+    proxyFactoryProvider(new DefaultProxyFactoryProvider());
+  }
+
+
+  /**
+   * @param p
+   */
+  public static void proxyFactoryProvider(final ProxyFactoryProvider p) {
+    Shield.proxyFactoryProvider = p;
+  }
+
+
+  private Shield(final Object obj) {
+    this.proxyFactory = proxyFactoryProvider.forObject(obj);
+    this.filters = new LinkedList<>();
+  }
+
+
+  /**
+   * @param filter
+   * @return current shield object
+   */
+  public Shield filter(final Filter filter) {
+    this.filters.add(Objects.requireNonNull(filter,
+        "filter can't be null"
+    ));
+    return this;
+  }
+
+
+  /**
+   * Creates new shield object that wraps the target object.
+   *
+   * @param targetObject
+   * @return new instance of shield
+   */
+  public static Shield forObject(final Object targetObject) {
+    return new Shield(targetObject);
+  }
+
+
+  /**
+   * Create proxy of the given type around the target object.
+   *
+   * @param type interface type of target component
+   * @param <T>  interface type
+   * @return proxy of the type that is passed as a parameter to this method
+   */
+  public <T> T as(final Class<T> type) {
+
+    if (filters.isEmpty()) {
+      throw new IllegalStateException(
+          "At least one filter must be provided"
+      );
     }
 
+    sort(filters);
 
-    /**
-     *
-     * @param p
-     */
-    public static void proxyFactoryProvider(final ProxyFactoryProvider p) {
-        Shield.proxyFactoryProvider = p;
-    }
+    return proxyFactory.create(type, filters);
+  }
 
 
-
-    private Shield(final Object obj) {
-        this.proxyFactory = proxyFactoryProvider.forObject(obj);
-        this.filters = new LinkedList<>();
-    }
-
-
-    /**
-     * @param filter
-     * @return current shield object
-     */
-    public Shield filter(final Filter filter) {
-        this.filters.add(Objects.requireNonNull(filter,
-                "filter can't be null"
-        ));
-        return this;
-    }
-
-
-    /**
-     * Creates new shield object that wraps the target object.
-     * @param targetObject
-     * @return new instance of shield
-     */
-    public static Shield forObject(final Object targetObject) {
-        return new Shield(targetObject);
-    }
-
-
-    /**
-     * Create proxy of the given type around the target object.
-     * @param type interface type of target component
-     * @param <T> interface type
-     * @return proxy of the type that is passed as a parameter to this method
-     */
-    public  <T> T as(final Class<T> type) {
-
-        if (filters.isEmpty()) {
-            throw new IllegalStateException(
-                    "At least one filter must be provided"
-            );
-        }
-
-        sort(filters);
-
-        return proxyFactory.create(type, filters);
-    }
-
-
-    private void sort(final List<Filter> list) {
-        Collections.sort(list);
-    }
+  private void sort(final List<Filter> list) {
+    Collections.sort(list);
+  }
 
 }
