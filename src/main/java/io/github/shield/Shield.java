@@ -2,7 +2,6 @@ package io.github.shield;
 
 
 import io.github.shield.internal.DefaultProxyFactoryProvider;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +11,6 @@ public final class Shield {
 
   private static ProxyFactoryProvider proxyFactoryProvider;
 
-  private final List<Filter> filters;
   private final List<FilterFactory> filterFactories;
   private final ProxyFactory proxyFactory;
 
@@ -27,7 +25,6 @@ public final class Shield {
 
   private Shield(final Object obj) {
     this.proxyFactory = proxyFactoryProvider.forObject(obj);
-    this.filters = new LinkedList<>();
     this.filterFactories = new LinkedList<>();
   }
 
@@ -70,18 +67,19 @@ public final class Shield {
       );
     }
 
-    filters.addAll(filterFactories
+    List<Filter> filters = filterFactories
         .stream()
         .map(FilterFactory::build)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList());
 
-    sort(filters);
-    return proxyFactory.create(type, filters);
+    return proxyFactory.create(type, sort(filters));
   }
 
 
-  private void sort(final List<Filter> list) {
-    Collections.sort(list);
+  private List<Filter> sort(final List<Filter> list) {
+    return list.stream()
+        .sorted()
+        .collect(Collectors.toList());
   }
 
 }
