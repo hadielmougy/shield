@@ -27,5 +27,6 @@ Fault tolerance library for java
 
 
 ## TODO
-* JMX support
-* Auto calculate queue size
+* Metrics
+* Circuit-breaker
+* Buldhead
