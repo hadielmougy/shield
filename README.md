@@ -6,11 +6,10 @@ Fault tolerance library for java
 
 ```java
     final IComponent comp=Shield.forObject(componentObj)
-    .filter(Filter.retry()
-    .delayMillis(500)
-    .maxRetries(3)
-    .onException(IllegalStateException.class)
-    .build())
+        .filter(Filter.retry()
+        .delayMillis(500)
+        .maxRetries(3)
+        .onException(IllegalStateException.class))
     .as(IComponent.class);
 
     comp.doSomething();
