@@ -13,8 +13,8 @@ public class RetryTimeoutTest {
     Component comp = Components.throwingComponentWithCounter(new IllegalStateException(),
         atomicInteger, 5);
     Component decorated = Shield.forObject(comp)
-        .filter(Filter.timeout().waitMillis(1100).build())
-        .filter(Filter.retry().delayMillis(1000).maxRetries(5).build())
+        .filter(Filter.timeout().waitMillis(1100))
+        .filter(Filter.retry().delayMillis(1000).maxRetries(5))
         .as(Component.class);
 
     decorated.doCall();

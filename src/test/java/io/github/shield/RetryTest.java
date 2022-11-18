@@ -19,8 +19,7 @@ public class RetryTest {
     final Component comp = Shield.forObject(component)
         .filter(Filter.retry()
             .delayMillis(500)
-            .maxRetries(3)
-            .build())
+            .maxRetries(3))
         .as(Component.class);
 
     comp.doCall();
@@ -37,8 +36,7 @@ public class RetryTest {
     final Component comp = Shield.forObject(component)
         .filter(Filter.retry()
             .delayMillis(500)
-            .maxRetries(3)
-            .build())
+            .maxRetries(3))
         .as(Component.class);
 
     comp.doCall();
@@ -54,8 +52,7 @@ public class RetryTest {
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
-            .onException(IllegalArgumentException.class)
-            .build())
+            .onException(IllegalArgumentException.class))
         .as(Component.class);
 
     comp.doCall();
@@ -72,8 +69,7 @@ public class RetryTest {
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
-            .onException(IllegalArgumentException.class)
-            .build())
+            .onException(IllegalArgumentException.class))
         .as(Component.class);
 
     comp.doCall();

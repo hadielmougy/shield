@@ -6,33 +6,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class Shield {
 
-  /**
-   *
-   */
-  private final List<Filter> filters;
-
-
-  /**
-   *
-   */
-  private final ProxyFactory proxyFactory;
-
-  /**
-   *
-   */
   private static ProxyFactoryProvider proxyFactoryProvider;
+
+  private final List<Filter> filters;
+  private final List<FilterFactory> filterFactories;
+  private final ProxyFactory proxyFactory;
 
   static {
     proxyFactoryProvider(new DefaultProxyFactoryProvider());
   }
 
-
-  /**
-   * @param p
-   */
   public static void proxyFactoryProvider(final ProxyFactoryProvider p) {
     Shield.proxyFactoryProvider = p;
   }
@@ -41,15 +28,16 @@ public final class Shield {
   private Shield(final Object obj) {
     this.proxyFactory = proxyFactoryProvider.forObject(obj);
     this.filters = new LinkedList<>();
+    this.filterFactories = new LinkedList<>();
   }
 
 
   /**
-   * @param filter
+   * @param filterFactory
    * @return current shield object
    */
-  public Shield filter(final Filter filter) {
-    this.filters.add(Objects.requireNonNull(filter,
+  public Shield filter(final FilterFactory filterFactory) {
+    this.filterFactories.add(Objects.requireNonNull(filterFactory,
         "filter can't be null"
     ));
     return this;
@@ -76,14 +64,18 @@ public final class Shield {
    */
   public <T> T as(final Class<T> type) {
 
-    if (filters.isEmpty()) {
+    if (filterFactories.isEmpty()) {
       throw new IllegalStateException(
           "At least one filter must be provided"
       );
     }
 
-    sort(filters);
+    filters.addAll(filterFactories
+        .stream()
+        .map(FilterFactory::build)
+        .collect(Collectors.toList()));
 
+    sort(filters);
     return proxyFactory.create(type, filters);
   }
 
