@@ -6,7 +6,7 @@ Fault tolerance library for java
 
 ```java
     final IComponent comp = Shield.forObject(componentObj)
-        .filter(Filter.retry()
+        .filter(Filter.retry())
         .delayMillis(500)
         .maxRetries(3)
         .onException(IllegalStateException.class))
