@@ -27,4 +27,4 @@ Fault tolerance library for java
 
 * Metrics
 * Circuit-breaker
-* Buldhead
+* Bulkhead
