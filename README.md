@@ -10,8 +10,8 @@ Fault tolerance library for java
         .delayMillis(500)
         .maxRetries(3)
         .backoff()
-        .onException(IllegalStateException.class))
-        .onException(AnotherException.class))
+        .onException(IllegalStateException.class)
+        .onException(AnotherException.class)
     .as(IComponent.class);
 
     comp.doSomething();
