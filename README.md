@@ -11,6 +11,7 @@ Fault tolerance library for java
         .maxRetries(3)
         .backoff()
         .onException(IllegalStateException.class))
+        .onException(AnotherException.class))
     .as(IComponent.class);
 
     comp.doSomething();
