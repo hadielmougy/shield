@@ -9,6 +9,7 @@ Fault tolerance library for java
         .filter(Filter.retry())
         .delayMillis(500)
         .maxRetries(3)
+        .backoff()
         .onException(IllegalStateException.class))
     .as(IComponent.class);
 
