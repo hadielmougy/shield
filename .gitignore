@@ -1,5 +1,7 @@
 # Compiled class file
 *.class
+src/main/main.iml
+src/test/test.iml
 
 shield.iml
 

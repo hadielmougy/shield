@@ -58,6 +58,24 @@ public interface Filter extends Comparable<Filter> {
     return new Timeout.Config();
   }
 
+  /**
+   * Factory method for circuit breaker build.
+   *
+   * @return direct build factory
+   */
+  static CircuitBreaker circuitBreaker() {
+    return new CircuitBreaker.Config();
+  }
+
+  /**
+   * Factory method for bulkhead build.
+   *
+   * @return direct build factory
+   */
+  static Bulkhead bulkhead() {
+    return new Bulkhead.Config();
+  }
+
 
   /**
    * This should be implemented by the build type. It contains all build specific logic to acquire
