@@ -3,6 +3,7 @@ package io.github.shield.internal;
 import io.github.shield.CircuitBreaker;
 import io.github.shield.util.ExceptionUtil;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -13,9 +14,9 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
     private final AtomicInteger failureCount = new AtomicInteger(0);
     private final CountBasedCircuitBreakerFilter breaker;
 
-    public CircuitBreakerClosedState(CircuitBreaker.Config config, CountBasedCircuitBreakerFilter countBasedCircuitBreakerFilter) {
+    public CircuitBreakerClosedState(CircuitBreaker.Config config, CountBasedCircuitBreakerFilter circuitBreakerFilter) {
         this.config = config;
-        this.breaker = countBasedCircuitBreakerFilter;
+        this.breaker = circuitBreakerFilter;
     }
 
     @Override
@@ -26,17 +27,16 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
                 &&
                 shouldOpen(currentCount)) {
             breaker.setState(new CircuitBreakerOpenState(config, breaker));
-            throw new CircuitBreakerException();
         }
         Object result = null;
         try {
             result = supplier.get();
         } catch (Throwable th) {
             if (config.getRecordExceptions().length == 0) {
-                for (Class<? extends Throwable> clazz : config.getIgnoreExceptions()) {
-                    if (ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2)) {
-                        break;
-                    }
+                boolean shouldIgnore = Arrays.stream(config.getIgnoreExceptions())
+                        .anyMatch(clazz -> ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2));
+                if (!shouldIgnore) {
+                    failureCount.incrementAndGet();
                 }
             } else {
                 for (Class<? extends Throwable> clazz : config.getRecordExceptions()) {
@@ -46,15 +46,15 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
                     }
                 }
             }
-
-
-
         }
         return result;
     }
 
     private boolean shouldOpen(int currentCount) {
-        int rate = currentCount / failureCount.get();
+        if (failureCount.get() == 0) {
+            return false;
+        }
+        float rate = (failureCount.get() * 100F) / currentCount;
         return rate >= config.getFailureRateThreshold();
     }
 }

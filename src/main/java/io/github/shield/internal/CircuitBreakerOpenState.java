@@ -1,7 +1,6 @@
 package io.github.shield.internal;
 
 import io.github.shield.CircuitBreaker;
-
 import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,10 +8,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class CircuitBreakerOpenState implements CircuitBreakerState {
+
     private final CircuitBreaker.Config config;
     private final Duration duration;
     private final CountBasedCircuitBreakerFilter breaker;
-    private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+    private final ScheduledExecutorService scheduledExecutorService
+            = Executors.newSingleThreadScheduledExecutor();
 
     public CircuitBreakerOpenState(CircuitBreaker.Config config, CountBasedCircuitBreakerFilter countBasedCircuitBreakerFilter) {
         this.config = config;
@@ -22,7 +24,11 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
     }
 
     private void close() {
-        breaker.setState(new CircuitBreakerHalfOpenState(config, breaker));
+        if (config.getPermittedNumberOfCallsInHalfOpenState() > 0) {
+            breaker.setState(new CircuitBreakerHalfOpenState(config, breaker));
+        } else {
+            breaker.setState(new CircuitBreakerClosedState(config, breaker));
+        }
     }
 
     @Override

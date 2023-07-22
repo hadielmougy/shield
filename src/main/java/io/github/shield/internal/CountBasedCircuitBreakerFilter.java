@@ -1,11 +1,11 @@
 package io.github.shield.internal;
 
 import io.github.shield.CircuitBreaker;
-import io.github.shield.Filter;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 
-public class CountBasedCircuitBreakerFilter implements CircuitBreakerFilter {
+public class CountBasedCircuitBreakerFilter extends AbstractBaseFilter implements CircuitBreakerFilter {
 
     private CircuitBreakerState state;
 
@@ -14,46 +14,21 @@ public class CountBasedCircuitBreakerFilter implements CircuitBreakerFilter {
     }
 
     synchronized void setState(CircuitBreakerState state) {
-        this.state = state;
+        this.state = Objects.requireNonNull(state);
     }
 
     @Override
     public boolean beforeInvocation() {
-        return false;
+        return true;
     }
 
     @Override
     public void afterInvocation() {
-
-    }
-
-    @Override
-    public Integer getOrder() {
-        return null;
-    }
-
-    @Override
-    public void setNext(Filter next) {
-
+        // do nothing
     }
 
     @Override
     public Object invoke(Supplier supplier) {
-        return state.invoke(supplier);
-    }
-
-    @Override
-    public void setContext(InvocationContext context) {
-
-    }
-
-    @Override
-    public InvocationContext getContext() {
-        return null;
-    }
-
-    @Override
-    public int compareTo(Filter o) {
-        return 0;
+        return state.invoke(()-> this.invokeNext(supplier));
     }
 }
