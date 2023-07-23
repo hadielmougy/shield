@@ -34,7 +34,7 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         try {
             acquired = lock.tryLock();
             if (!acquired) {
-                throw new CircuitBreakerException();
+                throw new CircuitBreakerOpenException();
             }
             return doInvoke(supplier);
         } finally {
@@ -45,7 +45,7 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
     }
 
     private Object doInvoke(Supplier supplier) {
-        int currentCount = numberOfAllowedRequests.decrementAndGet();
+        int remainder = numberOfAllowedRequests.decrementAndGet();
         Object result = null;
         try {
             result = supplier.get();
@@ -65,11 +65,11 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
                 }
             }
         }
-        if (currentCount == 0 && failureCount.get() == 0) {
+        if (remainder == 0 && failureCount.get() == 0) {
             breaker.setState(new CircuitBreakerClosedState(config, breaker));
         }
 
-        if (currentCount == 0 && failureCount.get() > 0) {
+        if (remainder == 0 && failureCount.get() > 0) {
             breaker.setState(new CircuitBreakerOpenState(config, breaker));
         }
         return result;
