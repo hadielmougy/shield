@@ -7,7 +7,7 @@ public class TimeBasedWindowingPolicyTest {
 
     @Test
     public void testIsDue() throws InterruptedException {
-        TimeBasedWindowingPolicy policy = new TimeBasedWindowingPolicy(1, 50);
+        TimeBasedWindowingPolicy policy = new TimeBasedWindowingPolicy(1, 50, 1);
         WindowContext ctx = new WindowContext();
         ctx.increaseCount();
         ctx.increaseCount();
