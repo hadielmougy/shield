@@ -24,8 +24,9 @@ Fault tolerance library for java
 * Timeout
 * Fire and forget
 * Retry
+* Circuit-breaker
 
 ## TODO
 
 * Metrics
-* Circuit-breaker
+
