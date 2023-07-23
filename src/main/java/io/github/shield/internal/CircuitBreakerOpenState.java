@@ -12,22 +12,24 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
     private final CircuitBreaker.Config config;
     private final Duration duration;
     private final CircuitBreakerFilter breaker;
+    private final WindowingPolicy windowingPolicy;
 
     private final ScheduledExecutorService scheduledExecutorService
             = Executors.newSingleThreadScheduledExecutor();
 
-    public CircuitBreakerOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter) {
+    public CircuitBreakerOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter, WindowingPolicy windowingPolicy) {
         this.config = config;
         this.breaker = circuitBreakerFilter;
         this.duration = config.getWaitDurationInOpenState();
+        this.windowingPolicy = windowingPolicy;
         scheduledExecutorService.schedule(this::close, duration.getSeconds(), TimeUnit.SECONDS);
     }
 
     private void close() {
         if (config.getPermittedNumberOfCallsInHalfOpenState() > 0) {
-            breaker.setState(new CircuitBreakerHalfOpenState(config, breaker));
+            breaker.setState(new CircuitBreakerHalfOpenState(config, breaker, windowingPolicy));
         } else {
-            breaker.setState(new CircuitBreakerClosedState(config, breaker));
+            breaker.setState(new CircuitBreakerClosedState(config, breaker, windowingPolicy));
         }
     }
 

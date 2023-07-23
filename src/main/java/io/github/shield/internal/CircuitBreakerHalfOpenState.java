@@ -15,17 +15,22 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
     private final CircuitBreakerFilter breaker;
     private final AtomicInteger numberOfAllowedRequests;
     private final Lock lock = new ReentrantLock(true);
-    private final AtomicInteger failureCount = new AtomicInteger(0);
+    private final WindowingPolicy windowingPolicy;
+    private final BreakerExceptionHandler breakerExceptionHandler;
+    private final WindowContext windowContext;
 
-    public CircuitBreakerHalfOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter) {
+    public CircuitBreakerHalfOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter, WindowingPolicy windowingPolicy) {
         this.config = config;
         this.breaker = circuitBreakerFilter;
+        this.windowingPolicy = windowingPolicy;
         this.numberOfAllowedRequests = new AtomicInteger(config.getPermittedNumberOfCallsInHalfOpenState());
+        this.breakerExceptionHandler = new BreakerExceptionHandler(config.getIgnoreExceptions(), config.getRecordExceptions());
+        this.windowContext = new WindowContext();
         close();
     }
 
     private void close() {
-        breaker.setState(new CircuitBreakerClosedState(config, breaker));
+        breaker.setState(new CircuitBreakerClosedState(config, breaker, windowingPolicy));
     }
 
     @Override
@@ -50,27 +55,16 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         try {
             result = supplier.get();
         } catch (Throwable th) {
-            if (config.getRecordExceptions().length == 0) {
-                boolean shouldIgnore = Arrays.stream(config.getIgnoreExceptions())
-                        .anyMatch(clazz -> ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2));
-                if (!shouldIgnore) {
-                    failureCount.incrementAndGet();
-                }
-            } else {
-                for (Class<? extends Throwable> clazz : config.getRecordExceptions()) {
-                    if (ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2)) {
-                        failureCount.incrementAndGet();
-                        break;
-                    }
-                }
+            if (breakerExceptionHandler.shouldRecord(th)) {
+                windowContext.increaseFailure();
             }
         }
-        if (remainder == 0 && failureCount.get() == 0) {
-            breaker.setState(new CircuitBreakerClosedState(config, breaker));
+        if (remainder == 0 && windowContext.getFailureCount() == 0) {
+            breaker.setState(new CircuitBreakerClosedState(config, breaker, windowingPolicy));
         }
 
-        if (remainder == 0 && failureCount.get() > 0) {
-            breaker.setState(new CircuitBreakerOpenState(config, breaker));
+        if (remainder == 0 && windowContext.getFailureCount() > 0) {
+            breaker.setState(new CircuitBreakerOpenState(config, breaker, windowingPolicy));
         }
         return result;
     }

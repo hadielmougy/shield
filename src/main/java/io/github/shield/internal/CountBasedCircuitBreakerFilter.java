@@ -10,7 +10,7 @@ public class CountBasedCircuitBreakerFilter extends AbstractBaseFilter implement
     private CircuitBreakerState state;
 
     public CountBasedCircuitBreakerFilter(CircuitBreaker.Config config) {
-        setState(new CircuitBreakerClosedState(config, this));
+        setState(new CircuitBreakerClosedState(config, this, new CountBasedWindowingPolicy(config.getSlidingWindowSize(), config.getFailureRateThreshold())));
     }
 
     @Override
