@@ -9,7 +9,8 @@ public class TimeBasedCircuitBreakerFilter extends AbstractBaseFilter implements
     private CircuitBreakerState state;
 
     public TimeBasedCircuitBreakerFilter(CircuitBreaker.Config config) {
-        setState(new CircuitBreakerClosedState(config, this, new TimeBasedWindowingPolicy(config.getSlidingWindowSize(), config.getFailureRateThreshold())));
+        WindowingPolicy policy = new TimeBasedWindowingPolicy(config.getSlidingWindowSize(), config.getFailureRateThreshold());
+        setState(new CircuitBreakerStateFactory(config, this, policy).newClosedState());
     }
 
     @Override

@@ -9,27 +9,30 @@ import java.util.function.Supplier;
 
 public class CircuitBreakerOpenState implements CircuitBreakerState {
 
-    private final CircuitBreaker.Config config;
     private final Duration duration;
     private final CircuitBreakerFilter breaker;
-    private final WindowingPolicy windowingPolicy;
+    private final CircuitBreakerStateFactory stateFactory;
+    private final int permittedNumberOfCallsInHalfOpenState;
 
     private final ScheduledExecutorService scheduledExecutorService
             = Executors.newSingleThreadScheduledExecutor();
 
-    public CircuitBreakerOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter, WindowingPolicy windowingPolicy) {
-        this.config = config;
+    public CircuitBreakerOpenState(CircuitBreakerStateFactory stateFactory,
+                                   CircuitBreakerFilter circuitBreakerFilter,
+                                   Duration waitDurationInOpenState,
+                                   int permittedNumberOfCallsInHalfOpenState) {
+        this.stateFactory = stateFactory;
         this.breaker = circuitBreakerFilter;
-        this.duration = config.getWaitDurationInOpenState();
-        this.windowingPolicy = windowingPolicy;
+        this.duration = waitDurationInOpenState;
+        this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
         scheduledExecutorService.schedule(this::close, duration.getSeconds(), TimeUnit.SECONDS);
     }
 
     private void close() {
-        if (config.getPermittedNumberOfCallsInHalfOpenState() > 0) {
-            breaker.setState(new CircuitBreakerHalfOpenState(config, breaker, windowingPolicy));
+        if (permittedNumberOfCallsInHalfOpenState > 0) {
+            breaker.setState(stateFactory.newHalfOpenState());
         } else {
-            breaker.setState(new CircuitBreakerClosedState(config, breaker, windowingPolicy));
+            breaker.setState(stateFactory.newClosedState());
         }
     }
 

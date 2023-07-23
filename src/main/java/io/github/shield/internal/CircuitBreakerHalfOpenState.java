@@ -1,9 +1,5 @@
 package io.github.shield.internal;
 
-import io.github.shield.CircuitBreaker;
-import io.github.shield.util.ExceptionUtil;
-
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,26 +7,27 @@ import java.util.function.Supplier;
 
 public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
 
-    private final CircuitBreaker.Config config;
     private final CircuitBreakerFilter breaker;
     private final AtomicInteger numberOfAllowedRequests;
     private final Lock lock = new ReentrantLock(true);
-    private final WindowingPolicy windowingPolicy;
-    private final BreakerExceptionHandler breakerExceptionHandler;
+    private final BreakerExceptionChecker breakerExceptionChecker;
     private final WindowContext windowContext;
+    private final CircuitBreakerStateFactory stateFactory;
 
-    public CircuitBreakerHalfOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter, WindowingPolicy windowingPolicy) {
-        this.config = config;
+    public CircuitBreakerHalfOpenState(CircuitBreakerStateFactory stateFactory,
+                                       BreakerExceptionChecker breakerExceptionChecker,
+                                       CircuitBreakerFilter circuitBreakerFilter,
+                                       int numberOfAllowedRequests) {
+        this.stateFactory = stateFactory;
         this.breaker = circuitBreakerFilter;
-        this.windowingPolicy = windowingPolicy;
-        this.numberOfAllowedRequests = new AtomicInteger(config.getPermittedNumberOfCallsInHalfOpenState());
-        this.breakerExceptionHandler = new BreakerExceptionHandler(config.getIgnoreExceptions(), config.getRecordExceptions());
+        this.numberOfAllowedRequests = new AtomicInteger(numberOfAllowedRequests);
         this.windowContext = new WindowContext();
+        this.breakerExceptionChecker = breakerExceptionChecker;
         close();
     }
 
     private void close() {
-        breaker.setState(new CircuitBreakerClosedState(config, breaker, windowingPolicy));
+        breaker.setState(stateFactory.newClosedState());
     }
 
     @Override
@@ -55,16 +52,16 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         try {
             result = supplier.get();
         } catch (Throwable th) {
-            if (breakerExceptionHandler.shouldRecord(th)) {
+            if (breakerExceptionChecker.shouldRecord(th)) {
                 windowContext.increaseFailure();
             }
         }
         if (remainder == 0 && windowContext.getFailureCount() == 0) {
-            breaker.setState(new CircuitBreakerClosedState(config, breaker, windowingPolicy));
+            breaker.setState(stateFactory.newClosedState());
         }
 
         if (remainder == 0 && windowContext.getFailureCount() > 0) {
-            breaker.setState(new CircuitBreakerOpenState(config, breaker, windowingPolicy));
+            breaker.setState(stateFactory.newOpenState());
         }
         return result;
     }

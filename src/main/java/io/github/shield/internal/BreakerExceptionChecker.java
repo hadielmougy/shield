@@ -4,11 +4,11 @@ import io.github.shield.util.ExceptionUtil;
 
 import java.util.Arrays;
 
-public final class BreakerExceptionHandler {
+public final class BreakerExceptionChecker {
     private final Class<? extends Throwable>[] recordExceptions;
     private final Class<? extends Throwable>[] ignoreExceptions;
 
-    public BreakerExceptionHandler(Class<? extends Throwable>[] ignoreExceptions, Class<? extends Throwable>[] recordExceptions) {
+    public BreakerExceptionChecker(Class<? extends Throwable>[] ignoreExceptions, Class<? extends Throwable>[] recordExceptions) {
         this.ignoreExceptions = ignoreExceptions;
         this.recordExceptions = recordExceptions;
     }
