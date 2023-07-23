@@ -21,7 +21,7 @@ public class Components {
       int maxCount) {
     return new TestComponentWithFallback(() -> {
       int count = counter.incrementAndGet();
-      if (count < maxCount) {
+      if (count <= maxCount) {
         throw e;
       }
     }, () -> counter.decrementAndGet());

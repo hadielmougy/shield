@@ -14,7 +14,7 @@ public class RetryTest {
     final AtomicInteger counter = new AtomicInteger(0);
 
     Component component = Components.throwingComponentWithCounter(new RuntimeException(), counter,
-        2);
+        1);
 
     final Component comp = Shield.forObject(component)
         .filter(Filter.retry()
@@ -47,7 +47,7 @@ public class RetryTest {
   public void shouldRetryOnGivenException() {
     final AtomicInteger counter = new AtomicInteger(0);
     final Component component = Components.throwingComponentWithCounter(
-        new IllegalArgumentException(), counter, 2);
+        new IllegalArgumentException(), counter, 1);
     final Component comp = Shield.forObject(component)
         .filter(Filter.retry()
             .delayMillis(500)

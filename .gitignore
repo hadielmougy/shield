@@ -1,4 +1,3 @@
-# Compiled class file
 .DS_Store
 src/.DS_Store
 src/main/.DS_Store
@@ -7,7 +6,11 @@ src/main/java/io/.DS_Store
 src/main/java/io/github/.DS_Store
 src/test/.DS_Store
 
+
+# Compiled class file
 *.class
+src/main/main.iml
+src/test/test.iml
 
 shield.iml
 

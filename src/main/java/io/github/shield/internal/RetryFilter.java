@@ -1,6 +1,8 @@
 package io.github.shield.internal;
 
 import io.github.shield.TimeoutPolicy;
+import io.github.shield.util.ExceptionUtil;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -83,7 +85,7 @@ public class RetryFilter extends AbstractBaseFilter {
 
     for (Class clazz : exceptions) {
       if (th.getClass().equals(clazz) ||
-          searchStaskTrace(th, clazz, 2)) {
+              ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2)) {
         return true;
       }
     }
@@ -92,17 +94,5 @@ public class RetryFilter extends AbstractBaseFilter {
   }
 
 
-  private boolean searchStaskTrace(Throwable throwable, Class clazz, int depth) {
-    int counter = 0;
-    Throwable th = throwable.getCause();
-    while (th != null && counter < depth) {
-      Class thClazz = th.getClass();
-      if (thClazz.equals(clazz)) {
-        return true;
-      }
-      th = th.getCause();
-      counter++;
-    }
-    return false;
-  }
+
 }
