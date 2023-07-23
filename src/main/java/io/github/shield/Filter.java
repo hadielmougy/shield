@@ -68,16 +68,6 @@ public interface Filter extends Comparable<Filter> {
   }
 
   /**
-   * Factory method for bulkhead build.
-   *
-   * @return direct build factory
-   */
-  static Bulkhead bulkhead() {
-    return new Bulkhead.Config();
-  }
-
-
-  /**
    * This should be implemented by the build type. It contains all build specific logic to acquire
    * needed resources before the invocation, like limiting requests counting requests etc.
    *

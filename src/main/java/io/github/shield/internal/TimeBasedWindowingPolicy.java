@@ -5,13 +5,14 @@ public class TimeBasedWindowingPolicy implements WindowingPolicy {
     private final int windowSize;
     private final int targetFailureRateCeiling;
 
-    TimeBasedWindowingPolicy(int windowSize, int targetFailureRateCeiling) {
-        this.windowSize = windowSize;
+    TimeBasedWindowingPolicy(int windowSizeSeconds, int targetFailureRateCeiling) {
+        this.windowSize = windowSizeSeconds;
         this.targetFailureRateCeiling = targetFailureRateCeiling;
     }
     @Override
     public boolean isDue(WindowContext state) {
-        return state.getWindowSizeSeconds() > windowSize
+        final long secondsSoFar = state.getWindowSizeSeconds();
+        return secondsSoFar >= windowSize
                 &&
                 shouldOpen(state);
     }
