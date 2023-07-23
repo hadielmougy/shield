@@ -29,4 +29,3 @@ Fault tolerance library for java
 
 * Metrics
 * Circuit-breaker
-* Bulkhead
