@@ -1,55 +1,34 @@
 package io.github.shield.internal;
 
 import io.github.shield.CircuitBreaker;
-import io.github.shield.Filter;
-
+import java.util.Objects;
 import java.util.function.Supplier;
 
-public class TimeBasedCircuitBreakerFilter implements CircuitBreakerFilter {
+public class TimeBasedCircuitBreakerFilter extends AbstractBaseFilter implements CircuitBreakerFilter {
 
-    private final CircuitBreaker.Config config;
+    private CircuitBreakerState state;
 
     public TimeBasedCircuitBreakerFilter(CircuitBreaker.Config config) {
-        this.config = config;
+        setState(new CircuitBreakerClosedState(config, this));
+    }
+
+    @Override
+    public synchronized void setState(CircuitBreakerState state) {
+        this.state = Objects.requireNonNull(state);
     }
 
     @Override
     public boolean beforeInvocation() {
-        return false;
+        return true;
     }
 
     @Override
     public void afterInvocation() {
-
-    }
-
-    @Override
-    public Integer getOrder() {
-        return null;
-    }
-
-    @Override
-    public void setNext(Filter next) {
-
+        // do nothing
     }
 
     @Override
     public Object invoke(Supplier supplier) {
-        return null;
-    }
-
-    @Override
-    public void setContext(InvocationContext context) {
-
-    }
-
-    @Override
-    public InvocationContext getContext() {
-        return null;
-    }
-
-    @Override
-    public int compareTo(Filter o) {
-        return 0;
+        return state.invoke(()-> this.invokeNext(supplier));
     }
 }

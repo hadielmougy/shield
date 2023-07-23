@@ -12,9 +12,9 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
     private final CircuitBreaker.Config config;
     private final AtomicInteger count = new AtomicInteger(0);
     private final AtomicInteger failureCount = new AtomicInteger(0);
-    private final CountBasedCircuitBreakerFilter breaker;
+    private final CircuitBreakerFilter breaker;
 
-    public CircuitBreakerClosedState(CircuitBreaker.Config config, CountBasedCircuitBreakerFilter circuitBreakerFilter) {
+    public CircuitBreakerClosedState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter) {
         this.config = config;
         this.breaker = circuitBreakerFilter;
     }

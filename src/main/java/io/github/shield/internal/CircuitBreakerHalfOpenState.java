@@ -12,14 +12,14 @@ import java.util.function.Supplier;
 public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
 
     private final CircuitBreaker.Config config;
-    private final CountBasedCircuitBreakerFilter breaker;
+    private final CircuitBreakerFilter breaker;
     private final AtomicInteger numberOfAllowedRequests;
     private final Lock lock = new ReentrantLock(true);
     private final AtomicInteger failureCount = new AtomicInteger(0);
 
-    public CircuitBreakerHalfOpenState(CircuitBreaker.Config config, CountBasedCircuitBreakerFilter countBasedCircuitBreakerFilter) {
+    public CircuitBreakerHalfOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter) {
         this.config = config;
-        this.breaker = countBasedCircuitBreakerFilter;
+        this.breaker = circuitBreakerFilter;
         this.numberOfAllowedRequests = new AtomicInteger(config.getPermittedNumberOfCallsInHalfOpenState());
         close();
     }

@@ -13,7 +13,8 @@ public class CountBasedCircuitBreakerFilter extends AbstractBaseFilter implement
         setState(new CircuitBreakerClosedState(config, this));
     }
 
-    synchronized void setState(CircuitBreakerState state) {
+    @Override
+    public synchronized void setState(CircuitBreakerState state) {
         this.state = Objects.requireNonNull(state);
     }
 

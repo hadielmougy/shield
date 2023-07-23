@@ -11,14 +11,14 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
 
     private final CircuitBreaker.Config config;
     private final Duration duration;
-    private final CountBasedCircuitBreakerFilter breaker;
+    private final CircuitBreakerFilter breaker;
 
     private final ScheduledExecutorService scheduledExecutorService
             = Executors.newSingleThreadScheduledExecutor();
 
-    public CircuitBreakerOpenState(CircuitBreaker.Config config, CountBasedCircuitBreakerFilter countBasedCircuitBreakerFilter) {
+    public CircuitBreakerOpenState(CircuitBreaker.Config config, CircuitBreakerFilter circuitBreakerFilter) {
         this.config = config;
-        this.breaker = countBasedCircuitBreakerFilter;
+        this.breaker = circuitBreakerFilter;
         this.duration = config.getWaitDurationInOpenState();
         scheduledExecutorService.schedule(this::close, duration.getSeconds(), TimeUnit.SECONDS);
     }
