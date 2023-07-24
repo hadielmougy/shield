@@ -31,7 +31,7 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
     }
 
     @Override
-    public Object invoke(Supplier supplier) {
+    public Object invoke(Supplier<?> supplier) {
         boolean acquired = false;
         try {
             acquired = lock.tryLock();
@@ -46,7 +46,7 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         }
     }
 
-    private Object doInvoke(Supplier supplier) {
+    private Object doInvoke(Supplier<?> supplier) {
         int remainder = numberOfAllowedRequests.decrementAndGet();
         Object result = null;
         try {

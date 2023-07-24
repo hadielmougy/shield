@@ -12,30 +12,30 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
     private final BreakerExceptionChecker breakerExceptionChecker;
     private final CircuitBreakerStateFactory stateFactory;
 
-
-
-    public CircuitBreakerClosedState(CircuitBreakerStateFactory stateFactory, BreakerExceptionChecker breakerExceptionChecker, CircuitBreakerFilter circuitBreakerFilter, WindowingPolicy windowingPolicy) {
+    public CircuitBreakerClosedState(CircuitBreakerStateFactory stateFactory,
+                                     BreakerExceptionChecker breakerExceptionChecker,
+                                     CircuitBreakerFilter circuitBreakerFilter,
+                                     WindowingPolicy windowingPolicy) {
         this.stateFactory = stateFactory;
         this.breaker = circuitBreakerFilter;
         this.windowingPolicy = windowingPolicy;
-        this.windowContext = new WindowContext();
         this.breakerExceptionChecker = breakerExceptionChecker;
+        this.windowContext = new WindowContext();
     }
 
     @Override
-    public Object invoke(Supplier supplier) {
+    public Object invoke(Supplier<?> supplier) {
         windowContext.increaseCount();
         if (windowingPolicy.isDue(windowContext)) {
             breaker.setState(stateFactory.newOpenState());
         }
-        Object result = null;
         try {
-            result = supplier.get();
+            return supplier.get();
         } catch (Throwable th) {
             if (breakerExceptionChecker.shouldRecord(th)) {
                 windowContext.increaseFailure();
             }
         }
-        return result;
+        return null;
     }
 }

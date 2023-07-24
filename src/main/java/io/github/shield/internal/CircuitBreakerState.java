@@ -4,5 +4,5 @@ import java.util.function.Supplier;
 
 public interface CircuitBreakerState {
 
-    Object invoke(Supplier supplier);
+    Object invoke(Supplier<?> supplier);
 }

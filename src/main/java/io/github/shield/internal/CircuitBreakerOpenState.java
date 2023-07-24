@@ -37,7 +37,7 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
     }
 
     @Override
-    public Object invoke(Supplier supplier) {
+    public Object invoke(Supplier<?> supplier) {
         throw new CircuitBreakerOpenException();
     }
 }
