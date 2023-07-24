@@ -23,11 +23,6 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         this.numberOfAllowedRequests = new AtomicInteger(numberOfAllowedRequests);
         this.windowContext = new WindowContext();
         this.breakerExceptionChecker = breakerExceptionChecker;
-        close();
-    }
-
-    private void close() {
-        breaker.setState(stateFactory.newClosedState());
     }
 
     @Override
@@ -48,9 +43,8 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
 
     private Object doInvoke(Supplier<?> supplier) {
         int remainder = numberOfAllowedRequests.decrementAndGet();
-        Object result = null;
         try {
-            result = supplier.get();
+            return supplier.get();
         } catch (Throwable th) {
             if (breakerExceptionChecker.shouldRecord(th)) {
                 windowContext.increaseFailure();
@@ -63,6 +57,6 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         if (remainder == 0 && windowContext.getFailureCount() > 0) {
             breaker.setState(stateFactory.newOpenState());
         }
-        return result;
+        return null;
     }
 }
