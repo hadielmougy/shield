@@ -21,8 +21,8 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         this.stateFactory = stateFactory;
         this.breaker = circuitBreakerFilter;
         this.numberOfAllowedRequests = new AtomicInteger(numberOfAllowedRequests);
-        this.windowContext = new WindowContext();
         this.breakerExceptionChecker = breakerExceptionChecker;
+        this.windowContext = new WindowContext();
     }
 
     @Override
