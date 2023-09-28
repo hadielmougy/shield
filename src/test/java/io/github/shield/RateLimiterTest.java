@@ -12,52 +12,52 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RateLimiterTest {
 
-  private ExecutorService executor;
+    private ExecutorService executor;
 
-  @Before
-  public void init() {
-    executor = Executors.newFixedThreadPool(4);
-  }
+    @Before
+    public void init() {
+        executor = Executors.newFixedThreadPool(4);
+    }
 
-  @Test
-  public void testLimited1() throws InterruptedException {
+    @Test
+    public void testLimited1() throws InterruptedException {
 
-    final AtomicInteger counter = new AtomicInteger(0);
-    Component component = Components.sleepComponentWithCounter(counter, 1000);
+        final AtomicInteger counter = new AtomicInteger(0);
+        Component component = Components.sleepComponentWithCounter(counter, 1000);
 
-    final Component comp = Shield.forObject(component)
-        .filter(Filter.rateLimiter()
-            .rate(1))
-        .as(Component.class);
+        final Component comp = Shield.forObject(component)
+                .filter(Filter.rateLimiter()
+                        .rate(1))
+                .as(Component.class);
 
-    executor.submit(() -> comp.doCall());
-    executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
 
-    TimeUnit.MILLISECONDS.sleep(100);
+        TimeUnit.MILLISECONDS.sleep(100);
 
-    Assert.assertEquals(1, counter.get());
+        Assert.assertEquals(1, counter.get());
 
-    executor.shutdown();
-  }
+        executor.shutdown();
+    }
 
 
-  @Test
-  public void testLimited2() {
-    final AtomicInteger counter = new AtomicInteger(0);
-    Component component = Components.sleepComponentWithCounter(counter, 1000);
+    @Test
+    public void testLimited2() {
+        final AtomicInteger counter = new AtomicInteger(0);
+        Component component = Components.sleepComponentWithCounter(counter, 1000);
 
-    final Component comp = Shield.forObject(component)
-        .filter(Filter.rateLimiter().rate(2))
-        .as(Component.class);
+        final Component comp = Shield.forObject(component)
+                .filter(Filter.rateLimiter().rate(2))
+                .as(Component.class);
 
-    executor.submit(() -> comp.doCall());
-    executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
+        executor.submit(() -> comp.doCall());
 
-    Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> counter.get() == 2);
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> counter.get() == 2);
 
-    Assert.assertEquals(2, counter.get());
-    executor.shutdown();
-  }
+        Assert.assertEquals(2, counter.get());
+        executor.shutdown();
+    }
 
 
 }

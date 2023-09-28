@@ -8,9 +8,9 @@ public class TimeBasedCircuitBreakerFilter extends AbstractBaseFilter implements
     private CircuitBreakerState state;
 
     public TimeBasedCircuitBreakerFilter(CircuitBreaker config) {
-        int windowSize      = config.getSlidingWindowSize();
-        int failureRate     = config.getFailureRateThreshold();
-        int numberOfCalls   = config.getMinimumNumberOfCalls();
+        int windowSize = config.getSlidingWindowSize();
+        int failureRate = config.getFailureRateThreshold();
+        int numberOfCalls = config.getMinimumNumberOfCalls();
 
         WindowingPolicy policy = new TimeBasedWindowingPolicy(windowSize, failureRate, numberOfCalls);
         setState(new CircuitBreakerStateFactory(config, this, policy).newClosedState());
@@ -33,6 +33,6 @@ public class TimeBasedCircuitBreakerFilter extends AbstractBaseFilter implements
 
     @Override
     public Object invoke(Supplier supplier) {
-        return state.invoke(()-> this.invokeNext(supplier));
+        return state.invoke(() -> this.invokeNext(supplier));
     }
 }

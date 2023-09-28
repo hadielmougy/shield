@@ -10,7 +10,7 @@ public final class WindowContext {
     WindowContext() {
         startTimestamp = System.currentTimeMillis();
         count = new AtomicInteger(0);
-        failureCount   = new AtomicInteger(0);
+        failureCount = new AtomicInteger(0);
     }
 
     public void increaseCount() {

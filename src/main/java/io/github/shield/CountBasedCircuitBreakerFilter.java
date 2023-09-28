@@ -30,6 +30,6 @@ public class CountBasedCircuitBreakerFilter extends AbstractBaseFilter implement
 
     @Override
     public Object invoke(Supplier supplier) {
-        return state.invoke(()-> this.invokeNext(supplier));
+        return state.invoke(() -> this.invokeNext(supplier));
     }
 }
