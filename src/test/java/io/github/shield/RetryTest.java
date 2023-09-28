@@ -1,9 +1,9 @@
 package io.github.shield;
 
-import io.github.shield.internal.RetriesExhaustedException;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class RetryTest {

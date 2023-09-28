@@ -1,7 +1,6 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.DefaultProxyFactoryProvider;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;

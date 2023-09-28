@@ -1,37 +1,26 @@
 package io.github.shield;
 
-import io.github.shield.internal.TimeoutFilter;
 import java.util.concurrent.TimeUnit;
 
-public interface Timeout extends FilterFactory {
+public class Timeout implements FilterFactory {
 
+  private long wait;
+  private TimeUnit timeunit;
 
-  Timeout waitMillis(long val);
+  public Timeout waitMillis(final long val) {
+    this.wait = val;
+    this.timeunit = TimeUnit.MILLISECONDS;
+    return this;
+  }
 
-  Timeout waitSeconds(long val);
+  public Timeout waitSeconds(final long val) {
+    this.wait = val;
+    this.timeunit = TimeUnit.SECONDS;
+    return this;
+  }
 
-  class Config implements Timeout {
-
-    private long wait;
-    private TimeUnit timeunit;
-
-    @Override
-    public Timeout waitMillis(final long val) {
-      this.wait = val;
-      this.timeunit = TimeUnit.MILLISECONDS;
-      return this;
-    }
-
-    @Override
-    public Timeout waitSeconds(final long val) {
-      this.wait = val;
-      this.timeunit = TimeUnit.SECONDS;
-      return this;
-    }
-
-    @Override
-    public Filter build() {
-      return new TimeoutFilter(wait, timeunit);
-    }
+  @Override
+  public Filter build() {
+    return new TimeoutFilter(wait, timeunit);
   }
 }

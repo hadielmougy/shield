@@ -1,7 +1,6 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.InvocationContext;
 import java.util.function.Supplier;
 
 /**
@@ -17,7 +16,7 @@ public interface Filter extends Comparable<Filter> {
    * @return rate limiter build factory
    */
   static RateLimiter rateLimiter() {
-    return new RateLimiter.Config();
+    return new RateLimiter();
   }
 
   /**
@@ -26,7 +25,7 @@ public interface Filter extends Comparable<Filter> {
    * @return throttler build factory
    */
   static Throttler throttler() {
-    return new Throttler.Config();
+    return new Throttler();
   }
 
   /**
@@ -35,7 +34,7 @@ public interface Filter extends Comparable<Filter> {
    * @return direct build factory
    */
   static FireAndForget fireAndForget() {
-    return new FireAndForget.Config();
+    return new FireAndForget();
   }
 
 
@@ -45,7 +44,7 @@ public interface Filter extends Comparable<Filter> {
    * @return direct build factory
    */
   static Retry retry() {
-    return new Retry.Config();
+    return new Retry();
   }
 
 
@@ -55,7 +54,7 @@ public interface Filter extends Comparable<Filter> {
    * @return direct build factory
    */
   static Timeout timeout() {
-    return new Timeout.Config();
+    return new Timeout();
   }
 
   /**
@@ -64,7 +63,7 @@ public interface Filter extends Comparable<Filter> {
    * @return direct build factory
    */
   static CircuitBreaker circuitBreaker() {
-    return new CircuitBreaker.Config();
+    return new CircuitBreaker();
   }
 
   /**
@@ -100,10 +99,9 @@ public interface Filter extends Comparable<Filter> {
   /**
    * Invoke this filter.
    *
-   * @param supplier
    * @return result of execution
    */
-  Object invoke(Supplier supplier);
+  Object invoke(Supplier<?> supplier);
 
 
   /**
@@ -127,7 +125,7 @@ public interface Filter extends Comparable<Filter> {
    * @param supplier
    * @return invocation result
    */
-  default Object doInvoke(Supplier supplier) {
+  default Object doInvoke(Supplier<?> supplier) {
     Object result = null;
     final boolean success = beforeInvocation();
     if (!success) {

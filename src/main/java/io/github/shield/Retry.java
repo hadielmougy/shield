@@ -1,9 +1,5 @@
 package io.github.shield;
 
-import io.github.shield.internal.BackOffTimeoutPolicy;
-import io.github.shield.internal.FixedDelayTimeoutPolicy;
-import io.github.shield.internal.RetryFilter;
-import io.github.shield.internal.Validations;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  *
  */
-public interface Retry extends FilterFactory {
+public class Retry implements FilterFactory {
 
   /**
    * Default delay millis value. 1000 is the default value for waiting between retries.
@@ -36,13 +32,27 @@ public interface Retry extends FilterFactory {
   TimeoutPolicy DEFAULT_TIMEOUT_POLICY = new FixedDelayTimeoutPolicy(DEFAULT_DELAY_VALUE,
       DEFAULT_TIMEUNIT);
 
+  private long delay = DEFAULT_DELAY_VALUE;
+  private TimeUnit timeUnit = DEFAULT_TIMEUNIT;
+  private int maxRetries = DEFAULT_RETRIES;
+  private List<Class<? extends Exception>> exceptions = new ArrayList<>();
+  private TimeoutPolicy timeoutPolicy = DEFAULT_TIMEOUT_POLICY;
+
   /**
    * Delay milliseconds between retries.
    *
    * @param delay value of milliseconds
    * @return Retry config builder
    */
-  Retry delayMillis(long delay);
+  Retry delayMillis(long delay) {
+    final String err = "delay must be positive value";
+    Validations.checkArgument(delay > 0, err);
+    this.delay = delay;
+    this.timeUnit = TimeUnit.MILLISECONDS;
+    this.timeoutPolicy.setDelay(delay);
+    this.timeoutPolicy.setTimeunit(this.timeUnit);
+    return this;
+  }
 
   /**
    * Delay seconds between retries.
@@ -50,7 +60,15 @@ public interface Retry extends FilterFactory {
    * @param delay
    * @return Retry config builder
    */
-  Retry delaySeconds(long delay);
+  Retry delaySeconds(long delay) {
+    final String err = "delay must be positive value";
+    Validations.checkArgument(delay > 0, err);
+    this.delay = delay;
+    this.timeUnit = TimeUnit.SECONDS;
+    this.timeoutPolicy.setDelay(delay);
+    this.timeoutPolicy.setTimeunit(this.timeUnit);
+    return this;
+  }
 
   /**
    * Maximum number of retries before give up.
@@ -58,21 +76,32 @@ public interface Retry extends FilterFactory {
    * @param maxRetries
    * @return Retry config builder
    */
-  Retry maxRetries(int maxRetries);
+  Retry maxRetries(int maxRetries) {
+    final String err = "maxRetries must be positive value";
+    Validations.checkArgument(maxRetries > 0, err);
+    this.maxRetries = maxRetries;
+    return this;
+  }
 
   /**
    * Fixed delay timeout policy.
    *
    * @return Retry config builder
    */
-  Retry fixed();
+  Retry fixed() {
+    timeoutPolicy = new FixedDelayTimeoutPolicy(delay, timeUnit);
+    return this;
+  }
 
   /**
    * BackOff delay timeout policy.
    *
    * @return Retry config builder
    */
-  Retry backOff();
+  Retry backOff() {
+    timeoutPolicy = new BackOffTimeoutPolicy(delay, timeUnit);
+    return this;
+  }
 
   /**
    * Can be called many times to set exceptions that must be retries on.
@@ -80,110 +109,13 @@ public interface Retry extends FilterFactory {
    * @param ex exception class
    * @return Retry config builder
    */
-  Retry onException(Class<? extends Exception> ex);
+  Retry onException(Class<? extends Exception> ex) {
+    final String err = "exception class must not be null";
+    exceptions.add(Objects.requireNonNull(ex, err));
+    return this;
+  }
 
-
-  /**
-   * Retry config builder.
-   */
-  class Config implements Retry {
-
-    /**
-     * @see Retry
-     */
-    private long delay = DEFAULT_DELAY_VALUE;
-    /**
-     * @see Retry
-     */
-    private TimeUnit timeUnit = DEFAULT_TIMEUNIT;
-    /**
-     * @see Retry
-     */
-    private int maxRetries = DEFAULT_RETRIES;
-    /**
-     * @see Retry
-     */
-    private List<Class<? extends Exception>> exceptions = new ArrayList<>();
-
-    /**
-     * @see Retry
-     */
-    private TimeoutPolicy timeoutPolicy = DEFAULT_TIMEOUT_POLICY;
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Retry delayMillis(final long value) {
-      final String err = "delay must be positive value";
-      Validations.checkArgument(delay > 0, err);
-      this.delay = value;
-      this.timeUnit = TimeUnit.MILLISECONDS;
-      this.timeoutPolicy.setDelay(value);
-      this.timeoutPolicy.setTimeunit(this.timeUnit);
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Retry delaySeconds(final long value) {
-      final String err = "delay must be positive value";
-      Validations.checkArgument(delay > 0, err);
-      this.delay = value;
-      this.timeUnit = TimeUnit.SECONDS;
-      this.timeoutPolicy.setDelay(value);
-      this.timeoutPolicy.setTimeunit(this.timeUnit);
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Retry maxRetries(final int value) {
-      final String err = "maxRetries must be positive value";
-      Validations.checkArgument(maxRetries > 0, err);
-      this.maxRetries = value;
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Retry fixed() {
-      timeoutPolicy = new FixedDelayTimeoutPolicy(delay, timeUnit);
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Retry backOff() {
-      timeoutPolicy = new BackOffTimeoutPolicy(delay, timeUnit);
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Retry onException(final Class<? extends Exception> ex) {
-      final String err = "exception class must not be null";
-      exceptions.add(Objects.requireNonNull(ex, err));
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Filter build() {
-      return new RetryFilter(maxRetries, delay, timeUnit, exceptions, timeoutPolicy);
-    }
+  public Filter build() {
+    return new RetryFilter(maxRetries, delay, timeUnit, exceptions, timeoutPolicy);
   }
 }
