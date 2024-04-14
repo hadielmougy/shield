@@ -13,5 +13,5 @@ public interface ProxyFactory {
    * @param <T>     type
    * @return proxy instance of the given type
    */
-  <T> T create(Class<T> type, List<Filter> filters);
+  <T> T create(List<Filter> filters);
 }

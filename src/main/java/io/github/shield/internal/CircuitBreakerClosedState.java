@@ -1,7 +1,5 @@
 package io.github.shield.internal;
 
-import io.github.shield.CircuitBreaker;
-
 import java.util.function.Supplier;
 
 public class CircuitBreakerClosedState implements CircuitBreakerState {

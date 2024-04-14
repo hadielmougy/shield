@@ -2,6 +2,7 @@ package io.github.shield;
 
 
 import io.github.shield.internal.InvocationContext;
+
 import java.util.function.Supplier;
 
 /**
@@ -103,7 +104,7 @@ public interface Filter extends Comparable<Filter> {
    * @param supplier
    * @return result of execution
    */
-  Object invoke(Supplier supplier);
+  <T> T invoke(Supplier<T> supplier);
 
 
   /**
@@ -111,7 +112,7 @@ public interface Filter extends Comparable<Filter> {
    *
    * @param context execution context
    */
-  void setContext(InvocationContext context);
+  <T> void setContext(InvocationContext<T> context);
 
 
   /**
@@ -119,7 +120,7 @@ public interface Filter extends Comparable<Filter> {
    *
    * @return context
    */
-  InvocationContext getContext();
+  <T> InvocationContext<T> getContext();
 
   /**
    * Invocation Template.
@@ -127,11 +128,11 @@ public interface Filter extends Comparable<Filter> {
    * @param supplier
    * @return invocation result
    */
-  default Object doInvoke(Supplier supplier) {
-    Object result = null;
+  default <T> T doInvoke(Supplier<T> supplier) {
+    T result = null;
     final boolean success = beforeInvocation();
     if (!success) {
-      throw new InvocationCancelledException(getContext().getTargetClass());
+      throw new InvocationCancelledException("Can't invoke target supplier");
     }
 
     try {

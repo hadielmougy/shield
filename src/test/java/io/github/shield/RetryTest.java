@@ -1,9 +1,11 @@
 package io.github.shield;
 
 import io.github.shield.internal.RetriesExhaustedException;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 
 public class RetryTest {
@@ -12,66 +14,59 @@ public class RetryTest {
   @Test
   public void shouldRetry() {
     final AtomicInteger counter = new AtomicInteger(0);
-
-    Component component = Components.throwingComponentWithCounter(new RuntimeException(), counter,
+    Supplier<Void> target = Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter,
         1);
-
-    final Component comp = Shield.forObject(component)
-        .filter(Filter.retry()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
-        .as(Component.class);
-
-    comp.doCall();
-
+        .build();
+    comp.get();
     Assert.assertEquals(2, counter.get());
   }
 
 
   @Test(expected = RetriesExhaustedException.class)
   public void shouldRetryAndExhaustRetries() {
-
-    Component component = Components.throwingComponent(new RuntimeException());
-
-    final Component comp = Shield.forObject(component)
-        .filter(Filter.retry()
+    Supplier<Void> target = Suppliers.throwingSupplier(new RuntimeException());
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
-        .as(Component.class);
-
-    comp.doCall();
+        .build();
+    comp.get();
   }
 
 
   @Test
   public void shouldRetryOnGivenException() {
     final AtomicInteger counter = new AtomicInteger(0);
-    final Component component = Components.throwingComponentWithCounter(
+    final Supplier<Void> target = Suppliers.throwingSupplierWithCounter(
         new IllegalArgumentException(), counter, 1);
-    final Component comp = Shield.forObject(component)
-        .filter(Filter.retry()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
-        .as(Component.class);
-
-    comp.doCall();
-
+        .build();
+    comp.get();
     Assert.assertEquals(2, counter.get());
   }
 
 
   @Test(expected = RetriesExhaustedException.class)
   public void shouldNotRetryOnGivenException() {
-    Component component = Components.throwingComponent(new IllegalStateException());
+    final Supplier<Void> target = Suppliers.throwingSupplier(new IllegalStateException());
 
-    final Component comp = Shield.forObject(component)
-        .filter(Filter.retry()
+    final Retry retry = Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
-            .onException(IllegalArgumentException.class))
-        .as(Component.class);
+            .onException(IllegalArgumentException.class);
 
-    comp.doCall();
+    final Supplier<Void> decorated = Shield.decorate(target)
+            .with(retry)
+            .build();
+
+    decorated.get();
   }
 }

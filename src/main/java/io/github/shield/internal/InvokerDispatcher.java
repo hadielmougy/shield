@@ -1,38 +1,22 @@
 package io.github.shield.internal;
 
-import io.github.shield.InvocationCancelledException;
 import io.github.shield.Invoker;
 import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
-public class InvokerDispatcher implements Invoker {
+public class InvokerDispatcher<T> implements Invoker<T> {
 
-  private final TargetMethodInvoker targetMethodInvoker;
-  private final FallbackMethodInvoker fallbackMethodInvoker;
+  private final TargetMethodInvoker<T> targetMethodInvoker;
 
 
-  public InvokerDispatcher(TargetMethodInvoker targetMethodInvoker,
-      FallbackMethodInvoker fallbackMethodInvoker) {
+  public InvokerDispatcher(TargetMethodInvoker<T> targetMethodInvoker) {
     this.targetMethodInvoker = targetMethodInvoker;
-    this.fallbackMethodInvoker = fallbackMethodInvoker;
   }
 
 
   @Override
-  public Object invoke(final InvocationContext context) {
-    Class targetClass = context.getTargetClass();
-    try {
-      return targetMethodInvoker.invoke(context);
-    } catch (InvocationCancelledException ex) {
-      if (isNotThrownFromTarget(ex, targetClass)) {
-        return fallbackMethodInvoker.invoke(context);
-      } else {
-        throw ex;
-      }
-    }
+  public T invoke(final InvocationContext<T> context) {
+    return targetMethodInvoker.invoke(context);
   }
 
-  private boolean isNotThrownFromTarget(InvocationCancelledException ex, Class targetClass) {
-    return !ex.getThrowingClass().equals(targetClass);
-  }
 }

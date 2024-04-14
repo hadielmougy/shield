@@ -3,7 +3,7 @@ package io.github.shield;
 
 import io.github.shield.internal.InvocationContext;
 
-public interface Invoker {
+public interface Invoker<T> {
 
   /**
    * Invoker of target object's method.
@@ -11,6 +11,6 @@ public interface Invoker {
    * @param context execution context
    * @return the result of execution
    */
-  Object invoke(InvocationContext context);
+  T invoke(InvocationContext<T> context);
 
 }

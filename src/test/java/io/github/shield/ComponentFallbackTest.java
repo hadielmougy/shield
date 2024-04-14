@@ -1,12 +1,14 @@
 package io.github.shield;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class ComponentFallbackTest {
 
@@ -20,24 +22,17 @@ public class ComponentFallbackTest {
   @Test(expected = InvocationCancelledException.class)
   public void testThrottledAndFallback() throws InterruptedException {
     final AtomicInteger counter = new AtomicInteger(0);
-
-    Component targetObj = Components.sleepComponentWithCounter(counter, 2000);
-
-    final Component comp = Shield.forObject(targetObj)
-        .filter(Filter.throttler()
+    Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 2000);
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.throttler()
             .requests(1)
             .maxWaitMillis(500))
-        .as(Component.class);
-
-    executor.submit(() -> comp.doCall());
-
-    Thread.currentThread().sleep(500);
-
-    comp.doCall();
-
+        .build();
+    executor.submit(comp::get);
+    Thread.sleep(500);
+    comp.get();
     Awaitility.await().until(() -> counter.get() == 1);
     Assert.assertEquals(1, counter.get());
-
     executor.shutdown();
   }
 

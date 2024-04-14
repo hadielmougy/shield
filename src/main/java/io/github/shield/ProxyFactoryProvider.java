@@ -9,5 +9,5 @@ public interface ProxyFactoryProvider {
    * @return proxy factory for given obj instance
    * @see ProxyFactory
    */
-  ProxyFactory forObject(Object obj);
+  <T> ProxyFactory forObject(final Class<T> type, Object obj);
 }

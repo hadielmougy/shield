@@ -1,30 +1,21 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.DefaultProxyFactoryProvider;
+import io.github.shield.internal.SupplierWrapper;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public final class Shield {
-
-  private static ProxyFactoryProvider proxyFactoryProvider;
+public final class Shield<T> {
 
   private final List<FilterFactory> filterFactories;
-  private final ProxyFactory proxyFactory;
+  private final Supplier<T> supplier;
 
-  static {
-    proxyFactoryProvider(new DefaultProxyFactoryProvider());
-  }
-
-  public static void proxyFactoryProvider(final ProxyFactoryProvider p) {
-    Shield.proxyFactoryProvider = p;
-  }
-
-
-  private Shield(final Object obj) {
-    this.proxyFactory = proxyFactoryProvider.forObject(obj);
+  public Shield(Supplier<T> supplier) {
+    this.supplier = supplier;
     this.filterFactories = new LinkedList<>();
   }
 
@@ -33,7 +24,7 @@ public final class Shield {
    * @param filterFactory
    * @return current shield object
    */
-  public Shield filter(final FilterFactory filterFactory) {
+  public Shield<T> with(final FilterFactory filterFactory) {
     this.filterFactories.add(Objects.requireNonNull(filterFactory,
         "filter can't be null"
     ));
@@ -44,22 +35,20 @@ public final class Shield {
   /**
    * Creates new shield object that wraps the target object.
    *
-   * @param targetObject
+   * @param supplier
    * @return new instance of shield
    */
-  public static Shield forObject(final Object targetObject) {
-    return new Shield(targetObject);
+  public static <T> Shield<T> decorate(Supplier<T> supplier) {
+    return new Shield<>(supplier);
   }
 
 
   /**
    * Create proxy of the given type around the target object.
    *
-   * @param type interface type of target component
-   * @param <T>  interface type
    * @return proxy of the type that is passed as a parameter to this method
    */
-  public <T> T as(final Class<T> type) {
+  public Supplier<T> build() {
 
     if (filterFactories.isEmpty()) {
       throw new IllegalStateException(
@@ -72,7 +61,7 @@ public final class Shield {
         .map(FilterFactory::build)
         .collect(Collectors.toList());
 
-    return proxyFactory.create(type, sort(filters));
+    return new SupplierWrapper<>(supplier, sort(filters));
   }
 
 

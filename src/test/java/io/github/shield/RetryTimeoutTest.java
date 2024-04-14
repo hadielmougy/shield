@@ -1,24 +1,24 @@
 package io.github.shield;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 
 public class RetryTimeoutTest {
 
   @Test
   public void shouldTimeout() {
-    AtomicInteger atomicInteger = new AtomicInteger(0);
-    Component comp = Components.throwingComponentWithCounter(new IllegalStateException(),
+    final AtomicInteger atomicInteger = new AtomicInteger(0);
+    final Supplier<Void> target = Suppliers.throwingSupplierWithCounter(new IllegalStateException(),
         atomicInteger, 5);
-    Component decorated = Shield.forObject(comp)
-        .filter(Filter.timeout().waitMillis(1100))
-        .filter(Filter.retry().delayMillis(1000).maxRetries(5))
-        .as(Component.class);
-
-    decorated.doCall();
-
+    Supplier<Void> decorated = Shield.decorate(target)
+        .with(Filter.timeout().waitMillis(1100))
+        .with(Filter.retry().delayMillis(1000).maxRetries(5))
+        .build();
+    decorated.get();
     Assert.assertEquals(2, atomicInteger.get());
   }
 }

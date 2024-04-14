@@ -5,16 +5,17 @@ Fault tolerance library for java
 ## Usage
 
 ```java
-    final IComponent comp = Shield.forObject(componentObj)
-        .filter(Filter.retry())
-        .delayMillis(500)
-        .maxRetries(3)
-        .backoff()
-        .onException(IllegalStateException.class)
-        .onException(AnotherException.class)
-    .as(IComponent.class);
 
-    comp.doSomething();
+    final Retry retry = Filter.retry()
+            .delayMillis(500)
+            .maxRetries(3)
+            .onException(IllegalArgumentException.class);
+
+    final Supplier<Void> decorated = Shield.decorate(() -> ...)
+            .with(retry)
+            .build();
+    
+    decorated.get();
 ```
 
 ## Supported Filters

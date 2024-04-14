@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.TimeoutPolicy;
+
 import java.util.concurrent.TimeUnit;
 
 public class BackOffTimeoutPolicy extends TimeoutPolicy {

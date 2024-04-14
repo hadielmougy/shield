@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.CircuitBreaker;
+
 import java.util.Objects;
 import java.util.function.Supplier;
 

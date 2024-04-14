@@ -1,6 +1,7 @@
 package io.github.shield.internal;
 
 import io.github.shield.ExecutorProvider;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
