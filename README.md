@@ -27,7 +27,3 @@ Fault tolerance library for java
 * Retry
 * Circuit-breaker
 
-## TODO
-
-* Metrics
-
