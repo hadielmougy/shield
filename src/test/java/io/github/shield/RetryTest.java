@@ -16,8 +16,8 @@ public class RetryTest {
     final AtomicInteger counter = new AtomicInteger(0);
     Supplier<Void> target = Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter,
         1);
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.retry()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
         .build();
@@ -29,8 +29,8 @@ public class RetryTest {
   @Test(expected = RetriesExhaustedException.class)
   public void shouldRetryAndExhaustRetries() {
     Supplier<Void> target = Suppliers.throwingSupplier(new RuntimeException());
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.retry()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
         .build();
@@ -43,8 +43,8 @@ public class RetryTest {
     final AtomicInteger counter = new AtomicInteger(0);
     final Supplier<Void> target = Suppliers.throwingSupplierWithCounter(
         new IllegalArgumentException(), counter, 1);
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.retry()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
@@ -57,12 +57,16 @@ public class RetryTest {
   @Test(expected = RetriesExhaustedException.class)
   public void shouldNotRetryOnGivenException() {
     final Supplier<Void> target = Suppliers.throwingSupplier(new IllegalStateException());
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.retry()
+
+    final Retry retry = Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
-            .onException(IllegalArgumentException.class))
-        .build();
-    comp.get();
+            .onException(IllegalArgumentException.class);
+
+    final Supplier<Void> decorated = Shield.decorate(target)
+            .with(retry)
+            .build();
+
+    decorated.get();
   }
 }

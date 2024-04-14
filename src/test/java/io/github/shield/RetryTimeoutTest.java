@@ -14,9 +14,9 @@ public class RetryTimeoutTest {
     final AtomicInteger atomicInteger = new AtomicInteger(0);
     final Supplier<Void> target = Suppliers.throwingSupplierWithCounter(new IllegalStateException(),
         atomicInteger, 5);
-    Supplier<Void> decorated = Shield.wrapSupplier(target)
-        .filter(Filter.timeout().waitMillis(1100))
-        .filter(Filter.retry().delayMillis(1000).maxRetries(5))
+    Supplier<Void> decorated = Shield.decorate(target)
+        .with(Filter.timeout().waitMillis(1100))
+        .with(Filter.retry().delayMillis(1000).maxRetries(5))
         .build();
     decorated.get();
     Assert.assertEquals(2, atomicInteger.get());

@@ -23,8 +23,8 @@ public class ComponentFallbackTest {
   public void testThrottledAndFallback() throws InterruptedException {
     final AtomicInteger counter = new AtomicInteger(0);
     Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 2000);
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.throttler()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.throttler()
             .requests(1)
             .maxWaitMillis(500))
         .build();

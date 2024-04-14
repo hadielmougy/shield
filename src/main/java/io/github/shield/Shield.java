@@ -24,7 +24,7 @@ public final class Shield<T> {
    * @param filterFactory
    * @return current shield object
    */
-  public Shield<T> filter(final FilterFactory filterFactory) {
+  public Shield<T> with(final FilterFactory filterFactory) {
     this.filterFactories.add(Objects.requireNonNull(filterFactory,
         "filter can't be null"
     ));
@@ -38,7 +38,7 @@ public final class Shield<T> {
    * @param supplier
    * @return new instance of shield
    */
-  public static <T> Shield<T> wrapSupplier(Supplier<T> supplier) {
+  public static <T> Shield<T> decorate(Supplier<T> supplier) {
     return new Shield<>(supplier);
   }
 

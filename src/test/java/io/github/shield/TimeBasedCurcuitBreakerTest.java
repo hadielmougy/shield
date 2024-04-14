@@ -15,8 +15,8 @@ public class TimeBasedCurcuitBreakerTest {
         final AtomicInteger counter = new AtomicInteger(0);
         Supplier<Void> target =
                 Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 3);
-        final Supplier<Void> comp = Shield.wrapSupplier(target)
-                .filter(Filter.circuitBreaker()
+        final Supplier<Void> comp = Shield.decorate(target)
+                .with(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
                         .waitDurationInOpenState(Duration.ofSeconds(1))
@@ -40,8 +40,8 @@ public class TimeBasedCurcuitBreakerTest {
         final AtomicInteger counter = new AtomicInteger(0);
         Supplier<Void> component =
                 Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 3);
-        final Supplier<Void> comp = Shield.wrapSupplier( component)
-                .filter(Filter.circuitBreaker()
+        final Supplier<Void> comp = Shield.decorate( component)
+                .with(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
                         .waitDurationInOpenState(Duration.ofSeconds(1))

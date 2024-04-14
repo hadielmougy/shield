@@ -23,8 +23,8 @@ public class FireAndForgetConnectorTest {
   public void testRunningInDifferentThread() throws InterruptedException {
     final StringBuilder stringBuilder = new StringBuilder();
     Supplier<StringBuilder> target = () -> stringBuilder.append(Thread.currentThread().getName());
-    final Supplier<StringBuilder> comp = Shield.wrapSupplier(target)
-        .filter(Filter.fireAndForget())
+    final Supplier<StringBuilder> comp = Shield.decorate(target)
+        .with(Filter.fireAndForget())
         .build();
     comp.get();
     TimeUnit.MILLISECONDS.sleep(100);

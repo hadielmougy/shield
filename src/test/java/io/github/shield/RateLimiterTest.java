@@ -24,8 +24,8 @@ public class RateLimiterTest {
   public void testLimited1() throws InterruptedException {
     final AtomicInteger counter = new AtomicInteger(0);
     final Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 1000);
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.rateLimiter()
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.rateLimiter()
             .rate(1))
         .build();
     executor.submit(comp::get);
@@ -40,8 +40,8 @@ public class RateLimiterTest {
   public void testLimited2() {
     final AtomicInteger counter = new AtomicInteger(0);
     Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 1000);
-    final Supplier<Void> comp = Shield.wrapSupplier(target)
-        .filter(Filter.rateLimiter().rate(2))
+    final Supplier<Void> comp = Shield.decorate(target)
+        .with(Filter.rateLimiter().rate(2))
         .build();
     executor.submit(comp::get);
     executor.submit(comp::get);
