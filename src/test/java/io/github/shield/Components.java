@@ -1,37 +1,39 @@
 package io.github.shield;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class Components {
 
 
-  public static Component sleepComponentWithCounter(AtomicInteger counter, long sleepMillis) {
-    return new TestComponentWithFallback(() -> {
+  public static Supplier<Void> sleepComponentWithCounter(AtomicInteger counter, long sleepMillis) {
+    return () -> {
       counter.incrementAndGet();
       try {
         Thread.currentThread().sleep(sleepMillis);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-    }, () -> counter.decrementAndGet());
+        return null;
+    };
   }
 
 
-  public static Component throwingComponentWithCounter(RuntimeException e, AtomicInteger counter,
-      int maxCount) {
-    return new TestComponentWithFallback(() -> {
+  public static Supplier<Void> throwingComponentWithCounter(RuntimeException e, AtomicInteger counter, int maxCount) {
+    return () -> {
       int count = counter.incrementAndGet();
       if (count <= maxCount) {
         throw e;
       }
-    }, () -> counter.decrementAndGet());
+        return null;
+    };
   }
 
 
-  public static Component throwingComponent(RuntimeException e) {
-    return new TestComponentWithFallback(() -> {
+  public static Supplier<Void> throwingComponent(RuntimeException e) {
+    return () -> {
       throw e;
-    }, null);
+    };
   }
 
 }

@@ -1,12 +1,14 @@
 package io.github.shield;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.function.Supplier;
 
 
 public class ConcurrentLimiterTest {
@@ -23,16 +25,16 @@ public class ConcurrentLimiterTest {
 
     final AtomicInteger counter = new AtomicInteger(0);
 
-    Component targetObj = Components.sleepComponentWithCounter(counter, 2000);
+    Supplier<Void> targetObj = Components.sleepComponentWithCounter(counter, 2000);
 
-    final Component comp = Shield.forObject(Component.class, targetObj)
+    final Supplier<Void> comp = Shield.wrapSupplier( targetObj)
         .filter(Filter.throttler()
             .requests(1)
             .maxWaitMillis(500))
         .build();
 
-    executor.submit(() -> comp.doCall());
-    executor.submit(() -> comp.doCall());
+    executor.submit(comp::get);
+    executor.submit(comp::get);
 
     TimeUnit.MILLISECONDS.sleep(100);
 

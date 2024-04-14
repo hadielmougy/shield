@@ -4,11 +4,11 @@ import io.github.shield.Invoker;
 import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
-public class TargetMethodInvoker implements Invoker {
+public class TargetMethodInvoker<T> implements Invoker<T> {
 
   @Override
-  public Object invoke(InvocationContext context) {
-    return context.execute();
+  public T invoke(InvocationContext<T> context) {
+    return context.get();
   }
 
 }

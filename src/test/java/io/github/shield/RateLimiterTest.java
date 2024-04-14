@@ -1,13 +1,15 @@
 package io.github.shield;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class RateLimiterTest {
 
@@ -22,15 +24,14 @@ public class RateLimiterTest {
   public void testLimited1() throws InterruptedException {
 
     final AtomicInteger counter = new AtomicInteger(0);
-    Component component = Components.sleepComponentWithCounter(counter, 1000);
-
-    final Component comp = Shield.forObject(Component.class, component)
+    Supplier<Void> component = Components.sleepComponentWithCounter(counter, 1000);
+    final Supplier<Void> comp = Shield.wrapSupplier(component)
         .filter(Filter.rateLimiter()
             .rate(1))
         .build();
 
-    executor.submit(() -> comp.doCall());
-    executor.submit(() -> comp.doCall());
+    executor.submit(comp::get);
+    executor.submit(comp::get);
 
     TimeUnit.MILLISECONDS.sleep(100);
 
@@ -43,14 +44,14 @@ public class RateLimiterTest {
   @Test
   public void testLimited2() {
     final AtomicInteger counter = new AtomicInteger(0);
-    Component component = Components.sleepComponentWithCounter(counter, 1000);
+    Supplier<Void> component = Components.sleepComponentWithCounter(counter, 1000);
 
-    final Component comp = Shield.forObject(Component.class, component)
+    final Supplier<Void> comp = Shield.wrapSupplier(component)
         .filter(Filter.rateLimiter().rate(2))
         .build();
 
-    executor.submit(() -> comp.doCall());
-    executor.submit(() -> comp.doCall());
+    executor.submit(comp::get);
+    executor.submit(comp::get);
 
     Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> counter.get() == 2);
 

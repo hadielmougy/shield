@@ -1,21 +1,21 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.DefaultProxyFactoryProvider;
+import io.github.shield.internal.SupplierWrapper;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public final class Shield<T> {
 
-  private static ProxyFactoryProvider proxyFactoryProvider;
-
   private final List<FilterFactory> filterFactories;
-  private final ProxyFactory proxyFactory;
+  private final Supplier<T> supplier;
 
-  private Shield(final Class<T> type, final Object obj) {
-    this.proxyFactory = new DefaultProxyFactoryProvider().forObject(type, obj);
+  public Shield(Supplier<T> supplier) {
+    this.supplier = supplier;
     this.filterFactories = new LinkedList<>();
   }
 
@@ -35,11 +35,11 @@ public final class Shield<T> {
   /**
    * Creates new shield object that wraps the target object.
    *
-   * @param targetObject
+   * @param supplier
    * @return new instance of shield
    */
-  public static <T> Shield<T> forObject(final Class<T> type, final Object targetObject) {
-    return new Shield<>(type, targetObject);
+  public static <T> Shield<T> wrapSupplier(Supplier<T> supplier) {
+    return new Shield<>(supplier);
   }
 
 
@@ -48,7 +48,7 @@ public final class Shield<T> {
    *
    * @return proxy of the type that is passed as a parameter to this method
    */
-  public T build() {
+  public Supplier<T> build() {
 
     if (filterFactories.isEmpty()) {
       throw new IllegalStateException(
@@ -61,7 +61,7 @@ public final class Shield<T> {
         .map(FilterFactory::build)
         .collect(Collectors.toList());
 
-    return proxyFactory.create(sort(filters));
+    return new SupplierWrapper<>(supplier, sort(filters));
   }
 
 

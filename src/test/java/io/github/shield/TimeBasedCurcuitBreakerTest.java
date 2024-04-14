@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class TimeBasedCurcuitBreakerTest {
 
@@ -12,10 +13,10 @@ public class TimeBasedCurcuitBreakerTest {
     @Test
     public void testSuccessBreaker() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
-        Component component =
+        Supplier<Void> component =
                 Components.throwingComponentWithCounter(new RuntimeException(), counter, 3);
 
-        final Component comp = Shield.forObject(Component.class, component)
+        final Supplier<Void> comp = Shield.wrapSupplier(component)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
@@ -23,14 +24,14 @@ public class TimeBasedCurcuitBreakerTest {
                         .slidingWindowType(CircuitBreaker.WindowType.TIME_BASED))
                 .build();
 
-        comp.doCall();
-        comp.doCall();
-        comp.doCall();
-        comp.doCall();
+        comp.get();
+        comp.get();
+        comp.get();
+        comp.get();
         // wait till the window timeout is due
         Thread.sleep(1000);
         // should open after this call
-        comp.doCall();
+        comp.get();
         // should fail
         //comp.doCall();
         Assert.assertEquals(5, counter.get());
@@ -39,10 +40,10 @@ public class TimeBasedCurcuitBreakerTest {
     @Test
     public void testHalfOpenFailsBreaker() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
-        Component component =
+        Supplier<Void> component =
                 Components.throwingComponentWithCounter(new RuntimeException(), counter, 3);
 
-        final Component comp = Shield.forObject(Component.class, component)
+        final Supplier<Void> comp = Shield.wrapSupplier( component)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
@@ -50,19 +51,19 @@ public class TimeBasedCurcuitBreakerTest {
                         .slidingWindowType(CircuitBreaker.WindowType.TIME_BASED))
                 .build();
 
-        comp.doCall();
-        comp.doCall();
-        comp.doCall();
-        comp.doCall();
+        comp.get();
+        comp.get();
+        comp.get();
+        comp.get();
         // wait till the window timeout is due
         Thread.sleep(1000);
         // should open after this call
-        comp.doCall();
+        comp.get();
         // should fail
         //comp.doCall();
         // wait till close
         Thread.sleep(1100);
-        comp.doCall();
+        comp.get();
         Assert.assertEquals(6, counter.get());
     }
 

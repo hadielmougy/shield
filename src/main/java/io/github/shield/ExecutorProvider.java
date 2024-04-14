@@ -3,6 +3,7 @@ package io.github.shield;
 import io.github.shield.internal.FireAndForgetFilter;
 import io.github.shield.internal.RateLimiterFilter;
 import io.github.shield.internal.TimeoutFilter;
+
 import java.util.concurrent.ExecutorService;
 
 public interface ExecutorProvider {

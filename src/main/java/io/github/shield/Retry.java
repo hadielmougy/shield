@@ -4,6 +4,7 @@ import io.github.shield.internal.BackOffTimeoutPolicy;
 import io.github.shield.internal.FixedDelayTimeoutPolicy;
 import io.github.shield.internal.RetryFilter;
 import io.github.shield.internal.Validations;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

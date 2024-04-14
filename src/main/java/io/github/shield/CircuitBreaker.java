@@ -1,9 +1,9 @@
 package io.github.shield;
 
-import io.github.shield.internal.CircuitBreakerFilter;
 import io.github.shield.internal.CountBasedCircuitBreakerFilter;
 import io.github.shield.internal.TimeBasedCircuitBreakerFilter;
 import io.github.shield.internal.Validations;
+
 import java.time.Duration;
 
 public interface CircuitBreaker extends FilterFactory {

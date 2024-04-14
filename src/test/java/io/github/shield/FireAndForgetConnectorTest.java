@@ -1,11 +1,13 @@
 package io.github.shield;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class FireAndForgetConnectorTest {
 
@@ -21,14 +23,12 @@ public class FireAndForgetConnectorTest {
   public void testRunningInDifferentThread() throws InterruptedException {
 
     final StringBuilder stringBuilder = new StringBuilder();
-
-    TestComponentWithFallback targetObj = new TestComponentWithFallback(
-        () -> stringBuilder.append(Thread.currentThread().getName()), null);
-    final Component comp = Shield.forObject(Component.class, targetObj)
+    Supplier<StringBuilder> supplier = () -> stringBuilder.append(Thread.currentThread().getName());
+    final Supplier<StringBuilder> comp = Shield.wrapSupplier(supplier)
         .filter(Filter.fireAndForget())
         .build();
 
-    comp.doCall();
+    comp.get();
 
     TimeUnit.MILLISECONDS.sleep(100);
     String currentThreadName = Thread.currentThread().getName();

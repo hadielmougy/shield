@@ -1,10 +1,11 @@
 package io.github.shield.internal;
 
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import io.github.shield.ExecutorProvider;
+
 import java.util.concurrent.ScheduledExecutorService;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  *

@@ -2,6 +2,7 @@ package io.github.shield.internal;
 
 
 import io.github.shield.ExecutorProvider;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

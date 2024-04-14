@@ -1,6 +1,7 @@
 package io.github.shield;
 
 import io.github.shield.internal.TimeoutFilter;
+
 import java.util.concurrent.TimeUnit;
 
 public interface Timeout extends FilterFactory {
