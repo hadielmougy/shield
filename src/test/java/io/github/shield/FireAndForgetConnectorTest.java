@@ -21,15 +21,12 @@ public class FireAndForgetConnectorTest {
 
   @Test
   public void testRunningInDifferentThread() throws InterruptedException {
-
     final StringBuilder stringBuilder = new StringBuilder();
-    Supplier<StringBuilder> supplier = () -> stringBuilder.append(Thread.currentThread().getName());
-    final Supplier<StringBuilder> comp = Shield.wrapSupplier(supplier)
+    Supplier<StringBuilder> target = () -> stringBuilder.append(Thread.currentThread().getName());
+    final Supplier<StringBuilder> comp = Shield.wrapSupplier(target)
         .filter(Filter.fireAndForget())
         .build();
-
     comp.get();
-
     TimeUnit.MILLISECONDS.sleep(100);
     String currentThreadName = Thread.currentThread().getName();
     Assert.assertNotEquals("", stringBuilder.toString());

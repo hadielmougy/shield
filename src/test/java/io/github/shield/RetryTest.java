@@ -14,33 +14,26 @@ public class RetryTest {
   @Test
   public void shouldRetry() {
     final AtomicInteger counter = new AtomicInteger(0);
-
-    Supplier<Void> component = Components.throwingComponentWithCounter(new RuntimeException(), counter,
+    Supplier<Void> target = Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter,
         1);
-
-    final Supplier<Void> comp = Shield.wrapSupplier(component)
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
         .build();
-
     comp.get();
-
     Assert.assertEquals(2, counter.get());
   }
 
 
   @Test(expected = RetriesExhaustedException.class)
   public void shouldRetryAndExhaustRetries() {
-
-    Supplier<Void> component = Components.throwingComponent(new RuntimeException());
-
-    final Supplier<Void> comp = Shield.wrapSupplier(component)
+    Supplier<Void> target = Suppliers.throwingSupplier(new RuntimeException());
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
         .build();
-
     comp.get();
   }
 
@@ -48,32 +41,28 @@ public class RetryTest {
   @Test
   public void shouldRetryOnGivenException() {
     final AtomicInteger counter = new AtomicInteger(0);
-    final Supplier<Void> component = Components.throwingComponentWithCounter(
+    final Supplier<Void> target = Suppliers.throwingSupplierWithCounter(
         new IllegalArgumentException(), counter, 1);
-    final Supplier<Void> comp = Shield.wrapSupplier( component)
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
         .build();
-
     comp.get();
-
     Assert.assertEquals(2, counter.get());
   }
 
 
   @Test(expected = RetriesExhaustedException.class)
   public void shouldNotRetryOnGivenException() {
-    Supplier<Void> component = Components.throwingComponent(new IllegalStateException());
-
-    final Supplier<Void> comp = Shield.wrapSupplier(component)
+    final Supplier<Void> target = Suppliers.throwingSupplier(new IllegalStateException());
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
         .build();
-
     comp.get();
   }
 }

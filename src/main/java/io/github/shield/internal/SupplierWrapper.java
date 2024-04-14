@@ -10,10 +10,6 @@ import java.util.function.Supplier;
 public class SupplierWrapper<T> implements Supplier<T> {
 
     private final List<Filter> filters;
-
-    /**
-     *
-     */
     private final InvokerDispatcher<T> dispatcher;
     private final Supplier<T> supplier;
     /**

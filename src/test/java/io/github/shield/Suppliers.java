@@ -3,10 +3,10 @@ package io.github.shield;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-public class Components {
+public class Suppliers {
 
 
-  public static Supplier<Void> sleepComponentWithCounter(AtomicInteger counter, long sleepMillis) {
+  public static Supplier<Void> sleepSupplierWithCounter(AtomicInteger counter, long sleepMillis) {
     return () -> {
       counter.incrementAndGet();
       try {
@@ -19,7 +19,7 @@ public class Components {
   }
 
 
-  public static Supplier<Void> throwingComponentWithCounter(RuntimeException e, AtomicInteger counter, int maxCount) {
+  public static Supplier<Void> throwingSupplierWithCounter(RuntimeException e, AtomicInteger counter, int maxCount) {
     return () -> {
       int count = counter.incrementAndGet();
       if (count <= maxCount) {
@@ -30,7 +30,7 @@ public class Components {
   }
 
 
-  public static Supplier<Void> throwingComponent(RuntimeException e) {
+  public static Supplier<Void> throwingSupplier(RuntimeException e) {
     return () -> {
       throw e;
     };

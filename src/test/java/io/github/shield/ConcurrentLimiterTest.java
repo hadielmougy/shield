@@ -22,26 +22,18 @@ public class ConcurrentLimiterTest {
 
   @Test
   public void testThrottled() throws InterruptedException {
-
     final AtomicInteger counter = new AtomicInteger(0);
-
-    Supplier<Void> targetObj = Components.sleepComponentWithCounter(counter, 2000);
-
-    final Supplier<Void> comp = Shield.wrapSupplier( targetObj)
+    Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 2000);
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.throttler()
             .requests(1)
             .maxWaitMillis(500))
         .build();
-
     executor.submit(comp::get);
     executor.submit(comp::get);
-
     TimeUnit.MILLISECONDS.sleep(100);
-
     Assert.assertEquals(1, counter.get());
-
     executor.shutdown();
-
   }
 
 

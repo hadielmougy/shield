@@ -14,7 +14,7 @@ public class CountBasedCurcuitBreakerTest {
     public void testSuccessBreaker() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
         Supplier<Void> component =
-                Components.throwingComponentWithCounter(new RuntimeException(), counter, 2);
+                Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 2);
 
         final Supplier<Void> comp = Shield.wrapSupplier( component)
                 .filter(Filter.circuitBreaker()
@@ -37,10 +37,9 @@ public class CountBasedCurcuitBreakerTest {
     @Test
     public void testHalfOpenFailsBreaker() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
-        Supplier<Void> component =
-                Components.throwingComponentWithCounter(new RuntimeException(), counter, 20);
-
-        final Supplier<Void> comp = Shield.wrapSupplier( component)
+        Supplier<Void> target =
+                Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 20);
+        final Supplier<Void> comp = Shield.wrapSupplier(target)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(4)
@@ -48,7 +47,6 @@ public class CountBasedCurcuitBreakerTest {
                         .permittedNumberOfCallsInHalfOpenState(1)
                         .slidingWindowType(CircuitBreaker.WindowType.COUNT_BASED))
                 .build();
-
         comp.get();
         comp.get();
         comp.get();
@@ -58,6 +56,4 @@ public class CountBasedCurcuitBreakerTest {
         comp.get();
         Assert.assertEquals(5, counter.get());
     }
-
-
 }

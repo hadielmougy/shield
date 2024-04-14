@@ -22,24 +22,17 @@ public class ComponentFallbackTest {
   @Test(expected = InvocationCancelledException.class)
   public void testThrottledAndFallback() throws InterruptedException {
     final AtomicInteger counter = new AtomicInteger(0);
-
-    Supplier<Void> targetObj = Components.sleepComponentWithCounter(counter, 2000);
-
-    final Supplier<Void> comp = Shield.wrapSupplier(targetObj)
+    Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 2000);
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.throttler()
             .requests(1)
             .maxWaitMillis(500))
         .build();
-
     executor.submit(comp::get);
-
-    Thread.currentThread().sleep(500);
-
+    Thread.sleep(500);
     comp.get();
-
     Awaitility.await().until(() -> counter.get() == 1);
     Assert.assertEquals(1, counter.get());
-
     executor.shutdown();
   }
 

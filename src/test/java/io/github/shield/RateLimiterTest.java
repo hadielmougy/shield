@@ -22,21 +22,16 @@ public class RateLimiterTest {
 
   @Test
   public void testLimited1() throws InterruptedException {
-
     final AtomicInteger counter = new AtomicInteger(0);
-    Supplier<Void> component = Components.sleepComponentWithCounter(counter, 1000);
-    final Supplier<Void> comp = Shield.wrapSupplier(component)
+    final Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 1000);
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.rateLimiter()
             .rate(1))
         .build();
-
     executor.submit(comp::get);
     executor.submit(comp::get);
-
     TimeUnit.MILLISECONDS.sleep(100);
-
     Assert.assertEquals(1, counter.get());
-
     executor.shutdown();
   }
 
@@ -44,17 +39,13 @@ public class RateLimiterTest {
   @Test
   public void testLimited2() {
     final AtomicInteger counter = new AtomicInteger(0);
-    Supplier<Void> component = Components.sleepComponentWithCounter(counter, 1000);
-
-    final Supplier<Void> comp = Shield.wrapSupplier(component)
+    Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 1000);
+    final Supplier<Void> comp = Shield.wrapSupplier(target)
         .filter(Filter.rateLimiter().rate(2))
         .build();
-
     executor.submit(comp::get);
     executor.submit(comp::get);
-
     Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> counter.get() == 2);
-
     Assert.assertEquals(2, counter.get());
     executor.shutdown();
   }

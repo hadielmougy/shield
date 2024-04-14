@@ -13,17 +13,15 @@ public class TimeBasedCurcuitBreakerTest {
     @Test
     public void testSuccessBreaker() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
-        Supplier<Void> component =
-                Components.throwingComponentWithCounter(new RuntimeException(), counter, 3);
-
-        final Supplier<Void> comp = Shield.wrapSupplier(component)
+        Supplier<Void> target =
+                Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 3);
+        final Supplier<Void> comp = Shield.wrapSupplier(target)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
                         .waitDurationInOpenState(Duration.ofSeconds(1))
                         .slidingWindowType(CircuitBreaker.WindowType.TIME_BASED))
                 .build();
-
         comp.get();
         comp.get();
         comp.get();
@@ -41,8 +39,7 @@ public class TimeBasedCurcuitBreakerTest {
     public void testHalfOpenFailsBreaker() throws InterruptedException {
         final AtomicInteger counter = new AtomicInteger(0);
         Supplier<Void> component =
-                Components.throwingComponentWithCounter(new RuntimeException(), counter, 3);
-
+                Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 3);
         final Supplier<Void> comp = Shield.wrapSupplier( component)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
@@ -50,7 +47,6 @@ public class TimeBasedCurcuitBreakerTest {
                         .waitDurationInOpenState(Duration.ofSeconds(1))
                         .slidingWindowType(CircuitBreaker.WindowType.TIME_BASED))
                 .build();
-
         comp.get();
         comp.get();
         comp.get();
@@ -66,6 +62,4 @@ public class TimeBasedCurcuitBreakerTest {
         comp.get();
         Assert.assertEquals(6, counter.get());
     }
-
-
 }
