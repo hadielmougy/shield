@@ -24,10 +24,10 @@ public class RateLimiterTest {
     final AtomicInteger counter = new AtomicInteger(0);
     Component component = Components.sleepComponentWithCounter(counter, 1000);
 
-    final Component comp = Shield.forObject(component)
+    final Component comp = Shield.forObject(Component.class, component)
         .filter(Filter.rateLimiter()
             .rate(1))
-        .as(Component.class);
+        .build();
 
     executor.submit(() -> comp.doCall());
     executor.submit(() -> comp.doCall());
@@ -45,9 +45,9 @@ public class RateLimiterTest {
     final AtomicInteger counter = new AtomicInteger(0);
     Component component = Components.sleepComponentWithCounter(counter, 1000);
 
-    final Component comp = Shield.forObject(component)
+    final Component comp = Shield.forObject(Component.class, component)
         .filter(Filter.rateLimiter().rate(2))
-        .as(Component.class);
+        .build();
 
     executor.submit(() -> comp.doCall());
     executor.submit(() -> comp.doCall());

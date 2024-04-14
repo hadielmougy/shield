@@ -24,9 +24,9 @@ public class FireAndForgetConnectorTest {
 
     TestComponentWithFallback targetObj = new TestComponentWithFallback(
         () -> stringBuilder.append(Thread.currentThread().getName()), null);
-    final Component comp = Shield.forObject(targetObj)
+    final Component comp = Shield.forObject(Component.class, targetObj)
         .filter(Filter.fireAndForget())
-        .as(Component.class);
+        .build();
 
     comp.doCall();
 

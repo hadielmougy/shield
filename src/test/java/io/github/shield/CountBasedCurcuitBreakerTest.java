@@ -14,13 +14,13 @@ public class CountBasedCurcuitBreakerTest {
         Component component =
                 Components.throwingComponentWithCounter(new RuntimeException(), counter, 2);
 
-        final Component comp = Shield.forObject(component)
+        final Component comp = Shield.forObject(Component.class, component)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(4)
                         .waitDurationInOpenState(Duration.ofSeconds(1))
                         .slidingWindowType(CircuitBreaker.WindowType.COUNT_BASED))
-                .as(Component.class);
+                .build();
 
         comp.doCall();
         comp.doCall();
@@ -38,14 +38,14 @@ public class CountBasedCurcuitBreakerTest {
         Component component =
                 Components.throwingComponentWithCounter(new RuntimeException(), counter, 20);
 
-        final Component comp = Shield.forObject(component)
+        final Component comp = Shield.forObject(Component.class, component)
                 .filter(Filter.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(4)
                         .waitDurationInOpenState(Duration.ofSeconds(1))
                         .permittedNumberOfCallsInHalfOpenState(1)
                         .slidingWindowType(CircuitBreaker.WindowType.COUNT_BASED))
-                .as(Component.class);
+                .build();
 
         comp.doCall();
         comp.doCall();

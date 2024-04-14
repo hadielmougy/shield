@@ -6,11 +6,15 @@ import java.util.Objects;
 
 public class DefaultProxyFactoryProvider implements ProxyFactoryProvider {
 
+
+  public DefaultProxyFactoryProvider() {
+  }
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public ProxyFactory forObject(final Object obj) {
-    return new JdkProxyFactory(Objects.requireNonNull(obj));
+  public <T> ProxyFactory forObject(final Class<T> type, final Object obj) {
+    return new JdkProxyFactory(type, Objects.requireNonNull(obj));
   }
 }

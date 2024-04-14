@@ -23,11 +23,11 @@ public class ComponentFallbackTest {
 
     Component targetObj = Components.sleepComponentWithCounter(counter, 2000);
 
-    final Component comp = Shield.forObject(targetObj)
+    final Component comp = Shield.forObject(Component.class, targetObj)
         .filter(Filter.throttler()
             .requests(1)
             .maxWaitMillis(500))
-        .as(Component.class);
+        .build();
 
     executor.submit(() -> comp.doCall());
 

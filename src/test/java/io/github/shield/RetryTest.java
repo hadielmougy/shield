@@ -16,11 +16,11 @@ public class RetryTest {
     Component component = Components.throwingComponentWithCounter(new RuntimeException(), counter,
         1);
 
-    final Component comp = Shield.forObject(component)
+    final Component comp = Shield.forObject(Component.class, component)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
-        .as(Component.class);
+        .build();
 
     comp.doCall();
 
@@ -33,11 +33,11 @@ public class RetryTest {
 
     Component component = Components.throwingComponent(new RuntimeException());
 
-    final Component comp = Shield.forObject(component)
+    final Component comp = Shield.forObject(Component.class, component)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3))
-        .as(Component.class);
+        .build();
 
     comp.doCall();
   }
@@ -48,12 +48,12 @@ public class RetryTest {
     final AtomicInteger counter = new AtomicInteger(0);
     final Component component = Components.throwingComponentWithCounter(
         new IllegalArgumentException(), counter, 1);
-    final Component comp = Shield.forObject(component)
+    final Component comp = Shield.forObject(Component.class, component)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
-        .as(Component.class);
+        .build();
 
     comp.doCall();
 
@@ -65,12 +65,12 @@ public class RetryTest {
   public void shouldNotRetryOnGivenException() {
     Component component = Components.throwingComponent(new IllegalStateException());
 
-    final Component comp = Shield.forObject(component)
+    final Component comp = Shield.forObject(Component.class, component)
         .filter(Filter.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
-        .as(Component.class);
+        .build();
 
     comp.doCall();
   }

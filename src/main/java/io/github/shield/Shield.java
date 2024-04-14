@@ -7,24 +7,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public final class Shield {
+public final class Shield<T> {
 
   private static ProxyFactoryProvider proxyFactoryProvider;
 
   private final List<FilterFactory> filterFactories;
   private final ProxyFactory proxyFactory;
 
-  static {
-    proxyFactoryProvider(new DefaultProxyFactoryProvider());
-  }
-
-  public static void proxyFactoryProvider(final ProxyFactoryProvider p) {
-    Shield.proxyFactoryProvider = p;
-  }
-
-
-  private Shield(final Object obj) {
-    this.proxyFactory = proxyFactoryProvider.forObject(obj);
+  private Shield(final Class<T> type, final Object obj) {
+    this.proxyFactory = new DefaultProxyFactoryProvider().forObject(type, obj);
     this.filterFactories = new LinkedList<>();
   }
 
@@ -33,7 +24,7 @@ public final class Shield {
    * @param filterFactory
    * @return current shield object
    */
-  public Shield filter(final FilterFactory filterFactory) {
+  public Shield<T> filter(final FilterFactory filterFactory) {
     this.filterFactories.add(Objects.requireNonNull(filterFactory,
         "filter can't be null"
     ));
@@ -47,19 +38,17 @@ public final class Shield {
    * @param targetObject
    * @return new instance of shield
    */
-  public static Shield forObject(final Object targetObject) {
-    return new Shield(targetObject);
+  public static <T> Shield<T> forObject(final Class<T> type, final Object targetObject) {
+    return new Shield<>(type, targetObject);
   }
 
 
   /**
    * Create proxy of the given type around the target object.
    *
-   * @param type interface type of target component
-   * @param <T>  interface type
    * @return proxy of the type that is passed as a parameter to this method
    */
-  public <T> T as(final Class<T> type) {
+  public T build() {
 
     if (filterFactories.isEmpty()) {
       throw new IllegalStateException(
@@ -72,7 +61,7 @@ public final class Shield {
         .map(FilterFactory::build)
         .collect(Collectors.toList());
 
-    return proxyFactory.create(type, sort(filters));
+    return proxyFactory.create(sort(filters));
   }
 
 
