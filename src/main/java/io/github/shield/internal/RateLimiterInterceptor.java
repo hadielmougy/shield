@@ -12,10 +12,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class RateLimiterInterceptor extends AbstractLimiterBase {
 
-
-  /**
-   * @param max
-   */
   public RateLimiterInterceptor(final int max) {
     super(max, 250);
   }
