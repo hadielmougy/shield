@@ -11,21 +11,21 @@ import java.util.stream.Collectors;
 
 public final class Shield<T> {
 
-  private final List<FilterFactory> filterFactories;
+  private final List<InterceptorBuilder> interceptorBuilders;
   private final Supplier<T> supplier;
 
   public Shield(Supplier<T> supplier) {
     this.supplier = supplier;
-    this.filterFactories = new LinkedList<>();
+    this.interceptorBuilders = new LinkedList<>();
   }
 
 
   /**
-   * @param filterFactory
+   * @param interceptorBuilder
    * @return current shield object
    */
-  public Shield<T> with(final FilterFactory filterFactory) {
-    this.filterFactories.add(Objects.requireNonNull(filterFactory,
+  public Shield<T> with(final InterceptorBuilder interceptorBuilder) {
+    this.interceptorBuilders.add(Objects.requireNonNull(interceptorBuilder,
         "filter can't be null"
     ));
     return this;
@@ -45,27 +45,26 @@ public final class Shield<T> {
 
   /**
    * Create proxy of the given type around the target object.
-   *
    * @return proxy of the type that is passed as a parameter to this method
    */
   public Supplier<T> build() {
 
-    if (filterFactories.isEmpty()) {
+    if (interceptorBuilders.isEmpty()) {
       throw new IllegalStateException(
           "At least one filter must be provided"
       );
     }
 
-    List<Filter> filters = filterFactories
+    List<Interceptor> interceptors = interceptorBuilders
         .stream()
-        .map(FilterFactory::build)
+        .map(InterceptorBuilder::build)
         .collect(Collectors.toList());
 
-    return new SupplierWrapper<>(supplier, sort(filters));
+    return new SupplierWrapper<>(supplier, sort(interceptors));
   }
 
 
-  private List<Filter> sort(final List<Filter> list) {
+  private List<Interceptor> sort(final List<Interceptor> list) {
     return list.stream()
         .sorted()
         .collect(Collectors.toList());

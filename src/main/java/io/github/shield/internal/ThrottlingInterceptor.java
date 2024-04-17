@@ -4,14 +4,14 @@ package io.github.shield.internal;
 /**
  *
  */
-public class ThrottlingFilter extends AbstractLimiterBase {
+public class ThrottlingInterceptor extends AbstractLimiterBase {
 
 
   /**
    * @param max
    * @param maxWaitMillis
    */
-  public ThrottlingFilter(int max, long maxWaitMillis) {
+  public ThrottlingInterceptor(int max, long maxWaitMillis) {
     super(max, maxWaitMillis);
   }
 

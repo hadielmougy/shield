@@ -5,13 +5,16 @@ import io.github.shield.CircuitBreaker;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-
-public class CountBasedCircuitBreakerFilter extends AbstractBaseFilter implements CircuitBreakerFilter {
+public class TimeBasedCircuitBreakerInterceptor extends AbstractBaseInterceptor implements CircuitBreakerInterceptor {
 
     private CircuitBreakerState state;
 
-    public CountBasedCircuitBreakerFilter(CircuitBreaker.Config config) {
-        WindowingPolicy policy = new CountBasedWindowingPolicy(config.getSlidingWindowSize(), config.getFailureRateThreshold());
+    public TimeBasedCircuitBreakerInterceptor(CircuitBreaker.Config config) {
+        int windowSize      = config.getSlidingWindowSize();
+        int failureRate     = config.getFailureRateThreshold();
+        int numberOfCalls   = config.getMinimumNumberOfCalls();
+
+        WindowingPolicy policy = new TimeBasedWindowingPolicy(windowSize, failureRate, numberOfCalls);
         setState(new CircuitBreakerStateFactory(config, this, policy).newClosedState());
     }
 

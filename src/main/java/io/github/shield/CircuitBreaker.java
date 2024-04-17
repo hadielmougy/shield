@@ -1,12 +1,12 @@
 package io.github.shield;
 
-import io.github.shield.internal.CountBasedCircuitBreakerFilter;
-import io.github.shield.internal.TimeBasedCircuitBreakerFilter;
+import io.github.shield.internal.CountBasedCircuitBreakerInterceptor;
+import io.github.shield.internal.TimeBasedCircuitBreakerInterceptor;
 import io.github.shield.internal.Validations;
 
 import java.time.Duration;
 
-public interface CircuitBreaker extends FilterFactory {
+public interface CircuitBreaker extends InterceptorBuilder {
 
   enum WindowType { TIME_BASED, COUNT_BASED }
 
@@ -110,11 +110,11 @@ public interface CircuitBreaker extends FilterFactory {
     }
 
     @Override
-    public Filter build() {
+    public Interceptor build() {
       if (this.slidingWindowType == WindowType.COUNT_BASED) {
-        return new CountBasedCircuitBreakerFilter(this.clone());
+        return new CountBasedCircuitBreakerInterceptor(this.clone());
       } else if (this.slidingWindowType == WindowType.TIME_BASED) {
-        return new TimeBasedCircuitBreakerFilter(this.clone());
+        return new TimeBasedCircuitBreakerInterceptor(this.clone());
       }
       throw new IllegalStateException("");
     }

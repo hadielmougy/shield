@@ -1,6 +1,6 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
+import io.github.shield.Interceptor;
 import io.github.shield.InvocationCancelledException;
 import io.github.shield.InvocationException;
 
@@ -11,11 +11,11 @@ public final class InvocationContext<T> implements Supplier<T> {
 
   private final Supplier<T> supplier;
 
-  private final Filter firstFilter;
+  private final Interceptor firstInterceptor;
 
 
-  public InvocationContext(Filter filter, Supplier<T> supplier) {
-    this.firstFilter = filter;
+  public InvocationContext(Interceptor interceptor, Supplier<T> supplier) {
+    this.firstInterceptor = interceptor;
     this.supplier = () -> {
       try {
         return supplier.get();
@@ -31,6 +31,6 @@ public final class InvocationContext<T> implements Supplier<T> {
 
   @Override
   public T get() {
-    return firstFilter.doInvoke(supplier);
+    return firstInterceptor.doInvoke(supplier);
   }
 }

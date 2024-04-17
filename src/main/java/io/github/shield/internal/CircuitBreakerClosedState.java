@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 public class CircuitBreakerClosedState implements CircuitBreakerState {
 
-    private final CircuitBreakerFilter breaker;
+    private final CircuitBreakerInterceptor breaker;
     private final WindowContext windowContext;
     private final WindowingPolicy windowingPolicy;
     private final BreakerExceptionChecker breakerExceptionChecker;
@@ -12,7 +12,7 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
 
     public CircuitBreakerClosedState(CircuitBreakerStateFactory stateFactory,
                                      BreakerExceptionChecker breakerExceptionChecker,
-                                     CircuitBreakerFilter circuitBreakerFilter,
+                                     CircuitBreakerInterceptor circuitBreakerFilter,
                                      WindowingPolicy windowingPolicy) {
         this.stateFactory = stateFactory;
         this.breaker = circuitBreakerFilter;

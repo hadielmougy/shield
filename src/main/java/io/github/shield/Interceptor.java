@@ -9,7 +9,7 @@ import java.util.function.Supplier;
  * Base build type that represents that invocation of a method from a client component to the target
  * (this). The method is represented as a supplier
  */
-public interface Filter extends Comparable<Filter> {
+public interface Interceptor extends Comparable<Interceptor> {
 
 
   /**
@@ -95,7 +95,7 @@ public interface Filter extends Comparable<Filter> {
    *
    * @param next next filter
    */
-  void setNext(Filter next);
+  void setNext(Interceptor next);
 
 
   /**

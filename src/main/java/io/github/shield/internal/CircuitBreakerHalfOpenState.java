@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
 
-    private final CircuitBreakerFilter breaker;
+    private final CircuitBreakerInterceptor breaker;
     private final AtomicInteger numberOfAllowedRequests;
     private final Lock lock = new ReentrantLock(true);
     private final BreakerExceptionChecker breakerExceptionChecker;
@@ -16,7 +16,7 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
 
     public CircuitBreakerHalfOpenState(CircuitBreakerStateFactory stateFactory,
                                        BreakerExceptionChecker breakerExceptionChecker,
-                                       CircuitBreakerFilter circuitBreakerFilter,
+                                       CircuitBreakerInterceptor circuitBreakerFilter,
                                        int numberOfAllowedRequests) {
         this.stateFactory = stateFactory;
         this.breaker = circuitBreakerFilter;

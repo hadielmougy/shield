@@ -1,14 +1,14 @@
 package io.github.shield;
 
 
-import io.github.shield.internal.ThrottlingFilter;
+import io.github.shield.internal.ThrottlingInterceptor;
 import io.github.shield.internal.Validations;
 
 
 /**
  *
  */
-public interface Throttler extends FilterFactory {
+public interface Throttler extends InterceptorBuilder {
 
   /**
    * Set the maximum number of concurrent requests.
@@ -68,8 +68,8 @@ public interface Throttler extends FilterFactory {
      * {@inheritDoc}
      */
     @Override
-    public Filter build() {
-      return new ThrottlingFilter(max, wait);
+    public Interceptor build() {
+      return new ThrottlingInterceptor(max, wait);
     }
   }
 }

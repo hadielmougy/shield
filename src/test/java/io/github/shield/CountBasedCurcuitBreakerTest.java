@@ -17,7 +17,7 @@ public class CountBasedCurcuitBreakerTest {
                 Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 2);
 
         final Supplier<Void> comp = Shield.decorate( component)
-                .with(Filter.circuitBreaker()
+                .with(Interceptor.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(4)
                         .waitDurationInOpenState(Duration.ofSeconds(1))
@@ -40,7 +40,7 @@ public class CountBasedCurcuitBreakerTest {
         Supplier<Void> target =
                 Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 20);
         final Supplier<Void> comp = Shield.decorate(target)
-                .with(Filter.circuitBreaker()
+                .with(Interceptor.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(4)
                         .waitDurationInOpenState(Duration.ofSeconds(1))

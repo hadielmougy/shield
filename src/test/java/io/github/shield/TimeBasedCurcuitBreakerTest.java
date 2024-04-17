@@ -16,7 +16,7 @@ public class TimeBasedCurcuitBreakerTest {
         Supplier<Void> target =
                 Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 3);
         final Supplier<Void> comp = Shield.decorate(target)
-                .with(Filter.circuitBreaker()
+                .with(Interceptor.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
                         .waitDurationInOpenState(Duration.ofSeconds(1))
@@ -41,7 +41,7 @@ public class TimeBasedCurcuitBreakerTest {
         Supplier<Void> component =
                 Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter, 3);
         final Supplier<Void> comp = Shield.decorate( component)
-                .with(Filter.circuitBreaker()
+                .with(Interceptor.circuitBreaker()
                         .failureRateThreshold(50)
                         .slidingWindowSize(1)
                         .waitDurationInOpenState(Duration.ofSeconds(1))

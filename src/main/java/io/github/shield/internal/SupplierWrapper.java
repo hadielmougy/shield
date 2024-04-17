@@ -1,6 +1,6 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
+import io.github.shield.Interceptor;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -9,16 +9,16 @@ import java.util.function.Supplier;
 
 public class SupplierWrapper<T> implements Supplier<T> {
 
-    private final List<Filter> filters;
+    private final List<Interceptor> interceptors;
     private final InvokerDispatcher<T> dispatcher;
     private final Supplier<T> supplier;
     /**
      *
      */
-    private Filter firstFilter;
+    private Interceptor firstInterceptor;
 
-    public SupplierWrapper(Supplier<T> supplier, final List<Filter> l) {
-        this.filters = l;
+    public SupplierWrapper(Supplier<T> supplier, final List<Interceptor> l) {
+        this.interceptors = l;
         this.supplier = supplier;
         final TargetMethodInvoker<T> method = new TargetMethodInvoker<>();
         dispatcher = new InvokerDispatcher<>(method);
@@ -26,24 +26,24 @@ public class SupplierWrapper<T> implements Supplier<T> {
     }
 
     private void setContext(final InvocationContext<T> ctx) {
-        for (Filter filter : filters) {
-            filter.setContext(ctx);
+        for (Interceptor interceptor : interceptors) {
+            interceptor.setContext(ctx);
         }
     }
 
 
     private void reduceFilters() {
 
-        Deque<Filter> filtersDeque = new LinkedList<>();
+        Deque<Interceptor> filtersDeque = new LinkedList<>();
 
-        for (Filter filter : filters) {
-            filtersDeque.addFirst(filter);
+        for (Interceptor interceptor : interceptors) {
+            filtersDeque.addFirst(interceptor);
         }
 
-        Filter curr = filtersDeque.pollFirst();
+        Interceptor curr = filtersDeque.pollFirst();
 
         while (true) {
-            Filter next = filtersDeque.pollFirst();
+            Interceptor next = filtersDeque.pollFirst();
             if (next == null) {
                 break;
             } else {
@@ -53,12 +53,12 @@ public class SupplierWrapper<T> implements Supplier<T> {
             break;
         }
 
-        this.firstFilter = curr;
+        this.firstInterceptor = curr;
     }
 
     @Override
     public T get() {
-        InvocationContext<T> ctx = new InvocationContext<>(firstFilter, supplier);
+        InvocationContext<T> ctx = new InvocationContext<>(firstInterceptor, supplier);
         setContext(ctx);
         return dispatcher.invoke(ctx);
     }

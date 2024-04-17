@@ -1,8 +1,8 @@
 package io.github.shield;
 
-import io.github.shield.internal.FireAndForgetFilter;
+import io.github.shield.internal.FireAndForgetInterceptor;
 
-public interface FireAndForget extends FilterFactory {
+public interface FireAndForget extends InterceptorBuilder {
 
 
   /**
@@ -14,8 +14,8 @@ public interface FireAndForget extends FilterFactory {
      * {@inheritDoc}
      */
     @Override
-    public Filter build() {
-      return new FireAndForgetFilter();
+    public Interceptor build() {
+      return new FireAndForgetInterceptor();
     }
   }
 

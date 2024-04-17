@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
-public class TimeoutFilter extends AbstractBaseFilter {
+public class TimeoutInterceptor extends AbstractBaseInterceptor {
 
   /**
    *
@@ -26,7 +26,7 @@ public class TimeoutFilter extends AbstractBaseFilter {
    * @param wait
    * @param unit
    */
-  public TimeoutFilter(final long wait, final TimeUnit unit) {
+  public TimeoutInterceptor(final long wait, final TimeUnit unit) {
     this.maxWait = wait;
     this.timeunit = unit;
   }

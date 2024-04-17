@@ -5,11 +5,11 @@ import io.github.shield.CircuitBreaker;
 public class CircuitBreakerStateFactory {
 
     private final CircuitBreaker.Config config;
-    private final CircuitBreakerFilter filter;
+    private final CircuitBreakerInterceptor filter;
     private final WindowingPolicy windowingPolicy;
     private final BreakerExceptionChecker breakerExceptionChecker;
 
-    CircuitBreakerStateFactory(CircuitBreaker.Config config, CircuitBreakerFilter filter, WindowingPolicy windowingPolicy) {
+    CircuitBreakerStateFactory(CircuitBreaker.Config config, CircuitBreakerInterceptor filter, WindowingPolicy windowingPolicy) {
         this.config = config;
         this.filter = filter;
         this.windowingPolicy = windowingPolicy;

@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 
 
 public
-class FireAndForgetFilter extends AbstractBaseFilter {
+class FireAndForgetInterceptor extends AbstractBaseInterceptor {
 
 
   /**
