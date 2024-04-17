@@ -51,7 +51,7 @@ public class RetryInterceptor extends AbstractBaseInterceptor {
       } catch (Throwable th_) {
         th = th_;
         if (!shouldRetry(th_)) {
-          break;
+          throw th_;
         }
       }
       counter++;

@@ -54,8 +54,8 @@ public class RetryTest {
   }
 
 
-  @Test(expected = RetriesExhaustedException.class)
-  public void shouldNotRetryOnGivenException() {
+  @Test(expected = IllegalStateException.class)
+  public void shouldNotRetryOnTheGivenException() {
     final Supplier<Void> target = Suppliers.throwingSupplier(new IllegalStateException());
 
     final Retry retry = Interceptor.retry()
