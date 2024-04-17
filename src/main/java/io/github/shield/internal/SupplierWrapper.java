@@ -12,9 +12,6 @@ public class SupplierWrapper<T> implements Supplier<T> {
     private final List<Interceptor> interceptors;
     private final InvokerDispatcher<T> dispatcher;
     private final Supplier<T> supplier;
-    /**
-     *
-     */
     private Interceptor firstInterceptor;
 
     public SupplierWrapper(Supplier<T> supplier, final List<Interceptor> l) {

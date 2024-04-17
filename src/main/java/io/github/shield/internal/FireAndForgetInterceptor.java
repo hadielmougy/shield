@@ -8,33 +8,16 @@ import java.util.function.Supplier;
 public
 class FireAndForgetInterceptor extends AbstractBaseInterceptor {
 
-
-  /**
-   * This called before the object being used to get the executor implementation based on
-   * implementation type.
-   *
-   * @param executorProvider
-   */
   @Override
   public void configureExecutor(final ExecutorProvider executorProvider) {
     executorService = executorProvider.get(this);
   }
 
-
-  /**
-   * Called before invocation.
-   */
   @Override
   public boolean beforeInvocation() {
     return true;
   }
 
-
-  /**
-   * Execute invocation chain.
-   *
-   * @param supplier
-   */
   @Override
   public Object invoke(Supplier supplier) {
     ensureExecutor();
@@ -47,10 +30,6 @@ class FireAndForgetInterceptor extends AbstractBaseInterceptor {
     return null;
   }
 
-
-  /**
-   * Called after execute to release used resources if any.
-   */
   @Override
   public void afterInvocation() {
   }

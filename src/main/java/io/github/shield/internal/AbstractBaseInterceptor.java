@@ -8,21 +8,9 @@ import java.util.function.Supplier;
 
 public abstract class AbstractBaseInterceptor implements Interceptor {
 
-  /**
-   * Next filter.
-   */
   private Interceptor next;
-
-  /**
-   *
-   */
   protected ExecutorService executorService;
-
-
-  /**
-   * Context holder.
-   */
-  private ThreadLocal<InvocationContext> context = new ThreadLocal<>();
+  private final ThreadLocal<InvocationContext> context = new ThreadLocal<>();
 
 
   public AbstractBaseInterceptor() {
@@ -30,27 +18,17 @@ public abstract class AbstractBaseInterceptor implements Interceptor {
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public int compareTo(final Interceptor o) {
     return this.getOrder().compareTo(o.getOrder());
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Integer getOrder() {
     return 0;
   }
 
-
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void setNext(final Interceptor n) {
     this.next = n;
@@ -65,37 +43,21 @@ public abstract class AbstractBaseInterceptor implements Interceptor {
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void setContext(final InvocationContext ctx) {
     this.context.set(ctx);
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public InvocationContext getContext() {
     return context.get();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param supplier
-   */
   @Override
   public Object invoke(Supplier supplier) {
     return invokeNext(supplier);
   }
 
-
-  @VisibleForTest
-  private void setExecutorService(final ExecutorService exe) {
-    this.executorService = exe;
-  }
 
 }

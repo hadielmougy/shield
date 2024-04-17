@@ -19,11 +19,6 @@ public final class Shield<T> {
     this.interceptorBuilders = new LinkedList<>();
   }
 
-
-  /**
-   * @param interceptorBuilder
-   * @return current shield object
-   */
   public Shield<T> with(final InterceptorBuilder interceptorBuilder) {
     this.interceptorBuilders.add(Objects.requireNonNull(interceptorBuilder,
         "filter can't be null"
@@ -31,22 +26,11 @@ public final class Shield<T> {
     return this;
   }
 
-
-  /**
-   * Creates new shield object that wraps the target object.
-   *
-   * @param supplier
-   * @return new instance of shield
-   */
   public static <T> Shield<T> decorate(Supplier<T> supplier) {
     return new Shield<>(supplier);
   }
 
 
-  /**
-   * Create proxy of the given type around the target object.
-   * @return proxy of the type that is passed as a parameter to this method
-   */
   public Supplier<T> build() {
 
     if (interceptorBuilders.isEmpty()) {

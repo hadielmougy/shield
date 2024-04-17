@@ -10,9 +10,6 @@ public class FixedDelayTimeoutPolicy extends TimeoutPolicy {
     super(delay, timeunit);
   }
 
-  /**
-   * @throws InterruptedException
-   */
   @Override
   public void sleep() throws InterruptedException {
     timeunit.sleep(delay);

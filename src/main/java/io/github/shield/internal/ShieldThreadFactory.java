@@ -5,29 +5,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShieldThreadFactory implements ThreadFactory {
 
-  /**
-   *
-   */
-  private final AtomicInteger poolNumber = new AtomicInteger(1);
-  /**
-   *
-   */
-  private final AtomicInteger threadNumber = new AtomicInteger(1);
-  /**
-   *
-   */
+    private final AtomicInteger threadNumber = new AtomicInteger(1);
   private final String namePrefix;
-
-  /**
-   * Constructor for thread factory.
-   */
   public ShieldThreadFactory() {
-    namePrefix = "shield-" + poolNumber.getAndIncrement() + "-thread-";
+      AtomicInteger poolNumber = new AtomicInteger(1);
+      namePrefix = "shield-" + poolNumber.getAndIncrement() + "-thread-";
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Thread newThread(final Runnable r) {
     Thread t = new Thread(r,
