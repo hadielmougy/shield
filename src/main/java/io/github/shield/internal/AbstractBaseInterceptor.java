@@ -1,17 +1,17 @@
 package io.github.shield.internal;
 
-import io.github.shield.Filter;
+import io.github.shield.Interceptor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 
-public abstract class AbstractBaseFilter implements Filter {
+public abstract class AbstractBaseInterceptor implements Interceptor {
 
   /**
    * Next filter.
    */
-  private Filter next;
+  private Interceptor next;
 
   /**
    *
@@ -25,7 +25,7 @@ public abstract class AbstractBaseFilter implements Filter {
   private ThreadLocal<InvocationContext> context = new ThreadLocal<>();
 
 
-  public AbstractBaseFilter() {
+  public AbstractBaseInterceptor() {
     configureExecutor(ExecutorConfigurer.INSTANCE);
   }
 
@@ -34,7 +34,7 @@ public abstract class AbstractBaseFilter implements Filter {
    * {@inheritDoc}
    */
   @Override
-  public int compareTo(final Filter o) {
+  public int compareTo(final Interceptor o) {
     return this.getOrder().compareTo(o.getOrder());
   }
 
@@ -52,7 +52,7 @@ public abstract class AbstractBaseFilter implements Filter {
    * {@inheritDoc}
    */
   @Override
-  public void setNext(final Filter n) {
+  public void setNext(final Interceptor n) {
     this.next = n;
   }
 

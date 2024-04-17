@@ -24,7 +24,7 @@ public class ComponentFallbackTest {
     final AtomicInteger counter = new AtomicInteger(0);
     Supplier<Void> target = Suppliers.sleepSupplierWithCounter(counter, 2000);
     final Supplier<Void> comp = Shield.decorate(target)
-        .with(Filter.throttler()
+        .with(Interceptor.throttler()
             .requests(1)
             .maxWaitMillis(500))
         .build();

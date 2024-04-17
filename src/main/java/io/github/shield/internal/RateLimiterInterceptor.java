@@ -10,13 +10,13 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  *
  */
-public class RateLimiterFilter extends AbstractLimiterBase {
+public class RateLimiterInterceptor extends AbstractLimiterBase {
 
 
   /**
    * @param max
    */
-  public RateLimiterFilter(final int max) {
+  public RateLimiterInterceptor(final int max) {
     super(max, 250);
   }
 

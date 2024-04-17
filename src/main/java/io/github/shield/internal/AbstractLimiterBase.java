@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public abstract class AbstractLimiterBase extends AbstractBaseFilter {
+public abstract class AbstractLimiterBase extends AbstractBaseInterceptor {
 
   /**
    *

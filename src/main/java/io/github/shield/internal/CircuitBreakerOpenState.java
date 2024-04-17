@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class CircuitBreakerOpenState implements CircuitBreakerState {
 
     private final Duration duration;
-    private final CircuitBreakerFilter breaker;
+    private final CircuitBreakerInterceptor breaker;
     private final CircuitBreakerStateFactory stateFactory;
     private final int permittedNumberOfCallsInHalfOpenState;
 
@@ -17,7 +17,7 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
             = Executors.newSingleThreadScheduledExecutor();
 
     public CircuitBreakerOpenState(CircuitBreakerStateFactory stateFactory,
-                                   CircuitBreakerFilter circuitBreakerFilter,
+                                   CircuitBreakerInterceptor circuitBreakerFilter,
                                    Duration waitDurationInOpenState,
                                    int permittedNumberOfCallsInHalfOpenState) {
         this.stateFactory = stateFactory;

@@ -16,17 +16,17 @@ public class ExecutorConfigurer implements ExecutorProvider {
 
 
   @Override
-  public ExecutorService get(final FireAndForgetFilter fireAndForgetFilter) {
+  public ExecutorService get(final FireAndForgetInterceptor fireAndForgetFilter) {
     return new BoundedExecutor(new ShieldThreadFactory());
   }
 
   @Override
-  public ExecutorService get(final TimeoutFilter timeoutFilter) {
+  public ExecutorService get(final TimeoutInterceptor timeoutFilter) {
     return new BoundedExecutor(new ShieldThreadFactory());
   }
 
   @Override
-  public ExecutorService get(final RateLimiterFilter rateLimiterFilter) {
+  public ExecutorService get(final RateLimiterInterceptor rateLimiterFilter) {
     return Executors.newScheduledThreadPool(8);
   }
 }

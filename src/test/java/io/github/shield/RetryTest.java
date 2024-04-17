@@ -17,7 +17,7 @@ public class RetryTest {
     Supplier<Void> target = Suppliers.throwingSupplierWithCounter(new RuntimeException(), counter,
         1);
     final Supplier<Void> comp = Shield.decorate(target)
-        .with(Filter.retry()
+        .with(Interceptor.retry()
             .delayMillis(500)
             .maxRetries(3))
         .build();
@@ -30,7 +30,7 @@ public class RetryTest {
   public void shouldRetryAndExhaustRetries() {
     Supplier<Void> target = Suppliers.throwingSupplier(new RuntimeException());
     final Supplier<Void> comp = Shield.decorate(target)
-        .with(Filter.retry()
+        .with(Interceptor.retry()
             .delayMillis(500)
             .maxRetries(3))
         .build();
@@ -44,7 +44,7 @@ public class RetryTest {
     final Supplier<Void> target = Suppliers.throwingSupplierWithCounter(
         new IllegalArgumentException(), counter, 1);
     final Supplier<Void> comp = Shield.decorate(target)
-        .with(Filter.retry()
+        .with(Interceptor.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class))
@@ -58,7 +58,7 @@ public class RetryTest {
   public void shouldNotRetryOnGivenException() {
     final Supplier<Void> target = Suppliers.throwingSupplier(new IllegalStateException());
 
-    final Retry retry = Filter.retry()
+    final Retry retry = Interceptor.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class);

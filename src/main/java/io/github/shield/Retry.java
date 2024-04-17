@@ -2,7 +2,7 @@ package io.github.shield;
 
 import io.github.shield.internal.BackOffTimeoutPolicy;
 import io.github.shield.internal.FixedDelayTimeoutPolicy;
-import io.github.shield.internal.RetryFilter;
+import io.github.shield.internal.RetryInterceptor;
 import io.github.shield.internal.Validations;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  *
  */
-public interface Retry extends FilterFactory {
+public interface Retry extends InterceptorBuilder {
 
   /**
    * Default delay millis value. 1000 is the default value for waiting between retries.
@@ -183,8 +183,8 @@ public interface Retry extends FilterFactory {
      * {@inheritDoc}
      */
     @Override
-    public Filter build() {
-      return new RetryFilter(maxRetries, delay, timeUnit, exceptions, timeoutPolicy);
+    public Interceptor build() {
+      return new RetryInterceptor(maxRetries, exceptions, timeoutPolicy);
     }
   }
 }

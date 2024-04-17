@@ -24,7 +24,7 @@ public class FireAndForgetConnectorTest {
     final StringBuilder stringBuilder = new StringBuilder();
     Supplier<StringBuilder> target = () -> stringBuilder.append(Thread.currentThread().getName());
     final Supplier<StringBuilder> comp = Shield.decorate(target)
-        .with(Filter.fireAndForget())
+        .with(Interceptor.fireAndForget())
         .build();
     comp.get();
     TimeUnit.MILLISECONDS.sleep(100);

@@ -1,16 +1,16 @@
 package io.github.shield;
 
-import io.github.shield.internal.FireAndForgetFilter;
-import io.github.shield.internal.RateLimiterFilter;
-import io.github.shield.internal.TimeoutFilter;
+import io.github.shield.internal.FireAndForgetInterceptor;
+import io.github.shield.internal.RateLimiterInterceptor;
+import io.github.shield.internal.TimeoutInterceptor;
 
 import java.util.concurrent.ExecutorService;
 
 public interface ExecutorProvider {
 
-  ExecutorService get(FireAndForgetFilter fireAndForgetFilter);
+  ExecutorService get(FireAndForgetInterceptor fireAndForgetFilter);
 
-  ExecutorService get(TimeoutFilter timeoutFilter);
+  ExecutorService get(TimeoutInterceptor timeoutFilter);
 
-  ExecutorService get(RateLimiterFilter rateLimiterFilter);
+  ExecutorService get(RateLimiterInterceptor rateLimiterFilter);
 }

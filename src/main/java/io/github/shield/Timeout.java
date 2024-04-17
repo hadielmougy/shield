@@ -1,10 +1,10 @@
 package io.github.shield;
 
-import io.github.shield.internal.TimeoutFilter;
+import io.github.shield.internal.TimeoutInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
-public interface Timeout extends FilterFactory {
+public interface Timeout extends InterceptorBuilder {
 
 
   Timeout waitMillis(long val);
@@ -31,8 +31,8 @@ public interface Timeout extends FilterFactory {
     }
 
     @Override
-    public Filter build() {
-      return new TimeoutFilter(wait, timeunit);
+    public Interceptor build() {
+      return new TimeoutInterceptor(wait, timeunit);
     }
   }
 }

@@ -7,29 +7,21 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class RetryFilter extends AbstractBaseFilter {
+public class RetryInterceptor extends AbstractBaseInterceptor {
 
-  private final long delay;
-  private final TimeUnit timeunit;
   private final int retries;
   private final List<Class<? extends Exception>> exceptions;
   private final TimeoutPolicy timeoutPolicy;
   private final boolean retryOnAll;
 
 
-  public RetryFilter(int retries, long delay, TimeUnit timeunit,
-      List<Class<? extends Exception>> exceptions, TimeoutPolicy timeoutPolicy) {
+  public RetryInterceptor(int retries,
+                          List<Class<? extends Exception>> exceptions,
+                          TimeoutPolicy timeoutPolicy) {
     this.retries = retries;
-    this.delay = delay;
-    this.timeunit = timeunit;
     this.exceptions = exceptions;
     this.timeoutPolicy = timeoutPolicy;
-
-    if (exceptions.isEmpty()) {
-      retryOnAll = true;
-    } else {
-      retryOnAll = false;
-    }
+    retryOnAll = exceptions.isEmpty();
   }
 
 
@@ -82,14 +74,12 @@ public class RetryFilter extends AbstractBaseFilter {
     if (retryOnAll) {
       return true;
     }
-
     for (Class clazz : exceptions) {
       if (th.getClass().equals(clazz) ||
               ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2)) {
         return true;
       }
     }
-
     return false;
   }
 

@@ -1,13 +1,13 @@
 package io.github.shield;
 
-import io.github.shield.internal.RateLimiterFilter;
+import io.github.shield.internal.RateLimiterInterceptor;
 import io.github.shield.internal.Validations;
 
 
 /**
  *
  */
-public interface RateLimiter extends FilterFactory {
+public interface RateLimiter extends InterceptorBuilder {
 
   /**
    * Default rate value per second.
@@ -47,8 +47,8 @@ public interface RateLimiter extends FilterFactory {
      * {@inheritDoc}
      */
     @Override
-    public Filter build() {
-      return new RateLimiterFilter(rate);
+    public Interceptor build() {
+      return new RateLimiterInterceptor(rate);
     }
   }
 }
