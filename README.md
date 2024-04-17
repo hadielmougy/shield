@@ -6,7 +6,7 @@ Fault tolerance library for java
 
 ```java
 
-    final Retry retry = Filter.retry()
+    final Retry retry = Interceptor.retry()
             .delayMillis(500)
             .maxRetries(3)
             .onException(IllegalArgumentException.class);
@@ -18,7 +18,7 @@ Fault tolerance library for java
     decorated.get();
 ```
 
-## Supported Filters
+## Supported Interceptors
 
 * Throttler
 * Rate limit
