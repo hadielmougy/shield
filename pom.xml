@@ -8,6 +8,29 @@
   <artifactId>shield</artifactId>
   <version>0.1-SNAPSHOT</version>
 
+  <name>shield</name>
+  <description>Fault tolerant library for Java</description>
+  <url>https://github.com/hadielmougy/shield</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Hadi Elmougy</name>
+      <email>h.elmougy@gmail.com</email>
+      <organization>Constx</organization>
+      <organizationUrl>constx.io</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/hadielmougy/shield.git</connection>
+    <developerConnection>scm:git:ssh://github.com:hadielmougy/shield.git</developerConnection>
+    <url>http://github.com/hadielmougy/shield/tree/master</url>
+  </scm>
+
 
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -25,19 +48,11 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
+
+
   <build>
+
     <plugins>
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -79,7 +94,6 @@
         </executions>
       </plugin>
     </plugins>
-
   </build>
 
   <dependencies>
