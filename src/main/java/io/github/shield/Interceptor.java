@@ -17,11 +17,6 @@ public interface Interceptor extends Comparable<Interceptor> {
     return new Throttler.Config();
   }
 
-  static FireAndForget fireAndForget() {
-    return new FireAndForget.Config();
-  }
-
-
   static Retry retry() {
     return new Retry.Config();
   }
