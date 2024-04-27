@@ -4,6 +4,14 @@ Fault tolerance library for java
 
 ## Usage
 
+```xml
+<dependency>
+    <groupId>io.github.hadielmougy</groupId>
+    <artifactId>shield</artifactId>
+    <version>0.1</version>
+</dependency>
+```
+
 ```java
 
     final Retry retry = Interceptor.retry()
