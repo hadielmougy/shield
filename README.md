@@ -31,7 +31,6 @@ Fault tolerance library for java
 * Throttler
 * Rate limit
 * Timeout
-* Fire and forget
 * Retry
 * Circuit-breaker
 
