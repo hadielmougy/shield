@@ -14,12 +14,6 @@ public class ExecutorConfigurer implements ExecutorProvider {
   private ExecutorConfigurer() {
   }
 
-
-  @Override
-  public ExecutorService get(final FireAndForgetInterceptor fireAndForgetFilter) {
-    return new BoundedExecutor(new ShieldThreadFactory());
-  }
-
   @Override
   public ExecutorService get(final TimeoutInterceptor timeoutFilter) {
     return new BoundedExecutor(new ShieldThreadFactory());
