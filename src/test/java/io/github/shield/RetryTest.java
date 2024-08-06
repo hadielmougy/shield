@@ -10,6 +10,17 @@ import java.util.function.Supplier;
 
 public class RetryTest {
 
+  private static class ThrowableRuntimeException extends RuntimeException {
+    public ThrowableRuntimeException() {
+      super();
+    }
+
+    public ThrowableRuntimeException(RuntimeException cause) {
+      super(cause);
+    }
+  }
+  private static class ThrowableRuntimeException2 extends IllegalArgumentException {}
+
 
   @Test
   public void shouldRetry() {
@@ -24,6 +35,32 @@ public class RetryTest {
     comp.get();
     Assert.assertEquals(2, counter.get());
   }
+
+  @Test(expected = RetriesExhaustedException.class)
+  public void shouldRetry2() {
+    Supplier<Void> target = Suppliers.throwingSupplier(new ThrowableRuntimeException());
+    final Supplier<Void> comp = Shield.decorate(target)
+            .with(Interceptor.retry()
+                    .delayMillis(500)
+                    .onException(RuntimeException.class)
+                    .maxRetries(3))
+            .build();
+    comp.get();
+  }
+
+  @Test(expected = RetriesExhaustedException.class)
+  public void shouldRetry3() {
+    Supplier<Void> target = Suppliers.throwingSupplier(
+            new ThrowableRuntimeException(new ThrowableRuntimeException2()));
+    final Supplier<Void> comp = Shield.decorate(target)
+            .with(Interceptor.retry()
+                    .delayMillis(500)
+                    .onException(IllegalArgumentException.class)
+                    .maxRetries(3))
+            .build();
+    comp.get();
+  }
+
 
 
   @Test(expected = RetriesExhaustedException.class)
