@@ -6,7 +6,7 @@
 
   <groupId>io.github.hadielmougy</groupId>
   <artifactId>shield</artifactId>
-  <version>0.1.2</version>
+  <version>0.2.0</version>
 
   <name>shield</name>
   <description>Fault tolerant library for Java</description>
