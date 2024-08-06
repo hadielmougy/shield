@@ -76,6 +76,7 @@ public class RetryInterceptor extends AbstractBaseInterceptor {
     }
     for (Class clazz : exceptions) {
       if (th.getClass().equals(clazz) ||
+              clazz.isAssignableFrom(th.getClass()) ||
               ExceptionUtil.isClassFoundInStackTrace(th, clazz, 2)) {
         return true;
       }
