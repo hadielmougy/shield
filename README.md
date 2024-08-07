@@ -8,7 +8,7 @@ Fault tolerance library for java
 <dependency>
     <groupId>io.github.hadielmougy</groupId>
     <artifactId>shield</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
