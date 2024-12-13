@@ -4,7 +4,6 @@ import io.github.shield.TimeoutPolicy;
 import io.github.shield.util.ExceptionUtil;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class RetryInterceptor extends AbstractBaseInterceptor {
@@ -58,8 +57,8 @@ public class RetryInterceptor extends AbstractBaseInterceptor {
       try {
         timeout.sleep();
       } catch (InterruptedException e) {
-        e.printStackTrace();
-        return null;
+        Thread.currentThread().interrupt();
+        throw new RuntimeException("Thread interrupted");
       }
     }
 

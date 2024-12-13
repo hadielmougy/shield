@@ -38,6 +38,7 @@ public class TimeoutInterceptor extends AbstractBaseInterceptor {
       // handle the timeout
     } catch (InterruptedException e) {
       // handle the interrupts
+      Thread.currentThread().interrupt();
     } catch (ExecutionException e) {
       // handle other exceptions
     } finally {

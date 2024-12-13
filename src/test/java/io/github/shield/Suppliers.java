@@ -12,7 +12,8 @@ public class Suppliers {
       try {
         Thread.currentThread().sleep(sleepMillis);
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Thread.currentThread().interrupt();
+        throw new RuntimeException("Thread interrupted");
       }
         return null;
     };

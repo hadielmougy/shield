@@ -3,7 +3,6 @@ package io.github.shield.internal;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 public abstract class AbstractLimiterBase extends AbstractBaseInterceptor {
 
@@ -21,10 +20,10 @@ public abstract class AbstractLimiterBase extends AbstractBaseInterceptor {
   public boolean beforeInvocation() {
     boolean permitted = false;
     try {
-      permitted = semaphore.tryAcquire(
-          invokeTimeout, TimeUnit.MILLISECONDS);
+      permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      Thread.currentThread().interrupt();
+      throw new RuntimeException("Thread interrupted while acquiring semaphore permit");
     }
     return permitted;
   }
