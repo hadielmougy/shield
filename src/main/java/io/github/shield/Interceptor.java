@@ -31,7 +31,6 @@ public interface Interceptor extends Comparable<Interceptor> {
 
   boolean beforeInvocation();
 
-
   void afterInvocation();
 
   Integer getOrder();

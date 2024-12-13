@@ -1,6 +1,8 @@
 package io.github.shield.internal;
 
 
+import io.github.shield.InvocationCancelledException;
+
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +25,7 @@ public abstract class AbstractLimiterBase extends AbstractBaseInterceptor {
       permitted = semaphore.tryAcquire(invokeTimeout, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      throw new RuntimeException("Thread interrupted while acquiring semaphore permit");
+      throw new InvocationCancelledException("Thread interrupted while acquiring semaphore permit");
     }
     return permitted;
   }
