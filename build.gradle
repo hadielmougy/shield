@@ -1,0 +1,74 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
+plugins {
+    id 'java-library'
+    id 'signing'
+    id 'com.vanniktech.maven.publish' version '0.30.0'
+}
+
+group = 'io.github.hadielmougy'
+version = '0.1.3'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'net.jcip:jcip-annotations:1.0'
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.awaitility:awaitility:4.0.2'
+}
+
+// Note: the sources and javadoc jars are added automatically by the
+// com.vanniktech.maven.publish plugin. Do not also call withSourcesJar()/withJavadocJar()
+// here or the publication ends up with duplicate javadoc/sources artifacts.
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 11
+}
+
+tasks.named('test') {
+    useJUnit()
+    testLogging {
+        events "failed"
+    }
+}
+
+// Sign with the developer's local GPG key (via gpg-agent) rather than in-memory keys.
+signing {
+    useGpgCmd()
+}
+
+mavenPublishing {
+    // Publish to the Sonatype Central Portal and release automatically once validation passes.
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, true)
+    signAllPublications()
+
+    coordinates(group.toString(), 'shield', version.toString())
+
+    pom {
+        name = 'shield'
+        description = 'Fault tolerant library for Java'
+        url = 'https://github.com/hadielmougy/shield'
+
+        licenses {
+            license {
+                name = 'The Apache Software License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        developers {
+            developer {
+                name = 'Hadi Elmougy'
+                email = 'h.elmougy@gmail.com'
+                organization = 'Constx'
+                organizationUrl = 'constx.io'
+            }
+        }
+        scm {
+            connection = 'scm:git:git://github.com/hadielmougy/shield.git'
+            developerConnection = 'scm:git:ssh://github.com:hadielmougy/shield.git'
+            url = 'https://github.com/hadielmougy/shield'
+        }
+    }
+}

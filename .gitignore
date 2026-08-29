@@ -20,6 +20,10 @@ shield.iml
 .idea/*
 target/
 
+# Gradle
+.gradle/
+build/
+
 # BlueJ files
 *.ctxt
 
@@ -37,3 +41,6 @@ target/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Keep the Gradle wrapper jar even though *.jar is ignored above
+!gradle/wrapper/gradle-wrapper.jar

@@ -31,11 +31,19 @@ throttling, and rate limiting — and compose them into a single decorated `Supp
 
 ## Installation
 
+Gradle:
+
+```groovy
+implementation 'io.github.hadielmougy:shield:0.1.3'
+```
+
+Maven:
+
 ```xml
 <dependency>
     <groupId>io.github.hadielmougy</groupId>
     <artifactId>shield</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
@@ -377,12 +385,56 @@ thread and copies the invocation context to it.
 
 ## Building from source
 
+The project builds with [Gradle](https://gradle.org/) via the wrapper (no local Gradle install
+required):
+
 ```bash
-./mvnw clean install
+./gradlew build
 ```
 
 Run the tests:
 
 ```bash
-./mvnw test
+./gradlew test
 ```
+
+## Releasing
+
+Releases are published to [Maven Central](https://central.sonatype.com/) through the Sonatype
+Central Portal, using the [`com.vanniktech.maven.publish`](https://vanniktech.github.io/gradle-maven-publish-plugin/)
+plugin. Artifacts (main jar, sources jar, javadoc jar) are GPG-signed.
+
+**One-time setup**
+
+1. **Central Portal token** — generate a user token at central.sonatype.com (*Account → Generate
+   User Token*) for the account that owns the verified `io.github.hadielmougy` namespace, and add it
+   to `~/.gradle/gradle.properties`:
+
+   ```properties
+   mavenCentralUsername=<token-username>
+   mavenCentralPassword=<token-password>
+   ```
+
+   (Alternatively, export `ORG_GRADLE_PROJECT_mavenCentralUsername` /
+   `ORG_GRADLE_PROJECT_mavenCentralPassword`.) Gradle does **not** read `~/.m2/settings.xml`.
+
+2. **Signing** — the build signs with your local GPG key via `gpg` (`signing { useGpgCmd() }`), so
+   an unlocked key in your GnuPG keyring is all that is needed.
+
+**Cut a release**
+
+1. Set the release version in `build.gradle` (`version = '…'`).
+2. Publish and auto-release:
+
+   ```bash
+   ./gradlew publishAndReleaseToMavenCentral
+   ```
+
+   Use `./gradlew publishToMavenCentral` instead to upload to a staging repository and release
+   manually from the Portal UI.
+3. Tag the release and push:
+
+   ```bash
+   git tag v<version>
+   git push origin v<version>
+   ```
