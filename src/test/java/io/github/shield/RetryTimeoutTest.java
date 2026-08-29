@@ -18,7 +18,8 @@ public class RetryTimeoutTest {
         .with(Interceptor.timeout().waitMillis(1100))
         .with(Interceptor.retry().delayMillis(1000).maxRetries(5))
         .build();
-    decorated.get();
+    // The retry keeps failing past the 1100ms timeout, so the timeout must surface.
+    Assert.assertThrows(TimeoutExceededException.class, decorated::get);
     Assert.assertEquals(2, atomicInteger.get());
   }
 }

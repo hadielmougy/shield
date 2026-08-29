@@ -49,6 +49,19 @@ public abstract class AbstractBaseInterceptor implements Interceptor {
   }
 
 
+  protected void clearContext() {
+    this.context.remove();
+  }
+
+
+  @Override
+  public void close() {
+    if (executorService != null) {
+      executorService.shutdownNow();
+    }
+  }
+
+
   @Override
   public InvocationContext getContext() {
     return context.get();

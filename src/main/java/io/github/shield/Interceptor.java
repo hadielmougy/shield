@@ -48,6 +48,13 @@ public interface Interceptor extends Comparable<Interceptor> {
 
   <T> InvocationContext<T> getContext();
 
+  /**
+   * Releases any resources held by this interceptor (for example thread pools). The default
+   * implementation does nothing. Implementations must make this safe to call more than once.
+   */
+  default void close() {
+  }
+
   default <T> T doInvoke(Supplier<T> supplier) {
     T result = null;
     final boolean success = beforeInvocation();

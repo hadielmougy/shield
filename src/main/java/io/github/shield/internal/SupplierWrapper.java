@@ -1,11 +1,12 @@
 package io.github.shield.internal;
 
 import io.github.shield.Interceptor;
+import io.github.shield.ShieldedSupplier;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SupplierWrapper<T> implements Supplier<T> {
+public class SupplierWrapper<T> implements ShieldedSupplier<T> {
 
     private final List<Interceptor> interceptors;
     private final InvokerDispatcher<T> dispatcher;
@@ -41,5 +42,12 @@ public class SupplierWrapper<T> implements Supplier<T> {
         InvocationContext<T> ctx = new InvocationContext<>(firstInterceptor, supplier);
         setContext(ctx);
         return dispatcher.invoke(ctx);
+    }
+
+    @Override
+    public void close() {
+        for (Interceptor interceptor : interceptors) {
+            interceptor.close();
+        }
     }
 }

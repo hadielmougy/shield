@@ -92,3 +92,21 @@ Fault tolerance library for java
     decorated.get();
 ```
 
+### Lifecycle
+
+`build()` returns a `ShieldedSupplier`, which is a `Supplier` that is also `AutoCloseable`.
+The timeout and rate-limiter interceptors allocate thread pools, so long-lived decorated
+suppliers should be closed when no longer needed to release those resources:
+
+```java
+
+    try (ShieldedSupplier<Void> decorated = Shield.decorate(() -> ...)
+            .with(Interceptor.timeout().waitMillis(1000))
+            .build()) {
+        decorated.get();
+    }
+```
+
+`close()` is idempotent and is a no-op for chains that hold no executors (e.g. circuit breaker,
+retry, throttler).
+
