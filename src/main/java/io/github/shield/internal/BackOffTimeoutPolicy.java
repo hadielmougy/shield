@@ -16,7 +16,12 @@ public class BackOffTimeoutPolicy extends TimeoutPolicy {
   @Override
   public void sleep() throws InterruptedException {
     timeunit.sleep(currentDelay);
-    currentDelay = (long) Math.pow(currentDelay, 2);
+    currentDelay = currentDelay * 2;
+  }
+
+  /** Visible for testing: the delay that the next {@link #sleep()} will wait. */
+  long getCurrentDelay() {
+    return currentDelay;
   }
 
 

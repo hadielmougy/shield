@@ -35,7 +35,13 @@ public abstract class AbstractLimiterBase extends AbstractBaseInterceptor {
   }
 
 
+  /**
+   * Resets the available permits back to the configured maximum for a new window. Draining first
+   * prevents unused permits from accumulating across windows (a plain {@code release(permits)} would
+   * add permits every window and let the count grow without bound).
+   */
   public void releaseAll() {
+    semaphore.drainPermits();
     semaphore.release(permits);
   }
 }

@@ -1,5 +1,7 @@
 package io.github.shield.internal;
 
+import io.github.shield.util.ExceptionUtil;
+
 import java.util.function.Supplier;
 
 public class CircuitBreakerClosedState implements CircuitBreakerState {
@@ -24,16 +26,25 @@ public class CircuitBreakerClosedState implements CircuitBreakerState {
     @Override
     public Object invoke(Supplier<?> supplier) {
         windowContext.increaseCount();
-        if (windowingPolicy.isDue(windowContext)) {
-            breaker.setState(stateFactory.newOpenState());
-        }
+        Throwable failure = null;
+        Object result = null;
         try {
-            return supplier.get();
+            result = supplier.get();
         } catch (Throwable th) {
             if (breakerExceptionChecker.shouldRecord(th)) {
                 windowContext.increaseFailure();
             }
+            failure = th;
         }
-        return null;
+        // Evaluate the trip condition after the current call has been recorded, so the decision
+        // includes this call's outcome. The call that trips the breaker still returns its own
+        // result/exception; only subsequent calls are rejected.
+        if (windowingPolicy.isDue(windowContext)) {
+            breaker.setState(stateFactory.newOpenState());
+        }
+        if (failure != null) {
+            throw ExceptionUtil.sneakyThrow(failure);
+        }
+        return result;
     }
 }

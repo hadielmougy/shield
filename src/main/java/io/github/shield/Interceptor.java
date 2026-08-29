@@ -17,6 +17,10 @@ public interface Interceptor extends Comparable<Interceptor> {
     return new Throttler.Config();
   }
 
+  static AdaptiveThrottler adaptiveThrottler() {
+    return new AdaptiveThrottler.Config();
+  }
+
   static Retry retry() {
     return new Retry.Config();
   }
@@ -43,6 +47,9 @@ public interface Interceptor extends Comparable<Interceptor> {
 
 
   <T> InvocationContext<T> getContext();
+
+  default void close() {
+  }
 
   default <T> T doInvoke(Supplier<T> supplier) {
     T result = null;

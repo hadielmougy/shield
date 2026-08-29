@@ -1,5 +1,7 @@
 package io.github.shield.internal;
 
+import io.github.shield.util.ExceptionUtil;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,12 +45,15 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
 
     private Object doInvoke(Supplier<?> supplier) {
         int remainder = numberOfAllowedRequests.decrementAndGet();
+        Throwable failure = null;
+        Object result = null;
         try {
-            return supplier.get();
+            result = supplier.get();
         } catch (Throwable th) {
             if (breakerExceptionChecker.shouldRecord(th)) {
                 windowContext.increaseFailure();
             }
+            failure = th;
         }
         if (remainder == 0 && windowContext.getFailureCount() == 0) {
             breaker.setState(stateFactory.newClosedState());
@@ -57,6 +62,9 @@ public class CircuitBreakerHalfOpenState implements CircuitBreakerState {
         if (remainder == 0 && windowContext.getFailureCount() > 0) {
             breaker.setState(stateFactory.newOpenState());
         }
-        return null;
+        if (failure != null) {
+            throw ExceptionUtil.sneakyThrow(failure);
+        }
+        return result;
     }
 }

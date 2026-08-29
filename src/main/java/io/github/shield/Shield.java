@@ -31,7 +31,7 @@ public final class Shield<T> {
   }
 
 
-  public Supplier<T> build() {
+  public ShieldedSupplier<T> build() {
 
     if (interceptorBuilders.isEmpty()) {
       throw new IllegalStateException(

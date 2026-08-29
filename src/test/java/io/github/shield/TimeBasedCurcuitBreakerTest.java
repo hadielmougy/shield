@@ -9,6 +9,15 @@ import java.util.function.Supplier;
 
 public class TimeBasedCurcuitBreakerTest {
 
+    /** Invokes the breaker, swallowing both target failures and open-circuit rejections. */
+    private static void quietly(Supplier<Void> comp) {
+        try {
+            comp.get();
+        } catch (RuntimeException ignored) {
+            // failures/rejections are asserted via the call counter in these tests
+        }
+    }
+
 
     @Test
     public void testSuccessBreaker() throws InterruptedException {
@@ -22,14 +31,14 @@ public class TimeBasedCurcuitBreakerTest {
                         .waitDurationInOpenState(Duration.ofSeconds(1))
                         .slidingWindowType(CircuitBreaker.WindowType.TIME_BASED))
                 .build();
-        comp.get();
-        comp.get();
-        comp.get();
-        comp.get();
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
         // wait till the window timeout is due
         Thread.sleep(1000);
         // should open after this call
-        comp.get();
+        quietly(comp);
         // should fail
         //comp.doCall();
         Assert.assertEquals(5, counter.get());
@@ -47,19 +56,19 @@ public class TimeBasedCurcuitBreakerTest {
                         .waitDurationInOpenState(Duration.ofSeconds(1))
                         .slidingWindowType(CircuitBreaker.WindowType.TIME_BASED))
                 .build();
-        comp.get();
-        comp.get();
-        comp.get();
-        comp.get();
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
         // wait till the window timeout is due
         Thread.sleep(1000);
         // should open after this call
-        comp.get();
+        quietly(comp);
         // should fail
         //comp.doCall();
         // wait till close
         Thread.sleep(1100);
-        comp.get();
+        quietly(comp);
         Assert.assertEquals(6, counter.get());
     }
 }
