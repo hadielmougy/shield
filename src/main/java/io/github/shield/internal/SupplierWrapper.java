@@ -2,8 +2,6 @@ package io.github.shield.internal;
 
 import io.github.shield.Interceptor;
 
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -30,27 +28,12 @@ public class SupplierWrapper<T> implements Supplier<T> {
 
 
     private void reduceFilters() {
-
-        Deque<Interceptor> filtersDeque = new LinkedList<>();
-
-        for (Interceptor interceptor : interceptors) {
-            filtersDeque.addFirst(interceptor);
+        // interceptors arrive already sorted by order; link each one to the next so the whole
+        // chain is traversed (interceptor[0] -> interceptor[1] -> ... -> supplier).
+        for (int i = 0; i < interceptors.size() - 1; i++) {
+            interceptors.get(i).setNext(interceptors.get(i + 1));
         }
-
-        Interceptor curr = filtersDeque.pollFirst();
-
-        while (true) {
-            Interceptor next = filtersDeque.pollFirst();
-            if (next == null) {
-                break;
-            } else {
-                next.setNext(curr);
-                curr = next;
-            }
-            break;
-        }
-
-        this.firstInterceptor = curr;
+        this.firstInterceptor = interceptors.isEmpty() ? null : interceptors.get(0);
     }
 
     @Override

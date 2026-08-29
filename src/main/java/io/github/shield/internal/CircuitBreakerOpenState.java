@@ -3,10 +3,17 @@ package io.github.shield.internal;
 import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class CircuitBreakerOpenState implements CircuitBreakerState {
+
+    private static final ThreadFactory DAEMON_THREAD_FACTORY = runnable -> {
+        Thread t = new Thread(runnable, "shield-circuit-breaker-timer");
+        t.setDaemon(true);
+        return t;
+    };
 
     private final Duration duration;
     private final CircuitBreakerInterceptor breaker;
@@ -14,7 +21,7 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
     private final int permittedNumberOfCallsInHalfOpenState;
 
     private final ScheduledExecutorService scheduledExecutorService
-            = Executors.newSingleThreadScheduledExecutor();
+            = Executors.newSingleThreadScheduledExecutor(DAEMON_THREAD_FACTORY);
 
     public CircuitBreakerOpenState(CircuitBreakerStateFactory stateFactory,
                                    CircuitBreakerInterceptor circuitBreakerFilter,
@@ -24,7 +31,17 @@ public class CircuitBreakerOpenState implements CircuitBreakerState {
         this.breaker = circuitBreakerFilter;
         this.duration = waitDurationInOpenState;
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
-        scheduledExecutorService.schedule(this::close, duration.getSeconds(), TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(this::transition, duration.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    private void transition() {
+        try {
+            close();
+        } finally {
+            // The scheduler fires exactly once, so shut it down to avoid leaking a thread
+            // every time the circuit opens.
+            scheduledExecutorService.shutdown();
+        }
     }
 
     private void close() {

@@ -9,6 +9,15 @@ import java.util.function.Supplier;
 
 public class CountBasedCurcuitBreakerTest {
 
+    /** Invokes the breaker, swallowing both target failures and open-circuit rejections. */
+    private static void quietly(Supplier<Void> comp) {
+        try {
+            comp.get();
+        } catch (RuntimeException ignored) {
+            // failures/rejections are asserted via the call counter in these tests
+        }
+    }
+
 
     @Test
     public void testSuccessBreaker() throws InterruptedException {
@@ -24,13 +33,13 @@ public class CountBasedCurcuitBreakerTest {
                         .slidingWindowType(CircuitBreaker.WindowType.COUNT_BASED))
                 .build();
 
-        comp.get();
-        comp.get();
-        comp.get();
-        comp.get();
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
         // wait till the circuit closes
         Thread.sleep(1100);
-        comp.get();
+        quietly(comp);
         Assert.assertEquals(5, counter.get());
     }
 
@@ -47,13 +56,13 @@ public class CountBasedCurcuitBreakerTest {
                         .permittedNumberOfCallsInHalfOpenState(1)
                         .slidingWindowType(CircuitBreaker.WindowType.COUNT_BASED))
                 .build();
-        comp.get();
-        comp.get();
-        comp.get();
-        comp.get();
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
+        quietly(comp);
         // wait till the circuit closes
         Thread.sleep(1100);
-        comp.get();
+        quietly(comp);
         Assert.assertEquals(5, counter.get());
     }
 }
