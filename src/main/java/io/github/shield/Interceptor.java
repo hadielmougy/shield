@@ -17,7 +17,7 @@ public interface Interceptor extends Comparable<Interceptor> {
     return new Throttler.Config();
   }
 
-  static Throttler adaptiveThrottler() {
+  static AdaptiveThrottler adaptiveThrottler() {
     return new AdaptiveThrottler.Config();
   }
 

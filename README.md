@@ -26,6 +26,24 @@ Fault tolerance library for java
 
    
 ```
+### Adaptive throttler
+
+Concurrency throttler whose limit adapts to call outcomes (AIMD): it shrinks the limit
+multiplicatively when admitted calls fail and grows it back one permit per success, staying within
+`[minRequests, requests]`.
+
+```java
+
+    final Supplier<Void> throttler = Shield.decorate(target)
+        .with(Interceptor.adaptiveThrottler()
+            .requests(10)          // maximum (and starting) concurrency
+            .minRequests(1)        // floor the limit never drops below
+            .backoffRatio(0.5)     // multiply the limit by this on each failure
+            .maxWaitMillis(500))
+        .build();
+
+```
+
 ### Rate limit
 
 ```java
