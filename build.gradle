@@ -19,10 +19,9 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:4.0.2'
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
+// Note: the sources and javadoc jars are added automatically by the
+// com.vanniktech.maven.publish plugin. Do not also call withSourcesJar()/withJavadocJar()
+// here or the publication ends up with duplicate javadoc/sources artifacts.
 
 tasks.withType(JavaCompile).configureEach {
     options.release = 11
