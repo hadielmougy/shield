@@ -16,7 +16,7 @@ public interface RateLimiter extends InterceptorBuilder {
 
     @Override
     public RateLimiter rate(final int r) {
-      Validations.checkArgument(rate > 0, "rate must be positive");
+      Validations.checkArgument(r > 0, "rate must be positive");
       this.rate = r;
       return this;
     }
